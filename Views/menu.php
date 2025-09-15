@@ -1,18 +1,4 @@
-<?php
-// require "../config/Conexion.php";
-// require_once "../Controllers/token.php";
 
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
-
-if (!isset($_SESSION['id_usuario'])) {
-    header("Location: login.php");
-    exit();
-}
-
-
-?>
 
 <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
     <div class="app-brand demo">

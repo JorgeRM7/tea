@@ -403,7 +403,7 @@
                         text: 'Registro creado exitosamente.',
                     });
                     setTimeout(() => {
-                        window.location.href = "admin-employees.php";
+                        window.location.href = "Admin/admin-employees.php";
                     }, 2000);
                 },
                 error: function(error) {

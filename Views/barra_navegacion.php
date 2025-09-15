@@ -34,7 +34,7 @@
             <li class="nav-item navbar-dropdown dropdown-user dropdown">
                 <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);" data-bs-toggle="dropdown">
                     <div class="avatar avatar-online">
-                        <img src="https://nominas.grupo-ortiz.site/Librerias/img/Fotos/<?= $_SESSION['nombre'] ?>.jpg" alt class="h-auto rounded-circle" style="width: 30px; height: 30px; object-fit: cover;"/>
+                        <!-- <img src="https://nominas.grupo-ortiz.site/Librerias/img/Fotos/<?= $_SESSION['nombre'] ?>.jpg" alt class="h-auto rounded-circle" style="width: 30px; height: 30px; object-fit: cover;"/> -->
                     </div>
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end">
@@ -47,7 +47,7 @@
                                     </div>
                                 </div>
                                 <div class="flex-grow-1">
-                                    <span class="fw-medium d-block"><?php echo $_SESSION['nombre']  ?></span>
+                                    <span class="fw-medium d-block"><?php echo $_SESSION['name']  ?></span>
                                 </div>
                             </div>
                         </a>

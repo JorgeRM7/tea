@@ -7,12 +7,11 @@ switch ($_GET["op"]) {
 
     case 'verificar':
         $usuario_data = $login->validar($_POST); 
-        echo $usuario_data;
+        echo json_encode($usuario_data);
     break;
 
     
     case 'logout':
-        // Solo iniciar si no está ya iniciada
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }
