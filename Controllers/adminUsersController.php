@@ -1,0 +1,49 @@
+<?php 
+require_once "../Models/User.php";
+$User = new User();
+
+
+switch ($_GET["op"]) {
+    case 'store':
+        $rspta = $User->store ( $_POST );
+        echo $rspta;
+    break;
+    
+    
+    case 'show':
+        $rspta = $User->show( $_POST );
+        echo json_encode($rspta);
+    break;
+    
+    case 'deleteItem':
+        $rspta=$User->deleteItem($_POST);
+        echo $rspta;
+    break;
+
+    case 'index':
+        
+        $rspta = $User->index();
+        
+        $data=Array();
+        while ($reg=$rspta->fetch_object()) {
+            
+            $bonton_editar = '<button type="button" class="editar btn btn-sm btn-warning" onclick="show('.$reg->id.')"><i class="ti ti-edit"></i></button>';
+            $bonton_borrar = '<button type="button" class="eliminar btn btn-sm btn-danger" onclick="deleteItem(' . $reg->id . ')"><i class="ti ti-trash"></i></button>';
+            
+            $data[]=array(
+                $bonton_editar.' '.$bonton_borrar,
+                $reg->id,
+                $reg->name,
+                $reg->email,
+                $reg->username
+            );
+         }
+        $results=array(
+                 "sEcho"=>1,
+                 "iTotalRecords"=>count($data),
+                 "iTotalDisplayRecords"=>count($data),
+                 "aaData"=>$data); 
+        echo json_encode($results);
+    break;
+}
+?>
