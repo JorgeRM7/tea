@@ -1,42 +1,40 @@
 <?php 
-require_once "../Models/User.php";
-$User = new User();
+require_once "../Models/UserType.php";
+$UserType = new UserType();
 
 
 switch ($_GET["op"]) {
     case 'store':
-        $rspta = $User->store ( $_POST );
+        $rspta = $UserType->store ( $_POST );
         echo $rspta;
     break;
     
     
     case 'show':
-        $rspta = $User->show( $_POST );
+        $rspta = $UserType->show( $_POST );
         echo json_encode($rspta);
     break;
     
     case 'deleteItem':
-        $rspta=$User->deleteItem($_POST);
+        $rspta=$UserType->deleteItem($_POST);
         echo $rspta;
     break;
 
     case 'index':
         
-        $rspta = $User->index();
+        $rspta = $UserType->index();
         
         $data=Array();
         while ($reg=$rspta->fetch_object()) {
             
             $bonton_editar = '<button type="button" class="editar btn btn-sm btn-warning" onclick="show('.$reg->id.')"><i class="ti ti-edit"></i></button>';
             $bonton_borrar = '<button type="button" class="eliminar btn btn-sm btn-danger" onclick="deleteItem(' . $reg->id . ')"><i class="ti ti-trash"></i></button>';
-            $bonton_contraseña = '<button type="button" class="btn btn-sm btn-success" onclick="deleteItem(' . $reg->id . ')"><i class="ti ti-cloud-lock-open"></i></button>';
             
             $data[]=array(
-                $bonton_editar.' '.$bonton_borrar.' '.$bonton_contraseña,
+                $bonton_editar.' '.$bonton_borrar,
                 $reg->id,
                 $reg->name,
-                $reg->email,
-                $reg->username
+                $reg->description
             );
          }
         $results=array(

@@ -8,6 +8,7 @@ if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
     exit();
 }
+require_once dirname(__DIR__) . "/Database/conexion.php";
 ?>
 
 <head>

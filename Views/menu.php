@@ -1,5 +1,3 @@
-
-
 <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
     <div class="app-brand demo">
 
@@ -46,6 +44,11 @@
                 <li class="menu-item">
                     <a href="admin-users.php" class="menu-link">
                         <div data-i18n="Usuarios">Usuarios</div>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="admin-users-types.php" class="menu-link">
+                        <div data-i18n="Tipos Usuarios">Tipos Usuarios</div>
                     </a>
                 </li>
             </ul>

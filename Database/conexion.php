@@ -10,13 +10,6 @@ $conexion->set_charset('utf8mb4');
 
 $conexion = new mysqli(DB_HOST, DB_USERNAME, DB_PASSWORD, DB_NAME);
 
-if ($conexion->connect_errno) {
-    die("❌ Error al conectar a la base de datos: " . $conexion->connect_error);
-} else {
-    echo "✅ Conexión exitosa a la base de datos";
-}
-
-
 if (mysqli_connect_errno()) {
 	printf("Ups parece que falló en la conexion con la base de datos: %s\n",mysqli_connect_error());
 	exit();
