@@ -392,19 +392,22 @@
                 processData: false,
                 success: function(response) {
                     console.log(response)
-                    Swal.fire({
-                        toast: true,
-                        position: 'top-end',
-                        showConfirmButton: false,
-                        timer: 3000,
-                        timerProgressBar: true,
-                        icon: 'success',
-                        title: 'Éxito',
-                        text: 'Registro creado exitosamente.',
-                    });
-                    setTimeout(() => {
-                        window.location.href = "Admin/admin-employees.php";
-                    }, 2000);
+
+                    if( response == null ){
+                        Swal.fire({
+                            toast: true,
+                            position: 'top-end',
+                            showConfirmButton: false,
+                            timer: 3000,
+                            timerProgressBar: true,
+                            icon: 'error',
+                            title: 'Éxito',
+                            text: 'Usuario y/o contraseña incorrectos.',
+                        });
+                        
+                    }else{
+                        window.location.href = "admin-employees.php";
+                    }
                 },
                 error: function(error) {
                     Swal.fire({

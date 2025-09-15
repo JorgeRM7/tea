@@ -43,7 +43,7 @@
                             <div class="d-flex">
                                 <div class="flex-shrink-0 me-3">
                                     <div class="avatar avatar-online">
-                                        <img src="https://nominas.grupo-ortiz.site/Librerias/img/Fotos/<?= $_SESSION['nombre'] ?>.jpg" alt class="h-auto rounded-circle" style="width: 30px; height: 30px; object-fit: cover;"/>
+                                        <!-- <img src="https://nominas.grupo-ortiz.site/Librerias/img/Fotos/<?= $_SESSION['nombre'] ?>.jpg" alt class="h-auto rounded-circle" style="width: 30px; height: 30px; object-fit: cover;"/> -->
                                     </div>
                                 </div>
                                 <div class="flex-grow-1">
