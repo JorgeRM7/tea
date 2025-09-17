@@ -22,7 +22,7 @@
                             <div class="col-xl-12 col-lg-12 col-md-12 order-0 order-md-1">
                                 <div class="card">
                                     <div class="card-header d-flex justify-content-between align-items-center">
-                                        <h5 class="mb-0">Usuarios</h5>
+                                        <h5 class="mb-0">Sucurales</h5>
                                         <div class="d-flex justify-content-end">
                                             
                                             <button class="crear btn btn-primary me-2" onclick="create()">
@@ -38,9 +38,17 @@
                                                         <tr>
                                                             <th>Acciones</th>
                                                             <th>#</th>
+                                                            <th>Codigo</th>
                                                             <th>Nombre</th>
-                                                            <th>Correo</th>  
-                                                            <th>Usuario</th>  
+                                                            <th>Descripción</th>
+                                                            <th>Dirección</th>
+                                                            <th>Ciudad</th>
+                                                            <th>Estado Serial</th>
+                                                            <th>Pais</th>
+                                                            <th>Codigo Postal</th> 
+                                                            <th>Telefono</th>    
+                                                            <th>Cprreo</th>    
+                                                            <th>Estatus</th>    
                                                         </tr>
                                                     </thead>
                                                     <tbody>
@@ -67,34 +75,45 @@
                                     <form name="formulario" id="formulario" method="POST">
                                         <div class="row">
                                             <div class="col-md-6">
+                                                <label for="nameWithTitle" class="form-label">Codigo</label>
+                                                <input type="text" id="code" name="code" class="form-control" placeholder="Ingresa..." required/>
+                                                <input type="hidden" id="branch_office_id" name="branch_office_id" class="form-control"/>
+                                            </div>
+                                            <div class="col-md-6">
                                                 <label for="nameWithTitle" class="form-label">Nombre</label>
                                                 <input type="text" id="name" name="name" class="form-control" placeholder="Ingresa..." required/>
-                                                <input type="hidden" id="user_id" name="user_id" class="form-control"/>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label for="nameWithTitle" class="form-label">Descripción</label>
+                                                <input type="text" id="description" name="description" class="form-control" placeholder="Ingresa..." required/>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label for="nameWithTitle" class="form-label">Dirección</label>
+                                                <input type="text" id="address" name="address" class="form-control" placeholder="Ingresa..." required/>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label for="nameWithTitle" class="form-label">Ciudad</label>
+                                                <input type="text" id="city" name="city" class="form-control" placeholder="Ingresa..." required/>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label for="nameWithTitle" class="form-label">Estado</label>
+                                                <input type="text" id="state" name="state" class="form-control" placeholder="Ingresa..." required/>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label for="nameWithTitle" class="form-label">Pais</label>
+                                                <input type="text" id="country" name="country" class="form-control" placeholder="Ingresa..." required/>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label for="nameWithTitle" class="form-label">Codigo Postal</label>
+                                                <input type="text" id="postal_code" name="postal_code" class="form-control" placeholder="Ingresa..." required/>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label for="nameWithTitle" class="form-label">Telefono</label>
+                                                <input type="text" id="phone" name="phone" class="form-control" placeholder="Ingresa..." required/>
                                             </div>
                                             <div class="col-md-6">
                                                 <label for="nameWithTitle" class="form-label">Correo</label>
                                                 <input type="text" id="email" name="email" class="form-control" placeholder="Ingresa..." required/>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <label for="nameWithTitle" class="form-label">Usuario</label>
-                                                <input type="text" id="username" name="username" class="form-control" placeholder="Ingresa..." required/>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <label for="nameWithTitle" class="form-label">Tipo de usuario</label>
-                                                <select class="form-select select2-container" id="planta" name="planta" aria-label="Default select example" required>
-                                                    <option value="">Selecciona...</option>
-                                                    <?php 
-                                                        $sql = "SELECT * FROM `users_types` WHERE deleted_at is null";
-                                                        $query = ejecutarConsulta($sql);
-                                                        while($valores = mysqli_fetch_array($query)){
-                                                            echo "<option value='".$valores['id']."'>".$valores['name']."</option>";
-                                                        }
-                                                    ?>
-                                                </select>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <label for="nameWithTitle" class="form-label">Contraseña</label>
-                                                <input type="text" id="password" name="password" class="form-control" placeholder="Ingresa..." required/>
                                             </div>
                                         </div>
                                     </form>
@@ -109,6 +128,8 @@
                         </div>
                     </div>
                     <!--Fin Modal Crear-->
+
+                    
                     
                     <!-- FOOTER -->
                     <?php require_once('footer.php'); ?>
@@ -127,7 +148,7 @@
 <script>
     var tabla;
     $(document).ready(function() {
-        const menuItem = document.querySelector('a[href="admin-users.php"]').parentElement;
+        const menuItem = document.querySelector('a[href="admin-branch-offices.php"]').parentElement;
         menuItem.classList.add('active');
         const menuToggle = document.querySelector('a[href="admin"]').parentElement;
         menuToggle.classList.add('open');
@@ -142,7 +163,7 @@
     const store = () => {
         const formData = new FormData(document.getElementById("formulario"));
         $.ajax({
-            url: "../Controllers/adminUsersController.php?op=store",
+            url: "../Controllers/adminBranchOfficesController.php?op=store",
             type: "POST",
             data: formData,
             contentType: false,
@@ -184,7 +205,7 @@
             "aServerSide": true,
             // "dom": 'Bfrtip',
             "ajax": {
-                url: '../Controllers/adminUsersController.php?op=index',
+                url: '../Controllers/adminBranchOfficesController.php?op=index',
                 type: "get",
                 dataType: "json",
                 error: (e) => {
@@ -202,20 +223,26 @@
         }).DataTable();
     };
 
-    const show = ( user_id ) => {
+    const show = ( branch_office_id ) => {
         $('#modal_create').modal('show');
         $.ajax({
-            url: "../Controllers/adminUsersController.php?op=show",
+            url: "../Controllers/adminBranchOfficesController.php?op=show",
             type: "POST",
             dataType: "json",
-            data: { user_id: user_id },
+            data: { branch_office_id: branch_office_id },
             success: function (response) {
                 let data = response;
-                console.log(data)
                 $("#name").val(data?.name);
-                $("#user_id").val(data?.id);
-                $("#email").val(data?.email);
-                $("#username").val(data?.username);
+                $("#branch_office_id").val(data?.id);
+                $("#code").val(data?.code);
+                $("#description").val(data?.description);
+                $("#address").val(data?.address);
+                $("#city").val(data?.city);
+                $("#state").val(data?.state);
+                $("#country").val(data?.country);
+                $("#postal_code").val(data?.postal_code);
+                $("#phone").val(data?.phone);
+                $("#email").val(data?.email);            
             },
             error: function (xhr, status, error) {
                 console.error("Error en la solicitud:", error);
@@ -229,8 +256,7 @@
         });
     }
 
-    const deleteItem = ( user_id ) => {
-        
+    const deleteItem = ( branch_office_id ) => {
         Swal.fire({
             title: "Alerta",
             text: "¿Estas seguro de realizar esta acción?",
@@ -242,9 +268,9 @@
         }).then((result) => {
             if (result.isConfirmed) {
                 $.ajax({
-                    url: "../Controllers/adminUsersController.php?op=deleteItem",
+                    url: "../Controllers/adminBranchOfficesController.php?op=deleteItem",
                     type: "POST",
-                    data: { user_id: user_id },
+                    data: { branch_office_id: branch_office_id },
                     success: function(data, status) {
                         Swal.fire({
                             toast: true,
@@ -269,18 +295,21 @@
                 });
             }
         });
-        
     };
 
+    
     const clean = () => {   
-        $("#brand").val('');
-        $("#user_id").val('');
-        $("#color").val('');
-        $("#model").val('');
-        $("#plate_number").val('');
-        $("#serial_number").val('');
-        $("#type").val('');
-        $("#year").val('');         
+        $("#name").val('');
+        $("#branch_office_id").val('');
+        $("#code").val('');
+        $("#description").val('');
+        $("#address").val('');
+        $("#city").val('');
+        $("#state").val('');
+        $("#country").val('');
+        $("#postal_code").val('');
+        $("#phone").val('');
+        $("#email").val('');    
     }
     
 </script>

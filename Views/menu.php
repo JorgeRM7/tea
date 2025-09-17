@@ -19,6 +19,20 @@
                 <div data-i18n="Inicio">Inicio</div>
             </a>
         </li>
+        <li class="menu-item">
+            <a href="tickets" class="menu-link menu-toggle">
+                <i class="menu-icon tf-icons ti ti-ticket"></i>
+                <div data-i18n="Boletos">Boletos</div>
+            </a>
+            <ul class="menu-sub">
+                <li class="menu-item">
+                    <a href="tickets-ticket.php" class="menu-link">
+                        <div data-i18n="Imprimir boleto">Imprimir boleto</div>
+                    </a>
+                </li>
+                
+            </ul>
+        </li>
 
         <li class="menu-item">
             <a href="admin" class="menu-link menu-toggle">
@@ -26,6 +40,11 @@
                 <div data-i18n="Administración">Administración</div>
             </a>
             <ul class="menu-sub">
+                <li class="menu-item">
+                    <a href="admin-branch-offices.php" class="menu-link">
+                        <div data-i18n="Sucursales">Sucursales</div>
+                    </a>
+                </li>
                 <li class="menu-item">
                     <a href="admin-employees.php" class="menu-link">
                         <div data-i18n="Empleados">Empleados</div>
@@ -39,6 +58,11 @@
                 <li class="menu-item">
                     <a href="admin-routes.php" class="menu-link">
                         <div data-i18n="Rutas">Rutas</div>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="admin-routes-schedules.php" class="menu-link">
+                        <div data-i18n="Horarios">Horarios</div>
                     </a>
                 </li>
                 <li class="menu-item">

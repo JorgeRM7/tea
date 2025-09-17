@@ -22,17 +22,17 @@ class Vehicle {
 
         if( $vehicle_id ){
             $sql="
-            UPDATE `vehicles` SET 
-                `plate_number`   = '$plate_number',
-                `brand`          = '$brand',
-                `model`          = '$model',
-                `year`           = '$year',
-                `color`          = '$color',
-                `serial_number`  = '$serial_number',
-                `type`           = '$type',
-                `updated_at`     = NOW()
-            WHERE `id` = '$vehicle_id'
-    ";
+                UPDATE `vehicles` SET 
+                    `plate_number`   = '$plate_number',
+                    `brand`          = '$brand',
+                    `model`          = '$model',
+                    `year`           = '$year',
+                    `color`          = '$color',
+                    `serial_number`  = '$serial_number',
+                    `type`           = '$type',
+                    `updated_at`     = NOW()
+                WHERE `id` = '$vehicle_id'
+            ";
         }else{
             $sql ="
                 INSERT INTO 
@@ -65,7 +65,14 @@ class Vehicle {
     }
     
     public function index() {
-        $sql = "SELECT * FROM vehicles WHERE deleted_at IS NULL";
+        $sql = "
+            SELECT 
+                vehicles.*,
+                CONCAT(employees.name, ' ', employees.paternal_surname, ' ', employees.maternal_surname) AS employee_name
+            FROM vehicles
+            LEFT JOIN employees ON employees.id = vehicles.employee_id
+            WHERE vehicles.deleted_at IS NULL
+        ";
         return ejecutarConsulta($sql);
     }
     
@@ -82,10 +89,22 @@ class Vehicle {
         UPDATE 
         `vehicles` SET 
             `deleted_at`= NOW()
-        WHERE `id`='$   '";
+        WHERE `id`='$vehicle_id'";
         return ejecutarConsulta($sql);
     }
     
+
+    public function assign ( $data ){
+        $vehicle_id = $data['vehicle_id'];
+        $employee_id = $data['employee_id'];
+        $sql="
+        UPDATE 
+        `vehicles` SET
+            `updated_at` = NOW(), 
+            `employee_id`= '$employee_id'
+        WHERE `id`='$vehicle_id'";
+        return ejecutarConsulta($sql);
+    }
  
 }   
 ?>

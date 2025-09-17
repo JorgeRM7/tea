@@ -22,7 +22,7 @@
                             <div class="col-xl-12 col-lg-12 col-md-12 order-0 order-md-1">
                                 <div class="card">
                                     <div class="card-header d-flex justify-content-between align-items-center">
-                                        <h5 class="mb-0">Usuarios</h5>
+                                        <h5 class="mb-0">Horarios</h5>
                                         <div class="d-flex justify-content-end">
                                             
                                             <button class="crear btn btn-primary me-2" onclick="create()">
@@ -38,14 +38,11 @@
                                                         <tr>
                                                             <th>Acciones</th>
                                                             <th>#</th>
-                                                            <th>Nombre</th>
-                                                            <th>Correo</th>  
-                                                            <th>Usuario</th>  
+                                                            <th>Ruta</th>
+                                                            <th>Horarios</th>
                                                         </tr>
                                                     </thead>
-                                                    <tbody>
-        
-                                                    </tbody>
+                                                    <tbody></tbody>
                                                 </table>
                                             </div>
                                         </div>
@@ -67,34 +64,35 @@
                                     <form name="formulario" id="formulario" method="POST">
                                         <div class="row">
                                             <div class="col-md-6">
-                                                <label for="nameWithTitle" class="form-label">Nombre</label>
-                                                <input type="text" id="name" name="name" class="form-control" placeholder="Ingresa..." required/>
-                                                <input type="hidden" id="user_id" name="user_id" class="form-control"/>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <label for="nameWithTitle" class="form-label">Correo</label>
-                                                <input type="text" id="email" name="email" class="form-control" placeholder="Ingresa..." required/>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <label for="nameWithTitle" class="form-label">Usuario</label>
-                                                <input type="text" id="username" name="username" class="form-control" placeholder="Ingresa..." required/>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <label for="nameWithTitle" class="form-label">Tipo de usuario</label>
-                                                <select class="form-select select2-container" id="planta" name="planta" aria-label="Default select example" required>
+                                                <label for="nameWithTitle" class="form-label">Ruta</label>
+                                                <select class="form-select select2-container" id="route_id" name="route_id" aria-label="Default select example" required>
                                                     <option value="">Selecciona...</option>
                                                     <?php 
-                                                        $sql = "SELECT * FROM `users_types` WHERE deleted_at is null";
+                                                        $sql = "SELECT * FROM `routes` WHERE deleted_at is null";
                                                         $query = ejecutarConsulta($sql);
                                                         while($valores = mysqli_fetch_array($query)){
-                                                            echo "<option value='".$valores['id']."'>".$valores['name']."</option>";
+                                                            echo "<option value='".$valores['id']."'>".$valores['origin']." - ".$valores['destination']."</option>";
                                                         }
                                                     ?>
                                                 </select>
                                             </div>
                                             <div class="col-md-6">
-                                                <label for="nameWithTitle" class="form-label">Contraseña</label>
-                                                <input type="text" id="password" name="password" class="form-control" placeholder="Ingresa..." required/>
+                                                <label for="nameWithTitle" class="form-label">Dia</label>
+                                                <select class="form-select select2-container" id="day" name="day" aria-label="Selecciona un día" required>
+                                                    <option value="">Selecciona...</option>
+                                                    <option value="monday">Lunes</option>
+                                                    <option value="tuesday">Martes</option>
+                                                    <option value="wednesday">Miércoles</option>
+                                                    <option value="thursday">Jueves</option>
+                                                    <option value="friday">Viernes</option>
+                                                    <option value="saturday">Sábado</option>
+                                                    <option value="sunday">Domingo</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label for="nameWithTitle" class="form-label">Hora de salida</label>
+                                                <input type="time" id="leaving_time" name="leaving_time" class="form-control" placeholder="Ingresa..." required/>
+                                                <input type="hidden" id="routes_schedule_id" name="routes_schedule_id" class="form-control"/>
                                             </div>
                                         </div>
                                     </form>
@@ -127,7 +125,7 @@
 <script>
     var tabla;
     $(document).ready(function() {
-        const menuItem = document.querySelector('a[href="admin-users.php"]').parentElement;
+        const menuItem = document.querySelector('a[href="admin-routes-schedules.php"]').parentElement;
         menuItem.classList.add('active');
         const menuToggle = document.querySelector('a[href="admin"]').parentElement;
         menuToggle.classList.add('open');
@@ -142,7 +140,7 @@
     const store = () => {
         const formData = new FormData(document.getElementById("formulario"));
         $.ajax({
-            url: "../Controllers/adminUsersController.php?op=store",
+            url: "../Controllers/adminRoutesSchedulesController.php?op=store",
             type: "POST",
             data: formData,
             contentType: false,
@@ -184,7 +182,7 @@
             "aServerSide": true,
             // "dom": 'Bfrtip',
             "ajax": {
-                url: '../Controllers/adminUsersController.php?op=index',
+                url: '../Controllers/adminRoutesSchedulesController.php?op=index',
                 type: "get",
                 dataType: "json",
                 error: (e) => {
@@ -202,20 +200,18 @@
         }).DataTable();
     };
 
-    const show = ( user_id ) => {
+    const show = ( routes_schedule_id ) => {
         $('#modal_create').modal('show');
         $.ajax({
-            url: "../Controllers/adminUsersController.php?op=show",
+            url: "../Controllers/adminRoutesSchedulesController.php?op=show",
             type: "POST",
             dataType: "json",
-            data: { user_id: user_id },
+            data: { routes_schedule_id: routes_schedule_id },
             success: function (response) {
                 let data = response;
-                console.log(data)
-                $("#name").val(data?.name);
-                $("#user_id").val(data?.id);
-                $("#email").val(data?.email);
-                $("#username").val(data?.username);
+                $("#routes_schedule_id").val(data?.id);
+                $("#route_id").val(data?.route_id);
+                $("#leaving_time").val(data?.leaving_time);          
             },
             error: function (xhr, status, error) {
                 console.error("Error en la solicitud:", error);
@@ -229,7 +225,7 @@
         });
     }
 
-    const deleteItem = ( user_id ) => {
+    const deleteItem = ( routes_schedule_id ) => {
         
         Swal.fire({
             title: "Alerta",
@@ -242,9 +238,9 @@
         }).then((result) => {
             if (result.isConfirmed) {
                 $.ajax({
-                    url: "../Controllers/adminUsersController.php?op=deleteItem",
+                    url: "../Controllers/adminRoutesSchedulesController.php?op=deleteItem",
                     type: "POST",
-                    data: { user_id: user_id },
+                    data: { routes_schedule_id: routes_schedule_id },
                     success: function(data, status) {
                         Swal.fire({
                             toast: true,
@@ -273,14 +269,9 @@
     };
 
     const clean = () => {   
-        $("#brand").val('');
-        $("#user_id").val('');
-        $("#color").val('');
-        $("#model").val('');
-        $("#plate_number").val('');
-        $("#serial_number").val('');
-        $("#type").val('');
-        $("#year").val('');         
+        $("#routes_schedule_id").val('');
+        $("#route_id").val('');
+        $("#leaving_time").val('');
     }
     
 </script>

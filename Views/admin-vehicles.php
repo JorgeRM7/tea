@@ -45,7 +45,8 @@
                                                             <th>Color</th>
                                                             <th>Numero Serial</th>
                                                             <th>Tipo</th>
-                                                            <th>Estatus</th>    
+                                                            <th>Estatus</th> 
+                                                            <th>Empleado</th>    
                                                         </tr>
                                                     </thead>
                                                     <tbody>
@@ -113,6 +114,45 @@
                         </div>
                     </div>
                     <!--Fin Modal Crear-->
+
+                    <!--Inicio Modal Asignar-->
+                    <div class="modal animate__animated animate__flipInX" id="modal_assign" aria-labelledby="flipInXAnimationModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel">Asignar</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <form name="formulario" id="formulario" method="POST">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <label for="nameWithTitle" class="form-label">Empleado</label>
+                                                <select class="form-select select2-container" id="employee_id" name="employee_id" aria-label="Default select example" required>
+                                                    <option value="">Selecciona...</option>
+                                                    <?php 
+                                                        $sql = "SELECT * FROM `employees` WHERE deleted_at is null";
+                                                        $query = ejecutarConsulta($sql);
+                                                        while($valores = mysqli_fetch_array($query)){
+                                                            echo "<option value='".$valores['id']."'>".$valores['name']."</option>";
+                                                        }
+                                                    ?>
+                                                </select>
+                                                <input type="hidden" id="vehicle_id" name="vehicle_id" class="form-control"/>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <button class="crear btn btn-primary me-2" onclick="assign()">
+                                        <i class="ti ti-device-floppy"></i> Guardar
+                                    </button>
+                                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal" onclick="clean()">Cerrar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!--Fin Modal Asignar-->
                     
                     <!-- FOOTER -->
                     <?php require_once('footer.php'); ?>
@@ -237,7 +277,6 @@
     }
 
     const deleteItem = ( vehicle_id ) => {
-        
         Swal.fire({
             title: "Alerta",
             text: "¿Estas seguro de realizar esta acción?",
@@ -276,7 +315,55 @@
                 });
             }
         });
-        
+    };
+
+    const show_assign = ( vehicle_id ) => {
+        $('#modal_assign').modal('show');
+        $("#vehicle_id").val(vehicle_id);
+    }
+
+    const assign = () => {
+        let employee_id = $("#employee_id").val();
+        let vehicle_id = $("#vehicle_id").val();
+        Swal.fire({
+            title: "Alerta",
+            text: "¿Estas seguro de realizar esta acción?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Si"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: "../Controllers/adminVehiclesController.php?op=assign",
+                    type: "POST",
+                    data: { vehicle_id: vehicle_id, employee_id: employee_id },
+                    success: function(data, status) {
+                        Swal.fire({
+                            toast: true,
+                            position: 'top-end',
+                            showConfirmButton: false,
+                            timer: 3000,
+                            timerProgressBar: true,
+                            icon: 'success',
+                            title: 'Éxito',
+                            text: 'Acción realizada exitosamente.',
+                        });
+                        index();
+                        $('#modal_assign').modal('hide');
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("Error:", error);
+                        Swal.fire({
+                            title: "Error",
+                            text: "No se pudo obtener la información del registro.",
+                            icon: "error"
+                        });
+                    }
+                });
+            }
+        });
     };
 
     const clean = () => {   

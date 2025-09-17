@@ -18,97 +18,49 @@
                 <div class="content-wrapper">
                     <div class="container-xxl flex-grow-1 container-p-y">
                         <div class="row">
-                            <!--Tabla de asistencias-->
-                            <div class="col-xl-12 col-lg-12 col-md-12 order-0 order-md-1">
-                                <div class="card">
+                            <div class="col-md-6">
+                                <div class="card mb-4">
                                     <div class="card-header d-flex justify-content-between align-items-center">
-                                        <h5 class="mb-0">Usuarios</h5>
-                                        <div class="d-flex justify-content-end">
-                                            
-                                            <button class="crear btn btn-primary me-2" onclick="create()">
-                                                <i class="ti ti-cloud-up"></i> Crear
-                                            </button>
-                                        </div>
+                                        <h5 class="mb-0">Boleto</h5>
+                                        <small class="text-muted float-end">Default label</small>
                                     </div>
-                                    <div class="card-datatable table-responsive">
-                                        <div class="row">
-                                            <div class="col-xl-12 col-lg-12 col-md-12 order-0 order-md-1">
-                                                <table class="dt-responsive table table-striped" id="tbllistado">
-                                                    <thead>
-                                                        <tr>
-                                                            <th>Acciones</th>
-                                                            <th>#</th>
-                                                            <th>Nombre</th>
-                                                            <th>Correo</th>  
-                                                            <th>Usuario</th>  
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-        
-                                                    </tbody>
-                                                </table>
+                                    <div class="card-body">
+                                        <form>
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <label for="nameWithTitle" class="form-label">Taquillero(a)</label>
+                                                    <select class="form-select select2-container" id="planta" name="planta" aria-label="Default select example" required>
+                                                        <option value="">Selecciona...</option>
+                                                        <?php 
+                                                            $sql = "SELECT * FROM `employees` WHERE deleted_at is null";
+                                                            $query = ejecutarConsulta($sql);
+                                                            while($valores = mysqli_fetch_array($query)){
+                                                                echo "<option value='".$valores['id']."'>".$valores['name']."</option>";
+                                                            }
+                                                        ?>
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label for="nameWithTitle" class="form-label">Ruta</label>
+                                                    <select class="form-select select2-container" id="planta" name="planta" aria-label="Default select example" required>
+                                                        <option value="">Selecciona...</option>
+                                                        <?php 
+                                                            $sql = "SELECT * FROM `routes` WHERE deleted_at is null";
+                                                            $query = ejecutarConsulta($sql);
+                                                            while($valores = mysqli_fetch_array($query)){
+                                                                echo "<option value='".$valores['id']."'>".$valores['name']."</option>";
+                                                            }
+                                                        ?>
+                                                    </select>
+                                                </div>
                                             </div>
-                                        </div>
+                                            <button type="button" class="btn btn-primary">Send</button>
+                                        </form>
                                     </div>
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-                    <!--Inicio Modal Crear-->
-                    <div class="modal animate__animated animate__flipInX" id="modal_create" aria-labelledby="flipInXAnimationModalLabel" aria-hidden="true">
-                        <div class="modal-dialog modal-dialog-centered" role="document">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="exampleModalLabel">Crear</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body">
-                                    <form name="formulario" id="formulario" method="POST">
-                                        <div class="row">
-                                            <div class="col-md-6">
-                                                <label for="nameWithTitle" class="form-label">Nombre</label>
-                                                <input type="text" id="name" name="name" class="form-control" placeholder="Ingresa..." required/>
-                                                <input type="hidden" id="user_id" name="user_id" class="form-control"/>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <label for="nameWithTitle" class="form-label">Correo</label>
-                                                <input type="text" id="email" name="email" class="form-control" placeholder="Ingresa..." required/>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <label for="nameWithTitle" class="form-label">Usuario</label>
-                                                <input type="text" id="username" name="username" class="form-control" placeholder="Ingresa..." required/>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <label for="nameWithTitle" class="form-label">Tipo de usuario</label>
-                                                <select class="form-select select2-container" id="planta" name="planta" aria-label="Default select example" required>
-                                                    <option value="">Selecciona...</option>
-                                                    <?php 
-                                                        $sql = "SELECT * FROM `users_types` WHERE deleted_at is null";
-                                                        $query = ejecutarConsulta($sql);
-                                                        while($valores = mysqli_fetch_array($query)){
-                                                            echo "<option value='".$valores['id']."'>".$valores['name']."</option>";
-                                                        }
-                                                    ?>
-                                                </select>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <label for="nameWithTitle" class="form-label">Contraseña</label>
-                                                <input type="text" id="password" name="password" class="form-control" placeholder="Ingresa..." required/>
-                                            </div>
-                                        </div>
-                                    </form>
-                                </div>
-                                <div class="modal-footer">
-                                    <button class="crear btn btn-primary me-2" onclick="store()">
-                                        <i class="ti ti-device-floppy"></i> Guardar
-                                    </button>
-                                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal" onclick="clean()">Cerrar</button>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <!--Fin Modal Crear-->
                     
                     <!-- FOOTER -->
                     <?php require_once('footer.php'); ?>
@@ -127,9 +79,9 @@
 <script>
     var tabla;
     $(document).ready(function() {
-        const menuItem = document.querySelector('a[href="admin-users.php"]').parentElement;
+        const menuItem = document.querySelector('a[href="tickets-ticket.php"]').parentElement;
         menuItem.classList.add('active');
-        const menuToggle = document.querySelector('a[href="admin"]').parentElement;
+        const menuToggle = document.querySelector('a[href="tickets"]').parentElement;
         menuToggle.classList.add('open');
         index();
     });
