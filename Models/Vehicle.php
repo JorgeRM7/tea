@@ -105,6 +105,11 @@ class Vehicle {
         WHERE `id`='$vehicle_id'";
         return ejecutarConsulta($sql);
     }
+
+    public function vehicles (){
+        $sql = "SELECT id, plate_number, brand, model FROM vehicles";
+        return ejecutarConsulta($sql);
+    }  
  
 }   
 ?>

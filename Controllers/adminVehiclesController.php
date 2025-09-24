@@ -79,5 +79,18 @@ switch ($_GET["op"]) {
         $rspta = $Vehicle->assign ( $_POST );
         echo $rspta;
     break;
+
+    case 'vehicles':
+        $rspta = $Vehicle->vehicles();
+        $data = [];
+        while ($reg = $rspta->fetch_assoc()) {
+            $data[] = [
+                "id" => $reg['id'],
+                "text" => $reg['plate_number'] . " - " . $reg['brand'] . " " . $reg['model']
+            ];
+        }
+
+        echo json_encode($data);
+    break;
 }
 ?>

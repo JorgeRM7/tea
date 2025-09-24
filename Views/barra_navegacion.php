@@ -114,7 +114,7 @@
     }
 
     .select2-container--default .select2-results__option--highlighted.select2-results__option--selectable {
-        background-color: #f07d42;
+        background-color: #38b449;
         color: white;
     }
 
