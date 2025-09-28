@@ -16,12 +16,10 @@ switch ($_GET["op"]) {
             session_start();
         }
 
-        // Si existe la sesión, la limpiamos
-        if (isset($_SESSION['id_usuario'])) {
-            // Vaciar todas las variables de sesión
+        
+        if (isset($_SESSION['user_id'])) {
             $_SESSION = [];
 
-            // Borrar la cookie de sesión en el navegador
             if (ini_get("session.use_cookies")) {
                 $params = session_get_cookie_params();
                 setcookie(
@@ -35,10 +33,8 @@ switch ($_GET["op"]) {
                 );
             }
 
-            // Finalmente destruir la sesión
             session_destroy();
 
-            // Redirigir al login
             header("Location: ../Views/login.php");
             exit;
         } else {

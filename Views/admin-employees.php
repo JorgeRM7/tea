@@ -101,6 +101,7 @@
                 </div>
             </div>
         </div>
+        </div>
         <div class="layout-overlay layout-menu-toggle"></div>
         <div class="drag-target"></div>
     </div>
@@ -113,7 +114,7 @@
     $(document).ready(function() {
         const menuItem = document.querySelector('a[href="admin-employees.php"]').parentElement;
         menuItem.classList.add('active');
-        const menuToggle = document.querySelector('a[href="admin"]').parentElement;
+        const menuToggle = document.querySelector('a[href="ADMINISTRACION"]').parentElement;
         menuToggle.classList.add('open');
         index();
     });
@@ -128,9 +129,13 @@
         $.ajax({
             url: "../Controllers/adminEmployeesController.php?op=store",
             type: "POST",
+            headers: {
+                "Authorization": "Bearer " + token
+            },
             data: formData,
             contentType: false,
             processData: false,
+
             success: function(response) {
                 
                 Swal.fire({
@@ -171,6 +176,9 @@
                 url: '../Controllers/adminEmployeesController.php?op=index',
                 type: "get",
                 dataType: "json",
+                headers: {
+                    "Authorization": "Bearer " + token
+                },
                 error: (e) => {
                     console.log(e.responseText);
                 }
@@ -192,6 +200,9 @@
             url: "../Controllers/adminEmployeesController.php?op=show",
             type: "POST",
             dataType: "json",
+            headers: {
+                "Authorization": "Bearer " + token
+            },
             data: { employee_id: employee_id },
             success: function (response) {
                 let data = response;
@@ -228,6 +239,9 @@
                 $.ajax({
                     url: "../Controllers/adminEmployeesController.php?op=deleteItem",
                     type: "POST",
+                    headers: {
+                        "Authorization": "Bearer " + token
+                    },
                     data: { employee_id: employee_id },
                     success: function(data, status) {
                         Swal.fire({

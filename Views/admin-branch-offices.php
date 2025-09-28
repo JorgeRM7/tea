@@ -150,7 +150,7 @@
     $(document).ready(function() {
         const menuItem = document.querySelector('a[href="admin-branch-offices.php"]').parentElement;
         menuItem.classList.add('active');
-        const menuToggle = document.querySelector('a[href="admin"]').parentElement;
+        const menuToggle = document.querySelector('a[href="ADMINISTRACION"]').parentElement;
         menuToggle.classList.add('open');
         index();
     });
@@ -165,6 +165,9 @@
         $.ajax({
             url: "../Controllers/adminBranchOfficesController.php?op=store",
             type: "POST",
+            headers: {
+                "Authorization": "Bearer " + token
+            },
             data: formData,
             contentType: false,
             processData: false,
@@ -207,6 +210,9 @@
             "ajax": {
                 url: '../Controllers/adminBranchOfficesController.php?op=index',
                 type: "get",
+                headers: {
+                    "Authorization": "Bearer " + token
+                },
                 dataType: "json",
                 error: (e) => {
                     console.log(e.responseText);
@@ -228,6 +234,9 @@
         $.ajax({
             url: "../Controllers/adminBranchOfficesController.php?op=show",
             type: "POST",
+            headers: {
+                "Authorization": "Bearer " + token
+            },
             dataType: "json",
             data: { branch_office_id: branch_office_id },
             success: function (response) {
@@ -270,6 +279,9 @@
                 $.ajax({
                     url: "../Controllers/adminBranchOfficesController.php?op=deleteItem",
                     type: "POST",
+                    headers: {
+                        "Authorization": "Bearer " + token
+                    },
                     data: { branch_office_id: branch_office_id },
                     success: function(data, status) {
                         Swal.fire({

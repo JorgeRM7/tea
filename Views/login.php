@@ -391,9 +391,11 @@
                 contentType: false,
                 processData: false,
                 success: function(response) {
-                    console.log(response)
+                    let data = (typeof response === "string") ? JSON.parse(response) : response;
 
-                    if( response == null ){
+                    console.log("Respuesta parseada:", data);
+
+                    if( data == null ){
                         Swal.fire({
                             toast: true,
                             position: 'top-end',
@@ -406,6 +408,8 @@
                         });
                         
                     }else{
+                        localStorage.setItem("token", data.token);
+                        
                         window.location.href = "admin-employees.php";
                     }
                 },

@@ -107,7 +107,7 @@ class Vehicle {
     }
 
     public function vehicles (){
-        $sql = "SELECT id, plate_number, brand, model FROM vehicles";
+        $sql = "SELECT id, plate_number, brand, model FROM vehicles WHERE deleted_at IS NULL";
         return ejecutarConsulta($sql);
     }  
  

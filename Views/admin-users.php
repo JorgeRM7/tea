@@ -129,7 +129,7 @@
     $(document).ready(function() {
         const menuItem = document.querySelector('a[href="admin-users.php"]').parentElement;
         menuItem.classList.add('active');
-        const menuToggle = document.querySelector('a[href="admin"]').parentElement;
+        const menuToggle = document.querySelector('a[href="ADMINISTRACION"]').parentElement;
         menuToggle.classList.add('open');
         index();
     });
@@ -144,6 +144,9 @@
         $.ajax({
             url: "../Controllers/adminUsersController.php?op=store",
             type: "POST",
+            headers: {
+                "Authorization": "Bearer " + token
+            },
             data: formData,
             contentType: false,
             processData: false,
@@ -186,6 +189,9 @@
             "ajax": {
                 url: '../Controllers/adminUsersController.php?op=index',
                 type: "get",
+                headers: {
+                    "Authorization": "Bearer " + token
+                },
                 dataType: "json",
                 error: (e) => {
                     console.log(e.responseText);
@@ -208,10 +214,13 @@
             url: "../Controllers/adminUsersController.php?op=show",
             type: "POST",
             dataType: "json",
+            headers: {
+                "Authorization": "Bearer " + token
+            },
             data: { user_id: user_id },
             success: function (response) {
                 let data = response;
-                console.log(data)
+
                 $("#name").val(data?.name);
                 $("#user_id").val(data?.id);
                 $("#email").val(data?.email);
@@ -244,6 +253,9 @@
                 $.ajax({
                     url: "../Controllers/adminUsersController.php?op=deleteItem",
                     type: "POST",
+                    headers: {
+                        "Authorization": "Bearer " + token
+                    },
                     data: { user_id: user_id },
                     success: function(data, status) {
                         Swal.fire({

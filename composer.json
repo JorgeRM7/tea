@@ -1,0 +1,7 @@
+{
+    "require": {
+        "mpdf/mpdf": "^8.2",
+        "endroid/qr-code": "^6.0",
+        "firebase/php-jwt": "^6.11"
+    }
+}

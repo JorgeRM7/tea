@@ -18,7 +18,6 @@
                 <div class="content-wrapper">
                     <div class="container-xxl flex-grow-1 container-p-y">
                         <div class="row">
-                            <!--Tabla de asistencias-->
                             <div class="col-xl-12 col-lg-12 col-md-12 order-0 order-md-1">
                                 <div class="card">
                                     <div class="card-header d-flex justify-content-between align-items-center">
@@ -33,28 +32,13 @@
                                             </button>
                                         </div>
                                     </div>
-                                    <div class="card-datatable table-responsive">
-                                        <div class="row">
-                                            <div class="col-xl-12 col-lg-12 col-md-12 order-0 order-md-1">
-                                                <table class="dt-responsive table table-striped" id="tbllistado">
-                                                    <thead>
-                                                        <tr>
-                                                            <th>Acciones</th>
-                                                            <th>#</th>
-                                                            <th>Ruta</th>
-                                                            <th>Horarios</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody></tbody>
-                                                </table>
-                                            </div>
-                                        </div>
-                                    </div>
+                                   
                                 </div>
                             </div>
-
                         </div>
+                        <div class="row mt-3" id="routes_leaving_times"></div>
                     </div>
+
                     <!--Inicio Modal Crear-->
                     <div class="modal animate__animated animate__flipInX" id="modal_create" aria-labelledby="flipInXAnimationModalLabel" aria-hidden="true">
                         <div class="modal-dialog modal-xl" role="document">
@@ -178,7 +162,7 @@
     $(document).ready(function() {
         const menuItem = document.querySelector('a[href="admin-routes-schedules.php"]').parentElement;
         menuItem.classList.add('active');
-        const menuToggle = document.querySelector('a[href="admin"]').parentElement;
+        const menuToggle = document.querySelector('a[href="ADMINISTRACION"]').parentElement;
         menuToggle.classList.add('open');
         index();
     });
@@ -229,6 +213,9 @@
         $.ajax({
             url: "../Controllers/adminRoutesSchedulesController.php?op=store",
             type: "POST",
+            headers: {
+                "Authorization": "Bearer " + token
+            },
             data: formData,
             contentType: false,
             processData: false,
@@ -259,48 +246,163 @@
     };
 
     const index = () => {
-        if ($.fn.DataTable.isDataTable('#tbllistado')) {
-            $('#tbllistado').DataTable().ajax.reload();
-            return;
-        }
-    
-        tabla = $('#tbllistado').dataTable({
-            "aProcessing": true,
-            "aServerSide": true,
-            // "dom": 'Bfrtip',
-            "ajax": {
-                url: '../Controllers/adminRoutesSchedulesController.php?op=index',
-                type: "get",
-                dataType: "json",
-                data: function (d) {
-                    let weekInput = document.getElementById('week_number_filter').value;
-                    if (weekInput) {
-                        // weekInput = "2025-W38"
-                        let [year, week] = weekInput.split("-W");
-                        d.week = week;
-                        d.year = year;
-                    }
-                },
-                error: (e) => {
-                    console.log(e.responseText);
-                }
+        $("#routes_leaving_times").html('');
+        $('#modal_filters').modal('hide');
+        
+        $.ajax({
+            url: "../Controllers/adminRoutesSchedulesController.php?op=index",
+            type: "POST",
+            headers: {
+                "Authorization": "Bearer " + token
             },
-            "bDestroy": true,
-            "iDisplayLength": 10,
-            "lengthMenu": [5, 10, 25, 50, 100],
-            // "order": [7, "asc"],
-            "language": {
-                "url": "//cdn.datatables.net/plug-ins/1.10.24/i18n/Spanish.json"
+            dataType: "json",
+            // data: { 
+            //     week: week,
+            //     year: year
+            // },
+            success: function (response) {
+                let data = response;
+                console.log(data);
+                $("#permission").empty();
+                data.forEach(item => {
+                    let card = `
+                    <div class="col-xl-4 col-lg-6 col-md-6 mb-3">
+                        <div class="card shadow-sm border-0 h-100">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between">
+                                    <h6 class="fw-normal mb-2">ID: ${item.id}</h6>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-end mt-1">
+                                    <div class="role-heading">
+                                        <h4 class="mb-1 text-primary">${item.origin} <i class="ti ti-arrow-big-right"></i> ${item.destination}</h4>
+                                        <a href="javascript:;" onclick="show_schedules(${item.id})" class="text-success">
+                                            <i class="ti ti-edit"></i> Editar
+                                        </a>
+                                    </div>
+                                    <a href="javascript:void(0);" class="text-danger" onclick="deleteItem(${item.id})">
+                                        <i class="ti ti-trash ti-md"></i>
+                                    </a>
+                                </div>
+                                <hr>
+                                <div class="row" id="leaving_times_${item.id}"></div>
+                            </div>
+                        </div>
+                    </div>`;
+                    $("#routes_leaving_times").append(card);
+                    show_leaving_times( item.id );
+                });
             },
-            "responsive": false,
-        }).DataTable();
+            error: function (xhr, status, error) {
+                console.error("Error en la solicitud:", error);
+                Swal.fire({
+                    icon: "error",
+                    title: "Error",
+                    text: "Hubo un problema al procesar los datos.",
+                    confirmButtonColor: "#f07d42"
+                });
+            }
+        });
     };
+
+    const show_leaving_times = ( route_id ) => {
+        let weekInput = document.getElementById('week_number_filter').value;
+        let week = null;
+        let year = null;
+        if (weekInput) {
+            [year, week] = weekInput.split("-W");
+        }
+
+        let weekFormatted = week.toString().padStart(2, "0"); 
+        let weekValue = `${year}-W${weekFormatted}`;
+        $("#week_number").val(weekValue);
+
+        $.ajax({
+            url: "../Controllers/adminRoutesSchedulesController.php?op=show-schedules",
+            type: "POST",
+            headers: {
+                "Authorization": "Bearer " + token
+            },
+            dataType: "json",
+            data: { 
+                route_id: route_id,
+                week: week,
+                year: year
+            },
+            success: function (response) {
+                let data = response;
+                console.log(data);
+
+                let container = $(`#leaving_times_${route_id}`);
+                container.empty();
+
+                if (data.length === 0) {
+                    container.html("<span class='text-muted'>No hay horarios registrados</span>");
+                    return;
+                }
+
+                const daysOrder = [
+                    { key: "monday", label: "Lunes" },
+                    { key: "tuesday", label: "Martes" },
+                    { key: "wednesday", label: "Miércoles" },
+                    { key: "thursday", label: "Jueves" },
+                    { key: "friday", label: "Viernes" },
+                    { key: "saturday", label: "Sábado" },
+                    { key: "sunday", label: "Domingo" }
+                ];
+
+                let grouped = {};
+                data.forEach(item => {
+                    if (!grouped[item.day]) {
+                        grouped[item.day] = [];
+                    }
+                    grouped[item.day].push(item);
+                });
+
+                daysOrder.forEach(day => {
+                    if (grouped[day.key]) {
+                        let horarios = grouped[day.key]
+                            .sort((a, b) => a.leaving_time.localeCompare(b.leaving_time))
+                            .map(item => `
+                                <span class="badge bg-primary me-1 mb-1" 
+                                    onclick="show_routes(${item.id})" style="cursor:pointer">
+                                    <i class="ti ti-clock"></i> ${item.leaving_time} 
+                                </span>
+                            `).join(" ");
+
+                        let section = `
+                            <div class="col-12 mb-2">
+                                <h6 class="fw-bold text-dark">
+                                    <i class="ti ti-calendar-event"></i> ${day.label}
+                                </h6>
+                                <div>${horarios}</div>
+                            </div>
+                        `;
+
+                        container.append(section);
+                    }
+                });
+
+            },
+            error: function (xhr, status, error) {
+                console.error("Error en la solicitud:", error);
+                Swal.fire({
+                    icon: "error",
+                    title: "Error",
+                    text: "Hubo un problema al procesar los datos.",
+                    confirmButtonColor: "#f07d42"
+                });
+            }
+        });
+    } 
 
     const show = ( routes_schedule_id ) => {
         $('#modal_create').modal('show');
         $.ajax({
             url: "../Controllers/adminRoutesSchedulesController.php?op=show",
             type: "POST",
+            headers: {
+                "Authorization": "Bearer " + token
+            },
             dataType: "json",
             data: { routes_schedule_id: routes_schedule_id },
             success: function (response) {
@@ -336,6 +438,9 @@
                 $.ajax({
                     url: "../Controllers/adminRoutesSchedulesController.php?op=deleteItem",
                     type: "POST",
+                    headers: {
+                        "Authorization": "Bearer " + token
+                    },
                     data: { routes_schedule_id: routes_schedule_id },
                     success: function(data, status) {
                         Swal.fire({
@@ -421,6 +526,9 @@
         $.ajax({
             url: '../Controllers/adminVehiclesController.php?op=vehicles',
             type: 'GET',
+            headers: {
+                "Authorization": "Bearer " + token
+            },
             dataType: 'json',
             success: function(data) {
             
@@ -444,6 +552,9 @@
         $.ajax({
             url: "../Controllers/adminRoutesSchedulesController.php?op=show-route",
             type: "POST",
+            headers: {
+                "Authorization": "Bearer " + token
+            },
             dataType: "json",
             data: { routes_schedule_id: routes_schedule_id },
             success: function (response) {
@@ -524,8 +635,15 @@
         });
     };
 
-    const show_schedules = (route_id, week, year) => {
+    const show_schedules = ( route_id ) => {
         $('#modal_create').modal('show');
+
+        let weekInput = document.getElementById('week_number_filter').value;
+        let week = null;
+        let year = null;
+        if (weekInput) {
+            [year, week] = weekInput.split("-W");
+        }
 
         let weekFormatted = week.toString().padStart(2, "0"); 
         let weekValue = `${year}-W${weekFormatted}`;
@@ -537,8 +655,11 @@
         $.ajax({
             url: "../Controllers/adminRoutesSchedulesController.php?op=show-schedules",
             type: "POST",
+            headers: {
+                "Authorization": "Bearer " + token
+            },
             dataType: "json",
-            data: { route_id: route_id, week: week, year: year },
+            data: { route_id: route_id, week: week, year: year},
             success: function (response) {
                 console.log(response)
                 response.forEach(item => {
@@ -637,6 +758,9 @@
                 $.ajax({
                     url: "../Controllers/adminRoutesSchedulesController.php?op=deleted-item",
                     type: "POST",
+                    headers: {
+                        "Authorization": "Bearer " + token
+                    },
                     dataType: "json",
                     data: { item_id_db: item_id_db },
                     success: function (response) {
@@ -649,6 +773,7 @@
                                 text: "El horario fue eliminado correctamente.",
                                 confirmButtonColor: "#28c76f"
                             });
+                            index();
                         } else {
                             Swal.fire({
                                 icon: "error",
@@ -673,7 +798,7 @@
     };
 
     const filters = () => {
-         $('#modal_filters').modal('show');
+        $('#modal_filters').modal('show');
     }
 
 </script>

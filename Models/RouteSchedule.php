@@ -7,104 +7,105 @@ class RouteSchedule {
     public function __construct() {}
     
     
-        public function store($data) {
-            $route_id    = $data["route_id"] ?? null;
-            $week_number = $data["week_number"] ?? null;
-            $vehicles    = $data["vehicle_id"] ?? [];
-            $days        = $data["day"] ?? [];
-            $times       = $data["leaving_time"] ?? [];
-            $ids         = $data["routes_schedule_id"] ?? [];
-            list($year, $week) = explode("-W", $week_number);
+    public function store($data) {
+        $route_id    = $data["route_id"] ?? null;
+        $week_number = $data["week_number"] ?? null;
+        $vehicles    = $data["vehicle_id"] ?? [];
+        $days        = $data["day"] ?? [];
+        $times       = $data["leaving_time"] ?? [];
+        $ids         = $data["routes_schedule_id"] ?? [];
+        list($year, $week) = explode("-W", $week_number);
 
-            $day_map = [
-                "monday"    => 1,
-                "tuesday"   => 2,
-                "wednesday" => 3,
-                "thursday"  => 4,
-                "friday"    => 5,
-                "saturday"  => 6,
-                "sunday"    => 7
-            ];
+        $day_map = [
+            "monday"    => 1,
+            "tuesday"   => 2,
+            "wednesday" => 3,
+            "thursday"  => 4,
+            "friday"    => 5,
+            "saturday"  => 6,
+            "sunday"    => 7
+        ];
 
-            $results = [];
+        $results = [];
 
-            foreach ($days as $index => $day) {
-                $time        = $times[$index]    ?? null;
-                $vehicle_id  = $vehicles[$index] ?? null;
-                $schedule_id = $ids[$index]      ?? null;
+        foreach ($days as $index => $day) {
+            $time        = $times[$index]    ?? null;
+            $vehicle_id  = $vehicles[$index] ?? null;
+            $schedule_id = $ids[$index]      ?? null;
 
-                if ($day && $time && $vehicle_id) {
-                    $dateObj = new DateTime();
-                    $dateObj->setISODate((int)$year, (int)$week, $day_map[$day] ?? 1);
-                    $date = $dateObj->format("Y-m-d");
-                    if ($schedule_id) {
-                        $sql = "
-                            UPDATE `routes_schedule` SET
-                                `route_id`     = '$route_id',
-                                `vehicle_id`   = '$vehicle_id',
-                                `leaving_time` = '$time',
-                                `day`          = '$day',
-                                `week`         = '$week',
-                                `year`         = '$year',
-                                `date`         = '$date',
-                                `updated_at`   = NOW()
-                            WHERE id = '$schedule_id'
-                        ";
-                        ejecutarConsulta($sql);
-                        $results[] = [
-                            "id"          => $schedule_id,
-                            "vehicle_id"  => $vehicle_id,
-                            "day"         => $day,
-                            "leaving_time"=> $time,
-                            "week"        => $week,
-                            "year"        => $year,
-                            "action"      => "updated"
-                        ];
-                    } else {
-                        $sql = "
-                            INSERT INTO `routes_schedule` (
-                                `route_id`,
-                                `vehicle_id`,
-                                `leaving_time`,
-                                `day`,
-                                `week`,
-                                `year`,
-                                `date`,
-                                `created_at`,
-                                `updated_at`
-                            ) VALUES (
-                                '$route_id',
-                                '$vehicle_id',
-                                '$time',
-                                '$day',
-                                '$week',
-                                '$year',
-                                '$date',
-                                NOW(),
-                                NOW()
-                            )
-                        ";
-                        $new_id = ejecutarConsulta_retornarID($sql);
-                        $results[] = [
-                            "id"          => $new_id,
-                            "vehicle_id"  => $vehicle_id,
-                            "day"         => $day,
-                            "leaving_time"=> $time,
-                            "week"        => $week,
-                            "year"        => $year,
-                            "action"      => "inserted"
-                        ];
-                    }
+            if ($day && $time && $vehicle_id) {
+                $dateObj = new DateTime();
+                $dateObj->setISODate((int)$year, (int)$week, $day_map[$day] ?? 1);
+                $date = $dateObj->format("Y-m-d");
+                if ($schedule_id) {
+                    $sql = "
+                        UPDATE `routes_schedule` SET
+                            `route_id`     = '$route_id',
+                            `vehicle_id`   = '$vehicle_id',
+                            `leaving_time` = '$time',
+                            `day`          = '$day',
+                            `week`         = '$week',
+                            `year`         = '$year',
+                            `date`         = '$date',
+                            `updated_at`   = NOW()
+                        WHERE id = '$schedule_id'
+                    ";
+                    ejecutarConsulta($sql);
+                    $results[] = [
+                        "id"          => $schedule_id,
+                        "vehicle_id"  => $vehicle_id,
+                        "day"         => $day,
+                        "leaving_time"=> $time,
+                        "week"        => $week,
+                        "year"        => $year,
+                        "action"      => "updated"
+                    ];
+                } else {
+                    $sql = "
+                        INSERT INTO `routes_schedule` (
+                            `route_id`,
+                            `vehicle_id`,
+                            `leaving_time`,
+                            `day`,
+                            `week`,
+                            `year`,
+                            `date`,
+                            `created_at`,
+                            `updated_at`
+                        ) VALUES (
+                            '$route_id',
+                            '$vehicle_id',
+                            '$time',
+                            '$day',
+                            '$week',
+                            '$year',
+                            '$date',
+                            NOW(),
+                            NOW()
+                        )
+                    ";
+                    $new_id = ejecutarConsulta_retornarID($sql);
+                    $results[] = [
+                        "id"          => $new_id,
+                        "vehicle_id"  => $vehicle_id,
+                        "day"         => $day,
+                        "leaving_time"=> $time,
+                        "week"        => $week,
+                        "year"        => $year,
+                        "action"      => "inserted"
+                    ];
                 }
             }
-
-            return $results;
         }
+
+        return $results;
+    }
 
 
     
-    public function index( $route_id, $week, $year ) {
-        $sql = "SELECT * FROM routes_schedule WHERE route_id='$route_id' AND week=$week AND year=$year AND deleted_at IS NULL";
+    public function index() {
+       
+        $sql = "SELECT * FROM routes WHERE deleted_at IS NULL";
         return ejecutarConsulta($sql);
     }
     

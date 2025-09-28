@@ -1,9 +1,37 @@
+<?php
+require_once dirname(__DIR__) . "/Database/conexion.php";
+
+$user_type_id = $_SESSION['user_type_id'] ?? 3;
+
+$sql = "
+    SELECT 
+        views.title,
+        views.route,
+        views.module,
+        permissions.permission_create,
+        permissions.permission_view,
+        permissions.permission_update,
+        permissions.permission_delete
+    FROM permissions
+    INNER JOIN views ON views.id = permissions.view_id
+    INNER JOIN users_types ON users_types.id = permissions.user_type_id
+    WHERE permissions.user_type_id = '$user_type_id'
+    ORDER BY views.module, views.title
+";
+$result = ejecutarConsulta($sql);
+
+$menu_items = [];
+while ($row = $result->fetch_assoc()) {
+    $menu_items[$row['module']][] = $row;
+}
+?>
+
 <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
     <div class="app-brand demo">
-
-        <a href="" class="app-brand-link">
-            <center><img src="https://tea.systemsorion.com/Librerias/img/logo" alt="TEA" width="50"
-                    height="50" style="padding:2px;"></center>
+        <a href="inicio.php" class="app-brand-link">
+            <center>
+                <img src="https://tea.systemsorion.com/Librerias/img/logo" alt="TEA" width="50" height="50" style="padding:2px;">
+            </center>
             <span class="app-brand-text demo menu-text fw-bold">TEA</span>
         </a>
         <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto">
@@ -12,73 +40,34 @@
         </a>
     </div>
     <div class="menu-inner-shadow"></div>
+
     <ul class="menu-inner py-1">
+        <!-- Dashboard fijo -->
         <li class="menu-item">
             <a href="inicio.php" class="menu-link">
                 <i class="menu-icon tf-icons ti ti-home"></i>
-                <div data-i18n="Inicio">Inicio</div>
+                <div data-i18n="INICIO">INICIO</div>
             </a>
-        </li>
-        <li class="menu-item">
-            <a href="tickets" class="menu-link menu-toggle">
-                <i class="menu-icon tf-icons ti ti-ticket"></i>
-                <div data-i18n="Boletos">Boletos</div>
-            </a>
-            <ul class="menu-sub">
-                <li class="menu-item">
-                    <a href="tickets-ticket.php" class="menu-link">
-                        <div data-i18n="Imprimir boleto">Imprimir boleto</div>
-                    </a>
-                </li>
-                
-            </ul>
         </li>
 
-        <li class="menu-item">
-            <a href="admin" class="menu-link menu-toggle">
-                <i class="menu-icon tf-icons ti ti-settings"></i>
-                <div data-i18n="Administración">Administración</div>
-            </a>
-            <ul class="menu-sub">
-                <li class="menu-item">
-                    <a href="admin-branch-offices.php" class="menu-link">
-                        <div data-i18n="Sucursales">Sucursales</div>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="admin-employees.php" class="menu-link">
-                        <div data-i18n="Empleados">Empleados</div>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="admin-vehicles.php" class="menu-link">
-                        <div data-i18n="Vehiculos">Vehiculos</div>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="admin-routes.php" class="menu-link">
-                        <div data-i18n="Rutas">Rutas</div>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="admin-routes-schedules.php" class="menu-link">
-                        <div data-i18n="Horarios">Horarios</div>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="admin-users.php" class="menu-link">
-                        <div data-i18n="Usuarios">Usuarios</div>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="admin-users-types.php" class="menu-link">
-                        <div data-i18n="Tipos Usuarios">Tipos Usuarios</div>
-                    </a>
-                </li>
-            </ul>
-        </li>
-
+        <?php foreach ($menu_items as $module => $views): ?>
+            <li class="menu-item">
+                <a href="<?= htmlspecialchars($module) ?>" class="menu-link menu-toggle">
+                    <i class="menu-icon tf-icons ti ti-folder"></i>
+                    <div><?= htmlspecialchars($module) ?></div>
+                </a>
+                <ul class="menu-sub">
+                    <?php foreach ($views as $view): ?>
+                        <li class="menu-item">
+                            <a href="<?= htmlspecialchars($view['route']) ?>" class="menu-link">
+                                <!--  -->
+                                <div><?= htmlspecialchars($view['title']) ?></div>
+                            </a>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
+            </li>
+        <?php endforeach; ?>
     </ul>
-
-    
 </aside>
+

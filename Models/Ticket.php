@@ -9,88 +9,135 @@ class Ticket
     {
     }
 
+    public function index ( $data ){
+        $date = $data['date'] ?? null;
+        $sql ="
+            SELECT 
+                tickets.id,
+                tickets.cost,
+                tickets.payment_method,
+                tickets.status,
+                routes_schedule.date,
+                routes_schedule.leaving_time,
+                routes.origin,
+                routes.destination,
+                CONCAT(employees.name,' ', employees.paternal_surname, ' ', employees.maternal_surname) AS employee,
+                vehicles.id AS vehicle_id
+            FROM `tickets`
+            LEFT JOIN routes_schedule ON tickets.route_schedule_id=routes_schedule.id
+            LEFT JOIN routes ON routes.id = tickets.route_id
+            LEFT JOIN employees ON employees.id = tickets.employee_id
+            LEFT JOIN vehicles ON vehicles.id = tickets.vehicle_id
 
-    public function store($data)
-    {
-        $user_id = $data["user_id"];
-        $name = $data["name"];
-        $email = $data["email"];
-        $username = $data["username"];
-        $user_type = $data["user_type"];
-        $password = $data["password"];
-        $hashed_password = password_hash($password, PASSWORD_BCRYPT);
+        ";
+        if (!empty($date)) {
+            $sql .= " WHERE tickets.date = '$date'";
+        }
 
-        if ($user_id) {
+        $sql .= " ORDER BY tickets.date DESC";
+        return ejecutarConsulta($sql);
+    }
+
+    public function store($data){
+        $route_schedule_id = $data["route_schedule_id"] ?? null;
+        $employee_id = $data["employee_id"] ?? null;
+        $route_id = $data["route_id"] ?? null;
+        $vehicle_id = $data["vehicle_id"] ?? null;
+        $cost = $data["cost"] ?? null;
+        $quantity = $data["quantity"] ?? null;
+        $cost = $data["cost"] ?? null;
+        $cost = $data["cost"] ?? null;
+        $cost = $data["cost"] ?? null;
+        $tickets_ids = [];
+        $date = date("Y-m-d");
+        $hour  = date("H:i:s");  
+
+        for ($i = 1; $i <= $quantity; $i++) {
             $sql = "
-            UPDATE `users` SET 
-                `name`   = '$name',
-                `email`          = '$email',
-                `username`          = '$username',
-                `password`           = '$hashed_password',
-                `updated_at`     = NOW()
-            WHERE `id` = '$user_id'
-    ";
-        } else {
-            $sql = "
-                INSERT INTO `users`(
-                `name`,
-                `email`,
-                `username`,
-                `email_verified_at`,
-                `password`,
-                `two_factor_secret`,
-                `two_factor_recovery_codes`,
-                `two_factor_confirmed_at`,
-                `remember_token`,
-                `current_team_id`,
-                `profile_photo_path`,
-                `created_at`,
-                `updated_at`,
+                INSERT INTO `tickets`(
+                    `route_schedule_id`,
+                    `route_id`,
+                    `employee_id`,
+                    `vehicle_id`,
+                    `quantity`, 
+                    `payment_method`,
+                    `cost`,
+                    `status`, 
+                    `date`,
+                    `hour`,
+                    `created_at`, 
+                    `updated_at`
                 ) VALUES (
-                    '$name',
-                    '$email',
-                    '$username',
-                    NULL,
-                    '$hashed_password',
-                    NULL,
-                    NULL,
-                    NULL,
-                    NULL,
-                    NULL,
-                    NULL,
-                    NULL,
+                    '$route_schedule_id',
+                    '$route_id',
+                    '$employee_id',
+                    '$vehicle_id',
+                    '1',
+                    'EFECTIVO',
+                    '$cost',
+                    'VENDIDO',
+                    '$date',
+                    '$hour',
                     NOW(),
                     NOW()
                 )
             ";
+            $result = ejecutarConsulta($sql);
+
+            if ( $result ) {
+                global $conexion;
+                $tickets_ids[] = mysqli_insert_id($conexion);
+            }
         }
-        return ejecutarConsulta($sql);
+        return $tickets_ids;
     }
 
-    
-
-
-    public function schedules( $data ){
+    public function schedules($data) {
+        $hour     = date("H:i:s"); 
+        $today    = date("Y-m-d");
         $route_id = $data['route_id'];
-        $date = $data['date'];
-        $sql = "SELECT * FROM `routes_schedule` WHERE date ='$date' AND route_id='$route_id' ";
+        $date     = $data['date'];
+
+        $sql = "SELECT * 
+                FROM `routes_schedule` 
+                WHERE route_id = '$route_id'";
+
+        if ($date == $today) {
+            $sql .= " AND date = '$date' AND leaving_time >= '$hour'";
+        } elseif ($date > $today) {
+            $sql .= " AND date = '$date'";
+        } else {
+            $sql .= " AND 1=0";
+        }
+
         return ejecutarConsulta($sql);
     }
 
-    public function routes( $data ){
-        $search_date = $data['search_date'] ?? NULL;
+
+    public function routes($data) {
+        $hour  = date("H:i:s"); 
+        $today = date("Y-m-d");
+        $search_date     = $data['search_date'] ?? NULL;
         $search_schedule = $data['search_schedule'] ?? NULL;
-        $search_route = $data['search_route'] ?? NULL;
+        $search_route    = $data['search_route'] ?? NULL;
+
         $sql = "SELECT 
                     routes.*,
                     routes_schedule.leaving_time,
                     routes_schedule.id AS route_schedule_id
                 FROM `routes_schedule` 
                 INNER JOIN routes ON routes.id = routes_schedule.route_id
-                ";
+                WHERE 1=1";
 
         if (!empty($search_date)) {
-            $sql .= " AND routes_schedule.date = '$search_date'";
+            if ($search_date == $today) {
+                $sql .= " AND routes_schedule.date = '$search_date' 
+                        AND routes_schedule.leaving_time >= '$hour'";
+            } elseif ($search_date > $today) {
+                $sql .= " AND routes_schedule.date = '$search_date'";
+            } else {
+                $sql .= " AND 1=0";
+            }
         }
 
         if (!empty($search_schedule)) {
@@ -102,12 +149,18 @@ class Ticket
         }
 
         $sql .= " ORDER BY routes_schedule.leaving_time ASC";
+
         return ejecutarConsulta($sql);
     }
+
 
     public function details( $data ){
         $route_schedule_id = $data['route_schedule_id'];
         $sql = "SELECT 
+                    routes.id AS route_id,
+                    routes_schedule.id AS route_schedule_id,
+                    vehicles.id AS vehicle_id,
+                    employees.id AS employee_id,
                     routes_schedule.leaving_time,
                     routes_schedule.date,
                     routes.origin,
@@ -115,7 +168,7 @@ class Ticket
                     routes.cost,
                     vehicles.type,
                     vehicles.model,
-                employees.name
+                    employees.name
                 FROM `routes_schedule`
                 LEFT JOIN routes ON routes.id = routes_schedule.route_id
                 LEFT JOIN vehicles ON vehicles.id = routes_schedule.vehicle_id
@@ -124,6 +177,29 @@ class Ticket
         return ejecutarConsultaSimpleFila($sql);
     }
 
+    public function tickets ( $data ){
+        $date = $data['date'];
+        $sql = "
+            SELECT 
+                SUM(CASE WHEN status = 'VENDIDO' THEN 1 ELSE 0 END) AS vendidos,
+                SUM(CASE WHEN status = 'CANCELADO' THEN 1 ELSE 0 END) AS cancelados,
+                COUNT(*) AS total
+            FROM tickets
+        ";
+        if (!empty($date)) {
+            $sql .= " WHERE tickets.date = '$date'";
+        }
+
+        $sql .= " ORDER BY tickets.date DESC";
+
+        return ejecutarConsultaSimpleFila($sql);
+    }
+
+    public function deleteItem ( $data ){
+        $ticket_id = $data['ticket_id'];
+        $sql = "UPDATE `tickets` SET `status`='CANCELADO',`updated_at`= NOW() WHERE `id`='$ticket_id'";
+        return ejecutarConsulta($sql);
+    }
     
 
 

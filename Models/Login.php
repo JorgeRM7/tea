@@ -1,5 +1,8 @@
 <?php
 require_once dirname(__DIR__) . "/Database/conexion.php";
+require_once __DIR__ . '/../vendor/autoload.php';
+use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
 class Login
 {
 
@@ -36,15 +39,44 @@ class Login
             $_SESSION['name'] = $user->name;
             $_SESSION['email'] = $user->email;
 
-            return [
-                "status" => "ok",
-                "message" => "Login exitoso",
-                "data" => [
-                    "id" => $user->id,
-                    "name" => $user->name,
-                    "email" => $user->email
-                ]
-            ];
+
+            $config = require __DIR__ . "/../Config/config.php";
+        $key = $config['jwt_secret'];
+
+        $payload = [
+            "iss" => "http://tu-sistema.com", // quién emite
+            "aud" => "http://tu-sistema.com", // quién recibe
+            "iat" => time(),                  // emitido en
+            "exp" => time() + (60 * 60),      // expira en 1 hora
+            "data" => [
+                "id"    => $user->id,
+                "name"  => $user->name,
+                "email" => $user->email
+            ]
+        ];
+
+        $jwt = JWT::encode($payload, $key, 'HS256');
+
+        return [
+            "status"  => "ok",
+            "message" => "Login exitoso",
+            "token"   => $jwt,
+            "user"    => [
+                "id"    => $user->id,
+                "name"  => $user->name,
+                "email" => $user->email
+            ]
+        ];
+
+            // return [
+            //     "status" => "ok",
+            //     "message" => "Login exitoso",
+            //     "data" => [
+            //         "id" => $user->id,
+            //         "name" => $user->name,
+            //         "email" => $user->email
+            //     ]
+            // ];
         }
 
         return null;

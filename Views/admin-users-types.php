@@ -107,7 +107,7 @@
     $(document).ready(function() {
         const menuItem = document.querySelector('a[href="admin-users-types.php"]').parentElement;
         menuItem.classList.add('active');
-        const menuToggle = document.querySelector('a[href="admin"]').parentElement;
+        const menuToggle = document.querySelector('a[href="ADMINISTRACION"]').parentElement;
         menuToggle.classList.add('open');
         index();
     });
@@ -122,6 +122,9 @@
         $.ajax({
             url: "../Controllers/adminUsersTypesController.php?op=store",
             type: "POST",
+            headers: {
+                "Authorization": "Bearer " + token
+            },
             data: formData,
             contentType: false,
             processData: false,
@@ -164,6 +167,9 @@
             "ajax": {
                 url: '../Controllers/adminUsersTypesController.php?op=index',
                 type: "get",
+                headers: {
+                    "Authorization": "Bearer " + token
+                },
                 dataType: "json",
                 error: (e) => {
                     console.log(e.responseText);
@@ -185,6 +191,9 @@
         $.ajax({
             url: "../Controllers/adminUsersTypesController.php?op=show",
             type: "POST",
+            headers: {
+                "Authorization": "Bearer " + token
+            },
             dataType: "json",
             data: { user_type_id: user_type_id },
             success: function (response) {
@@ -221,6 +230,9 @@
                 $.ajax({
                     url: "../Controllers/adminUsersTypesController.php?op=deleteItem",
                     type: "POST",
+                    headers: {
+                        "Authorization": "Bearer " + token
+                    },
                     data: { user_type_id: user_type_id },
                     success: function(data, status) {
                         Swal.fire({

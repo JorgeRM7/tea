@@ -1,6 +1,4 @@
 <?php
-if ($_SERVER['HTTP_HOST'] === 'localhost') {
-    define("BASE_URL", "http://localhost/tea");
-} else {
-    define("BASE_URL", "https://tea.digitalenigma.mx");
-}
+return [
+    "jwt_secret" => "tea2025"
+];

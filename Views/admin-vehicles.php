@@ -188,6 +188,9 @@
         $.ajax({
             url: "../Controllers/adminVehiclesController.php?op=store",
             type: "POST",
+            headers: {
+                "Authorization": "Bearer " + token
+            },
             data: formData,
             contentType: false,
             processData: false,
@@ -230,6 +233,9 @@
             "ajax": {
                 url: '../Controllers/adminVehiclesController.php?op=index',
                 type: "get",
+                headers: {
+                    "Authorization": "Bearer " + token
+                },
                 dataType: "json",
                 error: (e) => {
                     console.log(e.responseText);
@@ -251,6 +257,12 @@
         $.ajax({
             url: "../Controllers/adminVehiclesController.php?op=show",
             type: "POST",
+            headers: {
+                "Authorization": "Bearer " + token
+            },
+            headers: {
+                "Authorization": "Bearer " + token
+            },
             dataType: "json",
             data: { vehicle_id: vehicle_id },
             success: function (response) {
@@ -290,6 +302,9 @@
                 $.ajax({
                     url: "../Controllers/adminVehiclesController.php?op=deleteItem",
                     type: "POST",
+                    headers: {
+                        "Authorization": "Bearer " + token
+                    },
                     data: { vehicle_id: vehicle_id },
                     success: function(data, status) {
                         Swal.fire({
@@ -338,6 +353,9 @@
                 $.ajax({
                     url: "../Controllers/adminVehiclesController.php?op=assign",
                     type: "POST",
+                    headers: {
+                        "Authorization": "Bearer " + token
+                    },
                     data: { vehicle_id: vehicle_id, employee_id: employee_id },
                     success: function(data, status) {
                         Swal.fire({

@@ -1,4 +1,6 @@
 <?php 
+require_once "../Middlewares/authMiddleware.php";
+$userData = verificarToken();
 require_once "../Models/UserType.php";
 $UserType = new UserType();
 
