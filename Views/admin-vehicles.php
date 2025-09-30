@@ -173,7 +173,7 @@
     $(document).ready(function() {
         const menuItem = document.querySelector('a[href="admin-vehicles.php"]').parentElement;
         menuItem.classList.add('active');
-        const menuToggle = document.querySelector('a[href="admin"]').parentElement;
+        const menuToggle = document.querySelector('a[href="ADMINISTRACION"]').parentElement;
         menuToggle.classList.add('open');
         index();
     });

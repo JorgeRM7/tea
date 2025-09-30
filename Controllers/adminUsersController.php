@@ -10,8 +10,12 @@ switch ($_GET["op"]) {
         $rspta = $User->store ( $_POST );
         echo $rspta;
     break;
-    
-    
+
+    case 'store-password':
+        $rspta = $User->store_password ( $_POST );
+        echo $rspta;
+    break;
+
     case 'show':
         $rspta = $User->show( $_POST );
         echo json_encode($rspta);
@@ -31,7 +35,7 @@ switch ($_GET["op"]) {
             
             $bonton_editar = '<button type="button" class="editar btn btn-sm btn-warning" onclick="show('.$reg->id.')"><i class="ti ti-edit"></i></button>';
             $bonton_borrar = '<button type="button" class="eliminar btn btn-sm btn-danger" onclick="deleteItem(' . $reg->id . ')"><i class="ti ti-trash"></i></button>';
-            $bonton_contraseña = '<button type="button" class="btn btn-sm btn-success" onclick="deleteItem(' . $reg->id . ')"><i class="ti ti-cloud-lock-open"></i></button>';
+            $bonton_contraseña = '<button type="button" class="btn btn-sm btn-success" onclick="show_password(' . $reg->id . ')"><i class="ti ti-cloud-lock-open"></i></button>';
             
             $data[]=array(
                 $bonton_editar.' '.$bonton_borrar.' '.$bonton_contraseña,

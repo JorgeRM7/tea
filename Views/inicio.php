@@ -40,7 +40,6 @@ $title = "Inicio"; ?>
 </body>
 </html>
 <script>
-  let token = localStorage.getItem("jwt_token");
   $(document).ready(function () {
     const menuItem = document.querySelector('a[href="inicio.php"]').parentElement;
     menuItem.classList.add('active');

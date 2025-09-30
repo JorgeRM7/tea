@@ -43,7 +43,7 @@
                                                             <th>Descripción</th>
                                                             <th>Dirección</th>
                                                             <th>Ciudad</th>
-                                                            <th>Estado Serial</th>
+                                                            <th>Estado</th>
                                                             <th>Pais</th>
                                                             <th>Codigo Postal</th> 
                                                             <th>Telefono</th>    

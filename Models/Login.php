@@ -20,7 +20,9 @@ class Login
                 users.id, 
                 users.name,
                 users.email, 
-                users.password                
+                users.password,
+                users.branch_office_id,
+                users.user_type_id               
             FROM `users`
             WHERE (users.email = '$user' OR users.username = '$user')";
 
@@ -38,45 +40,42 @@ class Login
             $_SESSION['user_id'] = $user->id;
             $_SESSION['name'] = $user->name;
             $_SESSION['email'] = $user->email;
+            $_SESSION['branch_office_id'] = $user->branch_office_id;
+            $_SESSION['user_type_id'] = $user->user_type_id;
 
 
             $config = require __DIR__ . "/../Config/config.php";
-        $key = $config['jwt_secret'];
+            $key = $config['jwt_secret'];
 
-        $payload = [
-            "iss" => "http://tu-sistema.com", // quién emite
-            "aud" => "http://tu-sistema.com", // quién recibe
-            "iat" => time(),                  // emitido en
-            "exp" => time() + (60 * 60),      // expira en 1 hora
-            "data" => [
-                "id"    => $user->id,
-                "name"  => $user->name,
-                "email" => $user->email
-            ]
-        ];
+            $payload = [
+                "iss" => "http://tu-sistema.com", // quién emite
+                "aud" => "http://tu-sistema.com", // quién recibe
+                "iat" => time(),                  // emitido en
+                "exp" => time() + (60 * 60),      // expira en 1 hora
+                "data" => [
+                    "id"    => $user->id,
+                    "name"  => $user->name,
+                    "email" => $user->email,
+                    "branch_office_id" => $user->branch_office_id,
+                    "user_type_id" => $user->user_type_id,
+                ]
+            ];
 
-        $jwt = JWT::encode($payload, $key, 'HS256');
+            $jwt = JWT::encode($payload, $key, 'HS256');
 
-        return [
-            "status"  => "ok",
-            "message" => "Login exitoso",
-            "token"   => $jwt,
-            "user"    => [
-                "id"    => $user->id,
-                "name"  => $user->name,
-                "email" => $user->email
-            ]
-        ];
+            return [
+                "status"  => "ok",
+                "message" => "Login exitoso",
+                "token"   => $jwt,
+                "user"    => [
+                    "id"    => $user->id,
+                    "name"  => $user->name,
+                    "email" => $user->email,
+                    "branch_office_id" => $user->branch_office_id,
+                    "user_type_id" => $user->user_type_id,
 
-            // return [
-            //     "status" => "ok",
-            //     "message" => "Login exitoso",
-            //     "data" => [
-            //         "id" => $user->id,
-            //         "name" => $user->name,
-            //         "email" => $user->email
-            //     ]
-            // ];
+                ]
+            ];
         }
 
         return null;

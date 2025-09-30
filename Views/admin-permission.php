@@ -187,6 +187,9 @@
         $.ajax({
             url: "../Controllers/permissionsController.php?op=store",
             type: "POST",
+            headers: {
+                "Authorization": "Bearer " + token
+            },
             data: formData,
             contentType: false,
             processData: false,

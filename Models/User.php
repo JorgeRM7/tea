@@ -16,23 +16,28 @@ class User
         $name = $data["name"];
         $email = $data["email"];
         $username = $data["username"];
-        $user_type = $data["user_type"];
+        $branch_office_id = $data["branch_office_id"];
+        $user_type_id = $data["user_type_id"];
         $password = $data["password"];
         $hashed_password = password_hash($password, PASSWORD_BCRYPT);
+
 
         if ($user_id) {
             $sql = "
             UPDATE `users` SET 
-                `name`   = '$name',
-                `email`          = '$email',
-                `username`          = '$username',
-                `password`           = '$hashed_password',
-                `updated_at`     = NOW()
+                `user_type_id`       =    '$user_type_id',
+                `branch_office_id`   =    '$branch_office_id',
+                `name`               = '$name',
+                `email`         = '$email',
+                `username`      = '$username',
+                `updated_at`    = NOW()
             WHERE `id` = '$user_id'
     ";
         } else {
             $sql = "
                 INSERT INTO `users`(
+                `user_type_id`,
+                `branch_office_id`,
                 `name`,
                 `email`,
                 `username`,
@@ -45,8 +50,10 @@ class User
                 `current_team_id`,
                 `profile_photo_path`,
                 `created_at`,
-                `updated_at`,
+                `updated_at`
                 ) VALUES (
+                    '$user_type_id',
+                    '$branch_office_id',
                     '$name',
                     '$email',
                     '$username',
@@ -58,12 +65,12 @@ class User
                     NULL,
                     NULL,
                     NULL,
-                    NULL,
                     NOW(),
                     NOW()
                 )
             ";
         }
+        echo $sql;
         return ejecutarConsulta($sql);
     }
 
@@ -81,13 +88,25 @@ class User
         return ejecutarConsultaSimpleFila($sql);
     }
 
-    public function deleteItem($data)
-    {
+    public function deleteItem($data){
         $user_id = $data['user_id'];
         $sql = "
         UPDATE 
         `Users` SET 
             `deleted_at`= NOW()
+        WHERE `id`='$user_id'";
+        return ejecutarConsulta($sql);
+    }
+
+    public function store_password( $data ){
+        $password = $data["password"];
+        $hashed_password = password_hash($password, PASSWORD_BCRYPT);
+        $user_id = $data['user_password_id'];
+        $sql = "
+        UPDATE 
+        `Users` SET 
+            `password` = '$hashed_password',
+            `updated_at`= NOW()
         WHERE `id`='$user_id'";
         return ejecutarConsulta($sql);
     }

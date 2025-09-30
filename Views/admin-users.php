@@ -81,7 +81,7 @@
                                             </div>
                                             <div class="col-md-6">
                                                 <label for="nameWithTitle" class="form-label">Tipo de usuario</label>
-                                                <select class="form-select select2-container" id="planta" name="planta" aria-label="Default select example" required>
+                                                <select class="form-select select2-container" id="user_type_id" name="user_type_id" aria-label="Default select example" required>
                                                     <option value="">Selecciona...</option>
                                                     <?php 
                                                         $sql = "SELECT * FROM `users_types` WHERE deleted_at is null";
@@ -93,6 +93,19 @@
                                                 </select>
                                             </div>
                                             <div class="col-md-6">
+                                                <label for="nameWithTitle" class="form-label">Sucursal</label>
+                                                <select class="form-select select2-container" id="branch_office_id" name="branch_office_id" aria-label="Default select example" required>
+                                                    <option value="">Selecciona...</option>
+                                                    <?php 
+                                                        $sql = "SELECT * FROM `branch_offices` WHERE deleted_at is null";
+                                                        $query = ejecutarConsulta($sql);
+                                                        while($valores = mysqli_fetch_array($query)){
+                                                            echo "<option value='".$valores['id']."'>".$valores['name']."</option>";
+                                                        }
+                                                    ?>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-6" id="div_password">
                                                 <label for="nameWithTitle" class="form-label">Contraseña</label>
                                                 <input type="text" id="password" name="password" class="form-control" placeholder="Ingresa..." required/>
                                             </div>
@@ -101,6 +114,35 @@
                                 </div>
                                 <div class="modal-footer">
                                     <button class="crear btn btn-primary me-2" onclick="store()">
+                                        <i class="ti ti-device-floppy"></i> Guardar
+                                    </button>
+                                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal" onclick="clean()">Cerrar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!--Fin Modal Crear-->
+
+                    <!--Inicio Modal Crear-->
+                    <div class="modal animate__animated animate__flipInX" id="modal_password" aria-labelledby="flipInXAnimationModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel">Cambiar contraseña</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                   
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <label for="nameWithTitle" class="form-label">Nueva cotraseña</label>
+                                            <input type="hidden" id="user_password_id" name="user_password_id" class="form-control"/>
+                                            <input type="text" id="password" name="password" class="form-control" placeholder="Ingresa..." required/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button class="crear btn btn-primary me-2" onclick="store_password()">
                                         <i class="ti ti-device-floppy"></i> Guardar
                                     </button>
                                     <button type="button" class="btn btn-danger" data-bs-dismiss="modal" onclick="clean()">Cerrar</button>
@@ -136,7 +178,13 @@
    
     const create = () => {
         $('#modal_create').modal('show');
+        document.getElementById("div_password").style.display = "block";
         clean();
+    };
+
+    const show_password = ( user_id ) => {
+        $("#user_password_id").val(user_id);
+        $('#modal_password').modal('show');
     };
 
     const store = () => {
@@ -151,7 +199,7 @@
             contentType: false,
             processData: false,
             success: function(response) {
-                
+                console.log(response)
                 Swal.fire({
                     toast: true,
                     position: 'top-end',
@@ -213,18 +261,57 @@
         $.ajax({
             url: "../Controllers/adminUsersController.php?op=show",
             type: "POST",
-            dataType: "json",
             headers: {
                 "Authorization": "Bearer " + token
             },
+            dataType: "json",
             data: { user_id: user_id },
             success: function (response) {
                 let data = response;
-
+                console.log(response)
                 $("#name").val(data?.name);
                 $("#user_id").val(data?.id);
                 $("#email").val(data?.email);
                 $("#username").val(data?.username);
+                $("#branch_office_id").val(data?.branch_office_id);
+                $("#user_type_id").val(data?.user_type_id);
+                document.getElementById("div_password").style.display = "none";
+            },
+            error: function (xhr, status, error) {
+                console.error("Error en la solicitud:", error);
+                Swal.fire({
+                    icon: "error",
+                    title: "Error",
+                    text: "Hubo un problema al procesar los datos.",
+                    confirmButtonColor: "#f07d42"
+                });
+            }
+        });
+    }
+
+    const store_password = () => {
+        let password = $("#password").val();
+        let user_password_id = $("#user_password_id").val();
+        $.ajax({
+            url: "../Controllers/adminUsersController.php?op=store-password",
+            type: "POST",
+            headers: {
+                "Authorization": "Bearer " + token
+            },
+            dataType: "json",
+            data: { password: password, user_password_id: user_password_id },
+            success: function (response) {
+                Swal.fire({
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    icon: 'success',
+                    title: 'Éxito',
+                    text: 'Registro creado exitosamente.',
+                });
+                $('#modal_password').modal('show');
             },
             error: function (xhr, status, error) {
                 console.error("Error en la solicitud:", error);

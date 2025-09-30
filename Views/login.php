@@ -410,7 +410,7 @@
                     }else{
                         localStorage.setItem("token", data.token);
                         
-                        window.location.href = "admin-employees.php";
+                        window.location.href = "inicio.php";
                     }
                 },
                 error: function(error) {
