@@ -102,6 +102,30 @@
                         </div>
                     </div>
                     <!--Fin Modal Crear-->
+
+                    <!--Inicio Modal Editar-->
+                    <div class="modal animate__animated animate__flipInX" id="modal_edit" aria-labelledby="flipInXAnimationModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel">Editar</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <form name="formulario_edit" id="formulario_edit" method="POST">
+                                        <div class="row" id="permissions"></div>
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <button class="crear btn btn-primary me-2" onclick="update()">
+                                        <i class="ti ti-device-floppy"></i> Actualizar
+                                    </button>
+                                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal" onclick="clean()">Cerrar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!--Fin Modal Editar-->
                     
                     <!-- FOOTER -->
                     <?php require_once('footer.php'); ?>
@@ -129,57 +153,29 @@
    
     const create = () => {
         $('#modal_create').modal('show');
-
-        // $.ajax({
-        //     url: "../Controllers/permissionsController.php?op=views",
-        //     type: "POST",
-        //     dataType: "json",
-        //     success: function (response) {
-        //         let data = response;
-        //         console.log(data)
-        //         data.forEach(item => {
-        //             let card = `
-        //             `;
-        //             $("#views").append(card);
-        //         });
-        //     },
-        //     error: function (xhr, status, error) {
-        //         console.error("Error en la solicitud:", error);
-        //         Swal.fire({
-        //             icon: "error",
-        //             title: "Error",
-        //             text: "Hubo un problema al procesar los datos.",
-        //             confirmButtonColor: "#f07d42"
-        //         });
-        //     }
-        // });
-
-
-        // <tr>
-        //     <td class="text-nowrap fw-medium">User Management</td>
-        //     <td>
-        //     <div class="d-flex">
-        //         <div class="form-check me-3 me-lg-5">
-        //         <input class="form-check-input" type="checkbox" id="userManagementRead" />
-        //         <label class="form-check-label" for="userManagementRead"> Read </label>
-        //         </div>
-        //         <div class="form-check me-3 me-lg-5">
-        //         <input class="form-check-input" type="checkbox" id="userManagementWrite" />
-        //         <label class="form-check-label" for="userManagementWrite"> Write </label>
-        //         </div>
-        //         <div class="form-check">
-        //         <input class="form-check-input" type="checkbox" id="userManagementCreate" />
-        //         <label class="form-check-label" for="userManagementCreate"> Create </label>
-        //         </div>
-        //     </div>
-        //     </td>
-        // </tr>
-
-
         clean();
     };
 
     const store = () => {
+        let user_type_id = $("#user_type_id").val();
+        let view_id = $("#view_id").val();
+        if( user_type_id == ""){
+             Swal.fire({
+                title: "Error",
+                text: "Selecciona un rol",
+                icon: "error"
+            });
+            return;
+        }
+        if( view_id == ""){
+             Swal.fire({
+                title: "Error",
+                text: "Selecciona una vista",
+                icon: "error"
+            });
+            return;
+        }
+    
         const formData = new FormData(document.getElementById("formulario"));
         ["permission_view", "permission_create", "permission_update", "permission_delete"].forEach(id => {
             formData.set(id, document.getElementById(id).checked ? 1 : 0);
@@ -230,7 +226,6 @@
             dataType: "json",
             success: function (response) {
                 let data = response;
-                console.log(data)
                 data.forEach(item => {
                     let card = `
                     <div class="col-xl-4 col-lg-6 col-md-6 mb-3">
@@ -242,11 +237,11 @@
                                 <div class="d-flex justify-content-between align-items-end mt-1">
                                     <div class="role-heading">
                                         <h4 class="mb-1 text-primary">${item.name}</h4>
-                                        <a href="javascript:;" onclick="show_views(${item.id})" class="text-success">
+                                        <a href="javascript:;" onclick="show_permissions(${item.id})" class="text-success">
                                             <i class="ti ti-edit"></i> Editar
                                         </a>
                                     </div>
-                                    <a href="javascript:void(0);" class="text-danger" onclick="deleteRole(${item.id})">
+                                    <a href="javascript:void(0);" class="text-danger" onclick="deleteItem(${item.id})">
                                         <i class="ti ti-trash ti-md"></i>
                                     </a>
                                 </div>
@@ -268,22 +263,75 @@
         });
     };
 
-    const show = ( employee_id ) => {
-        $('#modal_create').modal('show');
+    const show_permissions = ( permission_id ) => {
+        $('#modal_edit').modal('show');
         $.ajax({
-            url: "../Controllers/permissionsController.php?op=show",
+            url: "../Controllers/permissionsController.php?op=permissions",
             type: "POST",
             dataType: "json",
             headers: {
                 "Authorization": "Bearer " + token
             },
-            data: { employee_id: employee_id },
+            data: { permission_id: permission_id },
             success: function (response) {
                 let data = response;
-                $("#name").val(data?.name);
-                $("#employee_id").val(data?.id);
-                $("#paternal_surname").val(data?.paternal_surname);
-                $("#maternal_surname").val(data?.maternal_surname);
+                let container = $("#permissions");
+                container.empty();
+
+                if (!data || data.length === 0) {
+                    container.html(`
+                        <div class="alert alert-warning text-center" role="alert">
+                            <i class="ti ti-alert-triangle"></i> 
+                            No tienes permisos asignados para esta vista.
+                        </div>
+                    `);
+                    return;
+                }
+
+                data.forEach(item => {
+                    let card = `
+                    <div class="col-12 mb-3">
+                        <div class="card shadow-sm border">
+                            <div class="card-body">
+                                <h5 class="card-title text-primary">
+                                    <i class="ti ti-lock"></i> ${item.view}
+                                </h5>
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <input type="checkbox" class="form-check-input" 
+                                            id="view_${item.permission_id}" 
+                                            name="permission_view[]" 
+                                            ${item.permission_view == "1" ? "checked" : ""}>
+                                        <label class="form-check-label" for="view_${item.permission_id}">Ver</label>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <input type="checkbox" class="form-check-input" 
+                                            id="create_${item.permission_id}" 
+                                            name="permission_create[]" 
+                                            ${item.permission_create == "1" ? "checked" : ""}>
+                                        <label class="form-check-label" for="create_${item.permission_id}">Crear</label>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <input type="checkbox" class="form-check-input" 
+                                            id="update_${item.permission_id}" 
+                                            name="permission_update[]" 
+                                            ${item.permission_update == "1" ? "checked" : ""}>
+                                        <label class="form-check-label" for="update_${item.permission_id}">Editar</label>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <input type="checkbox" class="form-check-input" 
+                                            id="delete_${item.permission_id}" 
+                                            name="permission_delete[]" 
+                                            ${item.permission_delete == "1" ? "checked" : ""}>
+                                        <label class="form-check-label" for="delete_${item.permission_id}">Eliminar</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>`;
+                    container.append(card);
+                });
+                
                 
             },
             error: function (xhr, status, error) {
@@ -298,10 +346,60 @@
         });
     }
 
-    const deleteItem = ( employee_id ) => {
+    const update = () => {
+        let permisos = [];
+
+        $("#permissions .card").each(function () {
+            let permiso = {};
+            let viewTitle = $(this).find(".card-title").text().trim();
+            let permission_id = $(this).find("input[type=checkbox]").first().attr("id").split("_")[1];
+            permiso.permission_id = permission_id;
+            permiso.view = viewTitle;
+            permiso.permission_view = $(this).find(`input[id=view_${permission_id}]`).is(":checked") ? 1 : 0;
+            permiso.permission_create = $(this).find(`input[id=create_${permission_id}]`).is(":checked") ? 1 : 0;
+            permiso.permission_update = $(this).find(`input[id=update_${permission_id}]`).is(":checked") ? 1 : 0;
+            permiso.permission_delete = $(this).find(`input[id=delete_${permission_id}]`).is(":checked") ? 1 : 0;
+
+            permisos.push(permiso);
+        });
+        $.ajax({
+            url: "../Controllers/permissionsController.php?op=update",
+            type: "POST",
+            headers: {
+                "Authorization": "Bearer " + token
+            },
+            dataType: "json",
+            contentType: "application/json",
+            data: JSON.stringify(permisos),
+            success: function(response) {
+                Swal.fire({
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    icon: 'success',
+                    title: 'Éxito',
+                    text: 'Registro creado exitosamente.',
+                });
+                $('#modal_edit').modal('hide');
+                clean();
+                index();
+            },
+            error: function(error) {
+                Swal.fire({
+                    title: "Error",
+                    text: "No se pudo guardar el registro.",
+                    icon: "error"
+                });
+            }
+        });
+    };
+
+    const deleteItem = ( permission_id ) => {
         Swal.fire({
-            title: "Alerta",
-            text: "¿Estas seguro de realizar esta acción?",
+            title: "¿Estas seguro de realizar esta acción?",
+            text: "Si realizas esta accion todos los permisos del rol se eliminaran",
             icon: "warning",
             showCancelButton: true,
             confirmButtonColor: "#3085d6",
@@ -315,7 +413,7 @@
                     headers: {
                         "Authorization": "Bearer " + token
                     },
-                    data: { employee_id: employee_id },
+                    data: { permission_id: permission_id },
                     success: function(data, status) {
                         Swal.fire({
                             toast: true,
@@ -347,7 +445,7 @@
         $("#name").val('');
         $("#paternal_surname").val('');
         $("#maternal_surname").val('');
-        $("#employee_id").val('');
+        $("#permission_id").val('');
     }
     
     

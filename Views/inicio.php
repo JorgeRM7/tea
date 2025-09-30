@@ -22,7 +22,35 @@ $title = "Inicio"; ?>
 
         <div class="content-wrapper">
           <!-- INICIO CONTENIDO -->
-          <div class="container-xxl flex-grow-1 container-p-y"></div>
+          <div class="container-xxl flex-grow-1 container-p-y">
+            <div class="row">
+    <!-- Perfil -->
+              <div class="col-md-4">
+                <div class="card shadow-sm border-0 text-center h-100">
+                  <div class="card-body">
+                    <img src="https://tea.systemsorion.com/Librerias/img/logo" class="rounded-circle mb-3" width="90">
+                    <h5 class="fw-bold"><?php echo $_SESSION['name']  ?></h5>
+                    <p class="text-muted mb-1">Administrador</p>
+                    <small class="text-muted">Último acceso: <?php echo date("d/m/Y h:i a"); ?></small>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Noticias -->
+              <div class="col-md-8">
+                <div class="card shadow-sm border-0 h-100">
+                  <div class="card-body">
+                    <h5 class="fw-bold mb-3"><i class="ti ti-bell"></i> Noticias</h5>
+                    <ul class="list-group list-group-flush">
+                      <li class="list-group-item">📢 El sistema tendrá mantenimiento este sábado a las 10 p.m.</li>
+                      <li class="list-group-item">🚍 Nueva ruta: Morelia → Pátzcuaro disponible desde hoy.</li>
+                      <li class="list-group-item">🧾 Recuerda revisar tu historial de boletos semanalmente.</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
           <!-- FIN CONTENIDO -->
 
           <!-- FOOTER -->
@@ -41,7 +69,9 @@ $title = "Inicio"; ?>
 </html>
 <script>
   $(document).ready(function () {
-    const menuItem = document.querySelector('a[href="inicio.php"]').parentElement;
-    menuItem.classList.add('active');
+    
+      const menuItem = document.querySelector('a[href="inicio.php"]').parentElement;
+        menuItem.classList.add('active');
+        console.log(menuItem)
   });
 </script>

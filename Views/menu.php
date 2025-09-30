@@ -28,7 +28,7 @@ while ($row = $result->fetch_assoc()) {
 
 <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
     <div class="app-brand demo">
-        <a href="inicio.php" class="app-brand-link">
+        <a href="" class="app-brand-link">
             <center>
                 <img src="https://tea.systemsorion.com/Librerias/img/logo" alt="TEA" width="50" height="50" style="padding:2px;">
             </center>
@@ -42,7 +42,7 @@ while ($row = $result->fetch_assoc()) {
     <div class="menu-inner-shadow"></div>
 
     <ul class="menu-inner py-1">
-        <!-- Dashboard fijo -->
+       
         <li class="menu-item">
             <a href="inicio.php" class="menu-link">
                 <i class="menu-icon tf-icons ti ti-home"></i>

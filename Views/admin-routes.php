@@ -190,6 +190,9 @@
             },
             "responsive": false,
         }).DataTable();
+        $('#tbllistado').on('draw.dt', function() {
+            permisos();
+        });
     };
 
     const show = ( route_id ) => {

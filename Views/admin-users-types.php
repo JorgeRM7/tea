@@ -184,6 +184,9 @@
             },
             "responsive": false,
         }).DataTable();
+        $('#tbllistado').on('draw.dt', function() {
+            permisos();
+        });
     };
 
     const show = ( user_type_id ) => {

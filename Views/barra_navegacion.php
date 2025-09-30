@@ -1,3 +1,38 @@
+<?php
+$archivo_actual = basename($_SERVER['PHP_SELF']);
+$user_type_id = $_SESSION['user_type_id'];
+$sql ="SELECT 
+            users_types.name,
+            permissions.permission_create,
+            permissions.permission_view,
+            permissions.permission_update,
+            permissions.permission_delete,
+            views.title  
+        FROM `permissions`
+        INNER JOIN users_types ON users_types.id = permissions.user_type_id
+        INNER JOIN views ON views.id = permissions.view_id
+        WHERE users_types.id ='$user_type_id' AND views.route='$archivo_actual'";
+$resultado_permisos = ejecutarConsulta($sql);
+while ($item = mysqli_fetch_array($resultado_permisos)) {
+    $permission_create = $item['permission_create'] ?? 0;
+    $permission_update = $item['permission_update'] ?? 0;
+    $permission_delete = $item['permission_delete'] ?? 0;
+    $permission_view = $item['permission_view'] ?? 0;
+}
+if($archivo_actual == 'inicio.php'){
+    $permission_view = 1;
+    $permission_update = 0;
+    $permission_delete = 0;
+    $permission_create = 0;
+}
+
+?>
+<input type="hidden" name="permission_create" id="permission_create" value="<?php echo $permission_create  ?>">
+<input type="hidden" name="permission_update" id="permission_update" value="<?php echo $permission_update ?>">
+<input type="hidden" name="permission_delete" id="permission_delete" value="<?php echo $permission_delete ?>">
+<input type="hidden" name="permission_view" id="permission_view" value="<?php echo $permission_view ?>">
+
+
 <nav class="layout-navbar navbar navbar-expand-md navbar-detached align-items-center bg-navbar-theme p-3" id="layout-navbar">
     <div class="layout-menu-toggle navbar-nav align-items-xl-center me-3 me-xl-0 d-xl-none">
         <a class="nav-item nav-link px-0 me-xl-4" href="javascript:void(0)">
@@ -84,6 +119,7 @@
     </div>
 </div>
 
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 <script>
     let token = localStorage?.token;
@@ -99,8 +135,67 @@
                 }
             });
         });
+        permisos();
     });
 
+    function permisos() {
+        let createPerm = document.getElementById("permission_create").value;
+        let updatePerm = document.getElementById("permission_update").value;
+        let deletePerm = document.getElementById("permission_delete").value;
+        let viewPerm = document.getElementById("permission_view").value;
+        // console.log(
+        //     'crear: ',createPerm, '\n',
+        //     'actualizar: ',updatePerm, '\n',
+        //     'borrar: ',deletePerm, '\n',
+        //     'ver: ',viewPerm, '\n'
+        // );
+
+        if (viewPerm == 0) {
+            window.location.href = "unauthorized.php"; 
+        }
+
+        if (createPerm == 1) {
+            document.querySelectorAll(".crear").forEach(boton => {
+                boton.style.removeProperty("display");
+                boton.classList.remove("d-none");
+            });
+        } else if (createPerm == 0) {
+            document.querySelectorAll(".crear").forEach(boton => {
+                boton.style.setProperty("display", "none", "important");
+                boton.classList.add("d-none");
+            });
+            console.log('sin permiso crear')
+        }
+
+        if (updatePerm == 1) {
+            document.querySelectorAll(".editar").forEach(boton => {
+                boton.style.removeProperty("display");
+                boton.classList.remove("d-none");
+            });
+        } else if (updatePerm == 0) {
+            console.log('sin permiso editar')
+            document.querySelectorAll(".editar").forEach(boton => {
+                boton.style.setProperty("display", "none", "important");
+                boton.classList.add("d-none");
+            });
+        }
+
+        if (deletePerm == 1) {
+            document.querySelectorAll(".eliminar").forEach(boton => {
+                boton.style.removeProperty("display");
+                boton.classList.remove("d-none");
+            });
+        } else if (deletePerm == 0) {
+            document.querySelectorAll(".eliminar").forEach(boton => {
+                boton.style.setProperty("display", "none", "important");
+                boton.classList.add("d-none");
+            });
+            console.log('sin permiso eliminar')
+        }
+
+        
+        
+    }
 
     
 </script>

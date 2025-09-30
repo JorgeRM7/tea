@@ -227,6 +227,10 @@
             },
             "responsive": false,
         }).DataTable();
+
+        $('#tbllistado').on('draw.dt', function() {
+            permisos();
+        });
     };
 
     const show = ( branch_office_id ) => {
