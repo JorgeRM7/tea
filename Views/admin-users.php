@@ -137,7 +137,7 @@
                                         <div class="col-md-6">
                                             <label for="nameWithTitle" class="form-label">Nueva cotraseña</label>
                                             <input type="hidden" id="user_password_id" name="user_password_id" class="form-control"/>
-                                            <input type="text" id="password" name="password" class="form-control" placeholder="Ingresa..." required/>
+                                            <input type="text" id="change_password" name="change_password" class="form-control" placeholder="Ingresa..." required/>
                                         </div>
                                     </div>
                                 </div>
@@ -293,7 +293,7 @@
     }
 
     const store_password = () => {
-        let password = $("#password").val();
+        let password = $("#change_password").val();
         let user_password_id = $("#user_password_id").val();
         $.ajax({
             url: "../Controllers/adminUsersController.php?op=store-password",
@@ -312,9 +312,10 @@
                     timerProgressBar: true,
                     icon: 'success',
                     title: 'Éxito',
-                    text: 'Registro creado exitosamente.',
+                    text: 'Contraseña actualizada exitosamente.',
                 });
-                $('#modal_password').modal('show');
+                $('#modal_password').modal('hide');
+                $("#change_password").val('');
             },
             error: function (xhr, status, error) {
                 console.error("Error en la solicitud:", error);

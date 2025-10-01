@@ -81,8 +81,7 @@ class User
     }
 
 
-    public function show($data)
-    {
+    public function show($data){
         $user_id = $data['user_id'];
         $sql = "SELECT * FROM users WHERE id = '$user_id' ";
         return ejecutarConsultaSimpleFila($sql);
@@ -92,19 +91,19 @@ class User
         $user_id = $data['user_id'];
         $sql = "
         UPDATE 
-        `Users` SET 
+        `users` SET 
             `deleted_at`= NOW()
         WHERE `id`='$user_id'";
         return ejecutarConsulta($sql);
     }
 
     public function store_password( $data ){
-        $password = $data["password"];
+        $password = $data["change_password"];
         $hashed_password = password_hash($password, PASSWORD_BCRYPT);
         $user_id = $data['user_password_id'];
         $sql = "
         UPDATE 
-        `Users` SET 
+        `users` SET 
             `password` = '$hashed_password',
             `updated_at`= NOW()
         WHERE `id`='$user_id'";

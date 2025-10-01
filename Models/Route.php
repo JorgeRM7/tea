@@ -62,7 +62,7 @@ class Route {
         UPDATE 
         `routes` SET 
             `deleted_at`= NOW()
-        WHERE `id`='$   '";
+        WHERE `id`='$route_id'";
         return ejecutarConsulta($sql);
     }
     
