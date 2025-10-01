@@ -293,7 +293,7 @@
     }
 
     const store_password = () => {
-        let password = $("#change_password").val();
+        let change_password = $("#change_password").val();
         let user_password_id = $("#user_password_id").val();
         $.ajax({
             url: "../Controllers/adminUsersController.php?op=store-password",
@@ -301,7 +301,7 @@
             headers: {
                 "Authorization": "Bearer " + token
             },
-            data: { password: password, user_password_id: user_password_id },
+            data: { change_password: change_password, user_password_id: user_password_id },
             success: function (response) {
                 console.log(response)
                 Swal.fire({
