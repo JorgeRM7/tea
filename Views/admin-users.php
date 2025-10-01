@@ -301,9 +301,9 @@
             headers: {
                 "Authorization": "Bearer " + token
             },
-            dataType: "json",
             data: { password: password, user_password_id: user_password_id },
             success: function (response) {
+                console.log(response)
                 Swal.fire({
                     toast: true,
                     position: 'top-end',
