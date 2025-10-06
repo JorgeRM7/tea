@@ -15,7 +15,7 @@ $sql = "
     FROM permissions
     INNER JOIN views ON views.id = permissions.view_id
     INNER JOIN users_types ON users_types.id = permissions.user_type_id
-    WHERE permissions.user_type_id = '$user_type_id' AND permissions.deleted_at is null
+    WHERE permissions.user_type_id = '$user_type_id' AND views.deleted_at is null
     ORDER BY views.module, views.title
 ";
 $result = ejecutarConsulta($sql);
