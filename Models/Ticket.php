@@ -152,14 +152,13 @@ class Ticket
 
         return ejecutarConsulta($sql);
     }
-
-
     public function details( $data ){
         $route_schedule_id = $data['route_schedule_id'];
         $sql = "SELECT 
                     routes.id AS route_id,
                     routes_schedule.id AS route_schedule_id,
                     vehicles.id AS vehicle_id,
+                    vehicles.capacity AS vehicle_capacity,
                     employees.id AS employee_id,
                     routes_schedule.leaving_time,
                     routes_schedule.date,
@@ -168,7 +167,8 @@ class Ticket
                     routes.cost,
                     vehicles.type,
                     vehicles.model,
-                    employees.name
+                    employees.name,
+                    (SELECT COUNT(id) FROM tickets WHERE route_schedule_id ='$route_schedule_id' AND status ='VENDIDO') AS tickets_sale
                 FROM `routes_schedule`
                 LEFT JOIN routes ON routes.id = routes_schedule.route_id
                 LEFT JOIN vehicles ON vehicles.id = routes_schedule.vehicle_id

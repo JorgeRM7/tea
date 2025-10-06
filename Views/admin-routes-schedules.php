@@ -713,6 +713,9 @@
                     $.ajax({
                         url: '../Controllers/adminVehiclesController.php?op=vehicles',
                         type: 'GET',
+                        headers: {
+                            "Authorization": "Bearer " + token
+                        },
                         dataType: 'json',
                         success: function(vehicles) {
                             let $select = $(`#vehicle_id_${item.id}`);

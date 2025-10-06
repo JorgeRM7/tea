@@ -470,7 +470,7 @@
             },
             success: function (response) {
                 let data = response;
-                console.log(data);
+                console.log(data)
                 costoUnitario = parseFloat(data.cost); 
                 let content = `
                 <div class="text-center mb-4">
@@ -512,6 +512,18 @@
                             <h5 class="mb-0">${data?.name}</h5>
                         </div>
                     </div>
+                    <div class="col-12 mt-3">
+                        <div class="p-3 border rounded bg-light">
+                            <i class="bi bi-ticket-perforated text-primary fs-4"></i>
+                            <p class="mb-1 fw-semibold">Boletos disponibles</p>
+                            <h5 class="mb-0">${
+                                (Number(data?.vehicle_capacity) && Number(data?.tickets_sale) !== undefined) 
+                                ? (Number(data?.vehicle_capacity) - Number(data?.tickets_sale)) 
+                                : ""
+                            }</h5>
+
+                        </div>
+                    </div>
                 </div>
                 `;
                 $("#detailsBody").html(content);
@@ -539,21 +551,24 @@
     }
 
     const total = () => {
-        let cost = $("#cost").val();
-        let quantity = $("#quantity").val();
-        let amount_received = $("#amount_received").val();
+        let cost = parseFloat($("#cost").val()) || 0;
+        let quantity = parseFloat($("#quantity").val()) || 0;
+        let amount_received = parseFloat($("#amount_received").val()) || 0;
 
-        let total = parseFloat(cost) * parseFloat(quantity);
-        let change = parseFloat(amount_received) - parseFloat(total);
+        let total = cost * quantity;
+        let change = amount_received - total;
+
+        if (change < 0) change = 0;
 
         let total_label = document.querySelector("#total_label");
         let amount_received_label = document.querySelector("#amount_received_label");
         let change_label = document.querySelector("#change_label");
 
         total_label.innerText = `Total a pagar: $${total.toFixed(2)}`;
-        amount_received_label.innerText = `Monto recibido: $${amount_received}`;
+        amount_received_label.innerText = `Monto recibido: $${amount_received.toFixed(2)}`;
         change_label.innerText = `Cambio: $${change.toFixed(2)}`;
-    }
+    };
+
     
     const clean = () => {   
         $("#brand").val('');

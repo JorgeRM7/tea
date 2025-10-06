@@ -13,8 +13,6 @@ switch ($_GET["op"]) {
         echo json_encode($rspta);
     break;
 
-    
-    
     case 'show':
         $rspta = $RouteSchedule->show( $_POST );
         echo json_encode($rspta);
