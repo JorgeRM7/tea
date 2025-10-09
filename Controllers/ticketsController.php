@@ -81,6 +81,7 @@ switch ($_GET["op"]) {
 
 
     case 'store':
+        // return print_r($_POST);
         $rspta = $Ticket->store ( $_POST );
         echo json_encode([
             "success" => true,
@@ -116,6 +117,10 @@ switch ($_GET["op"]) {
                 "destination" => $reg['destination'],
                 "cost" => $reg['cost'],
                 "leaving_time" => $reg['leaving_time'],
+                "tickets_sale" => $reg['tickets_sale'],
+                "vehicle_capacity" => $reg['vehicle_capacity'],
+                "vehicle_id" => $reg['vehicle_id'],
+                
             ];
         }
 

@@ -1,6 +1,7 @@
 <?php
 $archivo_actual = basename($_SERVER['PHP_SELF']);
 $user_type_id = $_SESSION['user_type_id'];
+$user_id = $_SESSION['user_id'];
 $sql ="SELECT 
             users_types.name,
             permissions.permission_create,
@@ -41,8 +42,26 @@ if($archivo_actual == 'inicio.php'){
     </div>
     <div class="navbar-nav-right d-flex align-items-center" id="navbar-collapse">
         <ul class="navbar-nav flex-row align-items-center ms-auto">
-            
+            <li>
 
+            
+                <select id="branch_office_id_selected" name="branch_office_id_selected" class="form-select" onchange="change_branch_office()">
+                    <?php
+                    $sql = "SELECT 
+                            branch_offices.id, 
+                            branch_offices.name
+                            FROM `branch_offices_user` 
+                            INNER JOIN users ON users.id = branch_offices_user.user_id 
+                            INNER JOIN branch_offices ON branch_offices.id = branch_offices_user.branch_office_id 
+                            WHERE branch_offices_user.user_id = '$user_id' AND branch_offices_user.deleted_at is  null";
+                    $query = ejecutarConsulta($sql);
+                    while ($valores = mysqli_fetch_array($query)) {
+                        echo "<option value='" . $valores['id'] . "'>" . $valores['name'] . "</option>";
+                    }            
+
+                    ?>
+                </select>
+            </li>
             <li class="nav-item dropdown-style-switcher dropdown me-2 me-xl-0">
                 <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);" data-bs-toggle="dropdown">
                     <i class="ti ti-md"></i>
@@ -136,7 +155,19 @@ if($archivo_actual == 'inicio.php'){
             });
         });
         permisos();
+
+        let branch_office_id = localStorage.getItem("branch_office_id");
+        if (branch_office_id) {
+            const select = document.getElementById('branch_office_id_selected');
+            select.value = branch_office_id;
+        }
     });
+
+    function change_branch_office() {
+        let branch_office_id = document.getElementById('branch_office_id_selected').value;
+        localStorage.setItem("branch_office_id", branch_office_id);
+        location.reload();
+    }
 
     function permisos() {
         let createPerm = document.getElementById("permission_create").value;
@@ -197,6 +228,7 @@ if($archivo_actual == 'inicio.php'){
         
     }
 
+    
     
 </script>
 

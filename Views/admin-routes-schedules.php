@@ -174,40 +174,40 @@
     };
 
     const store = () => {
-        let route_id   = $("#route_id").val();
-        let week_value = $("#week_number").val();
-        let isValid = true;
-        let messages = [];
+        // let route_id   = $("#route_id").val();
+        // let week_value = $("#week_number").val();
+        // let isValid = true;
+        // let messages = [];
 
-        if (!route_id) {
-            isValid = false;
-            messages.push("Debes seleccionar una ruta.");
-        }
-        if (!week_value) {
-            isValid = false;
-            messages.push("Debes seleccionar una semana.");
-        }
+        // if (!route_id) {
+        //     isValid = false;
+        //     messages.push("Debes seleccionar una ruta.");
+        // }
+        // if (!week_value) {
+        //     isValid = false;
+        //     messages.push("Debes seleccionar una semana.");
+        // }
 
-        $("[id^='item_schedule_']").each(function () {
-            let vehicle = $(this).find("select[name='vehicle_id[]']").val();
-            let day     = $(this).find("select[name='day[]']").val();
-            let time    = $(this).find("input[name='leaving_time[]']").val();
+        // $("[id^='item_schedule_']").each(function () {
+        //     let vehicle = $(this).find("select[name='vehicle_id[]']").val();
+        //     let day     = $(this).find("select[name='day[]']").val();
+        //     let time    = $(this).find("input[name='leaving_time[]']").val();
 
-            if (!vehicle || !day || !time) {
-                isValid = false;
-                messages.push("Debes llenar Vehículo, Día y Hora en todos los horarios.");
-            }
-        });
+        //     if (!vehicle || !day || !time) {
+        //         isValid = false;
+        //         messages.push("Debes llenar Vehículo, Día y Hora en todos los horarios.");
+        //     }
+        // });
 
-        if (!isValid) {
-            Swal.fire({
-                icon: "warning",
-                title: "Campos incompletos",
-                text: messages.join("\n"),
-                confirmButtonColor: "#f07d42"
-            });
-            return;
-        }
+        // if (!isValid) {
+        //     Swal.fire({
+        //         icon: "warning",
+        //         title: "Campos incompletos",
+        //         text: messages.join("\n"),
+        //         confirmButtonColor: "#f07d42"
+        //     });
+        //     return;
+        // }
 
         const formData = new FormData(document.getElementById("formulario"));
         $.ajax({
@@ -493,30 +493,16 @@
                     </div>
                     <div class="card-body">
                         <div class="row">
-                        <div class="col-md-12">
-                                <label for="nameWithTitle" class="form-label">Veihculo</label>
-                                    <select class="form-select select2-container" id="vehicle_id_${item_id}" name="vehicle_id[]" aria-label="Default select example" required>
+                            <div class="col-md-12">
+                                <select class="form-select select2-container" id="vehicle_id_${item_id}" name="schedules[${item_id}][vehicle_id]" required>
                                     <option value="">Selecciona...</option>
                                 </select>
-                            </div>
-                            <div class="col-md-6">
-                                <label for="nameWithTitle" class="form-label">Dia</label>
-                                <select class="form-select select2-container" id="day_${item_id}" name="day[]" aria-label="Selecciona un día" required>
-                                    <option value="">Selecciona...</option>
-                                    <option value="monday">Lunes</option>
-                                    <option value="tuesday">Martes</option>
-                                    <option value="wednesday">Miércoles</option>
-                                    <option value="thursday">Jueves</option>
-                                    <option value="friday">Viernes</option>
-                                    <option value="saturday">Sábado</option>
-                                    <option value="sunday">Domingo</option>
-                                </select>
-                            </div>
-                            <div class="col-md-6">
-                                <label for="nameWithTitle" class="form-label">Hora de salida</label>
-                                <input type="time" id="leaving_time_${item_id}" name="leaving_time[]" class="form-control" placeholder="Ingresa..." required/>
                             </div>
                         </div>
+                        <div class="row mt-3" id="schedule_list_${item_id}"></div>
+                        <button type="button" class="btn btn-sm btn-success mt-2" onclick="add_schedule(${item_id})">
+                            <i class="ti ti-plus"></i> Agregar horario
+                        </button>
                     </div>
                 </div>
             </div>
@@ -621,7 +607,7 @@
                     </div>
                 </div>
                 `;
-                $("#routes").html(schedule);       
+                $("#routes").html(schedule);           
             },
             error: function (xhr, status, error) {
                 console.error("Error en la solicitud:", error);
@@ -635,7 +621,119 @@
         });
     };
 
-    const show_schedules = ( route_id ) => {
+    // const show_schedules = ( route_id ) => {
+    //     $('#modal_create').modal('show');
+
+    //     let weekInput = document.getElementById('week_number_filter').value;
+    //     let week = null;
+    //     let year = null;
+    //     if (weekInput) {
+    //         [year, week] = weekInput.split("-W");
+    //     }
+
+    //     let weekFormatted = week.toString().padStart(2, "0"); 
+    //     let weekValue = `${year}-W${weekFormatted}`;
+    //     $("#week_number").val(weekValue);
+
+    //     $("#route_id").val(route_id);
+    //     $("#schedules").empty();
+
+    //     $.ajax({
+    //         url: "../Controllers/adminRoutesSchedulesController.php?op=show-schedules",
+    //         type: "POST",
+    //         headers: {
+    //             "Authorization": "Bearer " + token
+    //         },
+    //         dataType: "json",
+    //         data: { route_id: route_id, week: week, year: year},
+    //         success: function (response) {
+    //             console.log(response)
+    //             response.forEach(item => {
+
+    //                 item_id++; 
+    //                 let schedule = `
+    //                     <div class="col-md-6 mt-2" id="item_schedule_${item_id}">
+    //                         <div class="card mb-4">
+    //                             <div class="card-header d-flex justify-content-between align-items-center">
+    //                                 <h5 class="mb-0">Horario</h5>
+    //                                 <button type="button" class="btn btn-sm btn-danger" onclick="delete_item_db(${item_id}, ${item.id})">
+    //                                     <i class="ti ti-trash"></i> Eliminar
+    //                                 </button>
+    //                             </div>
+    //                             <div class="card-body">
+    //                                 <div class="row">
+    //                                     <div class="col-md-12">
+    //                                         <label class="form-label">Vehículo</label>
+    //                                         <select class="form-select" id="vehicle_id_${item.id}" name="vehicle_id[]" required>
+    //                                             <option value="">Cargando...</option>
+    //                                         </select>
+    //                                     </div>
+    //                                     <div class="col-md-6">
+    //                                         <label class="form-label">Día</label>
+    //                                         <select class="form-select" id="day_${item.id}" name="day[]" required>
+    //                                             <option value="">Selecciona...</option>
+    //                                             <option value="monday" ${item.day === "monday" ? "selected" : ""}>Lunes</option>
+    //                                             <option value="tuesday" ${item.day === "tuesday" ? "selected" : ""}>Martes</option>
+    //                                             <option value="wednesday" ${item.day === "wednesday" ? "selected" : ""}>Miércoles</option>
+    //                                             <option value="thursday" ${item.day === "thursday" ? "selected" : ""}>Jueves</option>
+    //                                             <option value="friday" ${item.day === "friday" ? "selected" : ""}>Viernes</option>
+    //                                             <option value="saturday" ${item.day === "saturday" ? "selected" : ""}>Sábado</option>
+    //                                             <option value="sunday" ${item.day === "sunday" ? "selected" : ""}>Domingo</option>
+    //                                         </select>
+    //                                     </div>
+    //                                     <div class="col-md-6">
+    //                                         <label class="form-label">Hora de salida</label>
+    //                                         <input type="time" id="leaving_time_${item.id}" 
+    //                                             name="leaving_time[]" 
+    //                                             class="form-control" 
+    //                                             value="${item.leaving_time}" required/>
+    //                                         <input type="hidden" id="routes_schedule_id_${item.id}" name="routes_schedule_id[]" value="${item.id ?? ''}"/>
+    //                                     </div>
+    //                                     <div id="schedule_list_${item.id}"></div>
+
+    //                                     <button type="button" class="btn btn-sm btn-success mt-2" onclick="add_schedule(${item.id})">
+    //                                         <i class="ti ti-plus"></i> Agregar horario
+    //                                     </button>
+    //                                 </div>
+    //                             </div>
+    //                         </div>
+    //                     </div>
+    //                 `;
+
+    //                 $("#schedules").append(schedule);
+    //                 $.ajax({
+    //                     url: '../Controllers/adminVehiclesController.php?op=vehicles',
+    //                     type: 'GET',
+    //                     headers: {
+    //                         "Authorization": "Bearer " + token
+    //                     },
+    //                     dataType: 'json',
+    //                     success: function(vehicles) {
+    //                         let $select = $(`#vehicle_id_${item.id}`);
+    //                         $select.empty().append('<option value="">Selecciona...</option>');
+    //                         vehicles.forEach(v => {
+    //                             $select.append(`<option value="${v.id}" ${v.id == item.vehicle_id ? "selected" : ""}>${v.text}</option>`);
+    //                         });
+    //                     },
+    //                     error: function(e) {
+    //                         console.error("Error cargando vehículos:", e.responseText);
+    //                     }
+    //                 });
+    //             });
+    //         },
+    //         error: function (xhr, status, error) {
+    //             console.error("Error en la solicitud:", error);
+    //             Swal.fire({
+    //                 icon: "error",
+    //                 title: "Error",
+    //                 text: "Hubo un problema al procesar los datos.",
+    //                 confirmButtonColor: "#f07d42"
+    //             });
+    //         }
+    //     });
+    // };
+
+    const show_schedules = (route_id) => {
         $('#modal_create').modal('show');
 
         let weekInput = document.getElementById('week_number_filter').value;
@@ -655,73 +753,96 @@
         $.ajax({
             url: "../Controllers/adminRoutesSchedulesController.php?op=show-schedules",
             type: "POST",
-            headers: {
-                "Authorization": "Bearer " + token
-            },
+            headers: { "Authorization": "Bearer " + token },
             dataType: "json",
-            data: { route_id: route_id, week: week, year: year},
+            data: { route_id: route_id, week: week, year: year },
             success: function (response) {
-                console.log(response)
+                console.log(response);
+                let grouped = {};
                 response.forEach(item => {
+                    if (!grouped[item.vehicle_id]) {
+                        grouped[item.vehicle_id] = [];
+                    }
+                    grouped[item.vehicle_id].push(item);
+                });
 
-                    item_id++; 
+                Object.keys(grouped).forEach(vehicleId => {
+                    item_id++;
+                    let current_id = item_id;
+                    let horarios = grouped[vehicleId];
+
                     let schedule = `
-                        <div class="col-md-6 mt-2" id="item_schedule_${item_id}">
+                        <div class="col-md-6 mt-2" id="item_schedule_${current_id}">
                             <div class="card mb-4">
                                 <div class="card-header d-flex justify-content-between align-items-center">
-                                    <h5 class="mb-0">Horario</h5>
-                                    <button type="button" class="btn btn-sm btn-danger" onclick="delete_item_db(${item_id}, ${item.id})">
-                                        <i class="ti ti-trash"></i> Eliminar
+                                    <h5 class="mb-0">Unidad #${vehicleId}</h5>
+                                    <button type="button" class="btn btn-sm btn-danger" onclick="delete_vehicle(${vehicleId}, ${current_id})">
+                                        <i class="ti ti-trash"></i> Eliminar todos
                                     </button>
                                 </div>
                                 <div class="card-body">
                                     <div class="row">
                                         <div class="col-md-12">
                                             <label class="form-label">Vehículo</label>
-                                            <select class="form-select" id="vehicle_id_${item.id}" name="vehicle_id[]" required>
+                                            <select class="form-select" id="vehicle_id_${current_id}" name="schedules[${current_id}][vehicle_id]" required>
                                                 <option value="">Cargando...</option>
                                             </select>
                                         </div>
-                                        <div class="col-md-6">
-                                            <label class="form-label">Día</label>
-                                            <select class="form-select" id="day_${item.id}" name="day[]" required>
-                                                <option value="">Selecciona...</option>
-                                                <option value="monday" ${item.day === "monday" ? "selected" : ""}>Lunes</option>
-                                                <option value="tuesday" ${item.day === "tuesday" ? "selected" : ""}>Martes</option>
-                                                <option value="wednesday" ${item.day === "wednesday" ? "selected" : ""}>Miércoles</option>
-                                                <option value="thursday" ${item.day === "thursday" ? "selected" : ""}>Jueves</option>
-                                                <option value="friday" ${item.day === "friday" ? "selected" : ""}>Viernes</option>
-                                                <option value="saturday" ${item.day === "saturday" ? "selected" : ""}>Sábado</option>
-                                                <option value="sunday" ${item.day === "sunday" ? "selected" : ""}>Domingo</option>
-                                            </select>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label class="form-label">Hora de salida</label>
-                                            <input type="time" id="leaving_time_${item.id}" 
-                                                name="leaving_time[]" 
-                                                class="form-control" 
-                                                value="${item.leaving_time}" required/>
-                                            <input type="hidden" id="routes_schedule_id_${item.id}" name="routes_schedule_id[]" value="${item.id ?? ''}"/>
-                                        </div>
                                     </div>
+                                    <div class="row mt-3" id="schedule_list_${current_id}">
+                    `;
+
+                    horarios.forEach(h => {
+                        schedule += `
+                            <div class="row mb-2 align-items-end" id="schedule_${h.id}">
+                                <div class="col-md-5">
+                                    <label class="form-label">Día</label>
+                                    <select class="form-select" name="schedules[${current_id}][day][]" required>
+                                        <option value="monday" ${h.day === "monday" ? "selected" : ""}>Lunes</option>
+                                        <option value="tuesday" ${h.day === "tuesday" ? "selected" : ""}>Martes</option>
+                                        <option value="wednesday" ${h.day === "wednesday" ? "selected" : ""}>Miércoles</option>
+                                        <option value="thursday" ${h.day === "thursday" ? "selected" : ""}>Jueves</option>
+                                        <option value="friday" ${h.day === "friday" ? "selected" : ""}>Viernes</option>
+                                        <option value="saturday" ${h.day === "saturday" ? "selected" : ""}>Sábado</option>
+                                        <option value="sunday" ${h.day === "sunday" ? "selected" : ""}>Domingo</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-5">
+                                    <label class="form-label">Hora de salida</label>
+                                    <input type="time" name="schedules[${current_id}][leaving_time][]" class="form-control" value="${h.leaving_time}" required>
+                                    <input type="hidden" name="schedules[${current_id}][routes_schedule_id][]" value="${h.id}">
+                                </div>
+                                <div class="col-md-2 text-end">
+                                    <button type="button" class="btn btn-sm btn-outline-danger" onclick="delete_item_db(${h.id}, ${h.id})">
+                                        <i class="ti ti-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+                    });
+
+                    schedule += `
+                                    </div>
+                                    <button type="button" class="btn btn-sm btn-success mt-2" onclick="add_schedule(${current_id})">
+                                        <i class="ti ti-plus"></i> Agregar horario
+                                    </button>
                                 </div>
                             </div>
                         </div>
                     `;
 
                     $("#schedules").append(schedule);
+
                     $.ajax({
                         url: '../Controllers/adminVehiclesController.php?op=vehicles',
                         type: 'GET',
-                        headers: {
-                            "Authorization": "Bearer " + token
-                        },
+                        headers: { "Authorization": "Bearer " + token },
                         dataType: 'json',
                         success: function(vehicles) {
-                            let $select = $(`#vehicle_id_${item.id}`);
+                            let $select = $(`#vehicle_id_${current_id}`);
                             $select.empty().append('<option value="">Selecciona...</option>');
                             vehicles.forEach(v => {
-                                $select.append(`<option value="${v.id}" ${v.id == item.vehicle_id ? "selected" : ""}>${v.text}</option>`);
+                                $select.append(`<option value="${v.id}" ${v.id == vehicleId ? "selected" : ""}>${v.text}</option>`);
                             });
                         },
                         error: function(e) {
@@ -740,6 +861,27 @@
                 });
             }
         });
+    };
+
+    const add_schedule = ( item_id ) => {
+        let html = `
+            <div class="col-md-6 mt-3">
+                <select name="schedules[${item_id}][day][]" class="form-select" required>
+                    <option value="">Día...</option>
+                    <option value="monday">Lunes</option>
+                    <option value="tuesday">Martes</option>
+                    <option value="wednesday">Miércoles</option>
+                    <option value="thursday">Jueves</option>
+                    <option value="friday">Viernes</option>
+                    <option value="saturday">Sábado</option>
+                    <option value="sunday">Domingo</option>
+                </select>
+            </div>
+            <div class="col-md-6 mt-3">
+                <input type="time" name="schedules[${item_id}][leaving_time][]" class="form-control" required>
+            </div>
+        `;
+        $(`#schedule_list_${item_id}`).append(html);
     };
 
     const delete_item = ( item_id )  => {
@@ -768,7 +910,7 @@
                     data: { item_id_db: item_id_db },
                     success: function (response) {
                         if (response) {
-                            $(`#item_schedule_${item_id}`).remove();
+                            $(`#schedule_${item_id}`).remove();
 
                             Swal.fire({
                                 icon: "success",

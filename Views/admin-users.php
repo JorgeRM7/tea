@@ -4,6 +4,21 @@
     data-theme="theme-default" data-assets-path="../assets/" data-template="vertical-menu-template">
 <!--HEADER-->
 <?php require_once('header.php'); ?>
+<style>
+    .plant-card {
+        cursor: pointer; /* 👆 manita al pasar */
+        transition: all 0.3s ease-in-out;
+        border-radius: 15px;
+        border: 2px solid transparent;
+    }
+
+    .plant-card:hover {
+        transform: translateY(-5px); /* efecto flotante */
+        box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        border-color: #38b449; /* verde TEA al hover */
+    }
+
+</style>
 <!--HEADER-->
 <body>
     <div class="layout-wrapper layout-content-navbar">
@@ -92,24 +107,12 @@
                                                     ?>
                                                 </select>
                                             </div>
-                                            <div class="col-md-6">
-                                                <label for="nameWithTitle" class="form-label">Sucursal</label>
-                                                <select class="form-select select2-container" id="branch_office_id" name="branch_office_id" aria-label="Default select example" required>
-                                                    <option value="">Selecciona...</option>
-                                                    <?php 
-                                                        $sql = "SELECT * FROM `branch_offices` WHERE deleted_at is null";
-                                                        $query = ejecutarConsulta($sql);
-                                                        while($valores = mysqli_fetch_array($query)){
-                                                            echo "<option value='".$valores['id']."'>".$valores['name']."</option>";
-                                                        }
-                                                    ?>
-                                                </select>
-                                            </div>
                                             <div class="col-md-6" id="div_password">
                                                 <label for="nameWithTitle" class="form-label">Contraseña</label>
                                                 <input type="text" id="password" name="password" class="form-control" placeholder="Ingresa..." required/>
                                             </div>
                                         </div>
+                                        <div class="row mt-3" id="branch_offices"></div>
                                     </form>
                                 </div>
                                 <div class="modal-footer">
@@ -180,6 +183,7 @@
         $('#modal_create').modal('show');
         document.getElementById("div_password").style.display = "block";
         clean();
+        branch_office();
     };
 
     const show_password = ( user_id ) => {
@@ -261,6 +265,7 @@
 
     const show = ( user_id ) => {
         $('#modal_create').modal('show');
+        branch_office();
         $.ajax({
             url: "../Controllers/adminUsersController.php?op=show",
             type: "POST",
@@ -271,13 +276,17 @@
             data: { user_id: user_id },
             success: function (response) {
                 let data = response;
-                console.log(response)
-                $("#name").val(data?.name);
-                $("#user_id").val(data?.id);
-                $("#email").val(data?.email);
-                $("#username").val(data?.username);
-                $("#branch_office_id").val(data?.branch_office_id);
-                $("#user_type_id").val(data?.user_type_id);
+                let user = response[0];
+                $("#name").val(user.name);
+                $("#user_id").val(user.user_id);
+                $("#email").val(user.email);
+                $("#username").val(user.username);
+                $("#user_type_id").val(user.user_type_id);
+                $("input[name='branch_office_id[]']").prop("checked", false);
+                response.forEach(item => {
+                    $(`#branch_${item.branch_office_id}`).prop("checked", true);
+                    togglePlant( item.branch_office_id )
+                });
                 document.getElementById("div_password").style.display = "none";
             },
             error: function (xhr, status, error) {
@@ -303,7 +312,6 @@
             },
             data: { change_password: change_password, user_password_id: user_password_id },
             success: function (response) {
-                console.log(response)
                 Swal.fire({
                     toast: true,
                     position: 'top-end',
@@ -330,7 +338,6 @@
     }
 
     const deleteItem = ( user_id ) => {
-        
         Swal.fire({
             title: "Alerta",
             text: "¿Estas seguro de realizar esta acción?",
@@ -376,14 +383,79 @@
     };
 
     const clean = () => {   
-        $("#brand").val('');
+        $("#name").val('');
         $("#user_id").val('');
-        $("#color").val('');
-        $("#model").val('');
-        $("#plate_number").val('');
-        $("#serial_number").val('');
-        $("#type").val('');
-        $("#year").val('');         
+        $("#email").val('');
+        $("#username").val('');
+        $("#user_type_id").val('');        
     }
-    
+
+    const branch_office = () => {
+        $.ajax({
+            url: "../Controllers/adminUsersController.php?op=branch_offices",
+            type: "POST",
+            dataType: "json",
+            headers: {
+                "Authorization": "Bearer " + token
+            },
+            success: function (response) {
+                let data = response;
+        
+                let container = $("#branch_offices");
+                container.empty();
+
+                if (!data || data.length === 0) {
+                    container.html(`
+                        <div class="alert alert-warning text-center" role="alert">
+                            <i class="ti ti-alert-triangle"></i> 
+                            No tienes permisos asignados para esta vista.
+                        </div>
+                    `);
+                    return;
+                }
+
+                data.forEach(item => {
+                    let card = `
+                    <div class="col-md-4 col-sm-6 mb-4">
+                        <div class="plant-card card h-100 shadow-sm text-center" id="plant_${item.branch_office_id}" onclick="togglePlant(${item.branch_office_id})">
+                            <div class="card-body d-flex flex-column justify-content-center align-items-center">
+                                <i class="ti ti-building fs-1 text-primary mb-3"></i>
+                                <h5 class="fw-bold mb-2">${item.name}</h5>
+                                <input type="checkbox" class="form-check-input d-none" 
+                                id="plant_check_${item.branch_office_id}" 
+                                name="branch_office_id[]" 
+                                value="${item.branch_office_id}">
+                            </div>
+                        </div>
+                    </div>`;
+                    container.append(card);
+                });
+                
+                
+            },
+            error: function (xhr, status, error) {
+                console.error("Error en la solicitud:", error);
+                Swal.fire({
+                    icon: "error",
+                    title: "Error",
+                    text: "Hubo un problema al procesar los datos.",
+                    confirmButtonColor: "#f07d42"
+                });
+            }
+        });
+    }
+
+    function togglePlant(id) {
+        // if(id){
+            let checkbox = document.getElementById(`plant_check_${id}`);
+            let card = document.getElementById(`plant_${id}`);
+            checkbox.checked = !checkbox.checked;
+            if (checkbox.checked) {
+                card.classList.add("border-success");
+            } else {
+                card.classList.remove("border-success");
+            }
+        // }
+        
+    }
 </script>

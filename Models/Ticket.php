@@ -43,11 +43,10 @@ class Ticket
         $employee_id = $data["employee_id"] ?? null;
         $route_id = $data["route_id"] ?? null;
         $vehicle_id = $data["vehicle_id"] ?? null;
-        $cost = $data["cost"] ?? null;
+        $price = $data["price"] ?? null;
         $quantity = $data["quantity"] ?? null;
-        $cost = $data["cost"] ?? null;
-        $cost = $data["cost"] ?? null;
-        $cost = $data["cost"] ?? null;
+        $user_id = $_SESSION['user_id'];
+        $branch_office_id = $data['branch_office_id'];
         $tickets_ids = [];
         $date = date("Y-m-d");
         $hour  = date("H:i:s");  
@@ -59,9 +58,11 @@ class Ticket
                     `route_id`,
                     `employee_id`,
                     `vehicle_id`,
+                    `branch_office_id`,
+                    `user_id`,
                     `quantity`, 
                     `payment_method`,
-                    `cost`,
+                    `price`,
                     `status`, 
                     `date`,
                     `hour`,
@@ -72,9 +73,11 @@ class Ticket
                     '$route_id',
                     '$employee_id',
                     '$vehicle_id',
+                    '$branch_office_id',
+                    '$user_id',
                     '1',
                     'EFECTIVO',
-                    '$cost',
+                    '$price',
                     'VENDIDO',
                     '$date',
                     '$hour',
@@ -124,9 +127,13 @@ class Ticket
         $sql = "SELECT 
                     routes.*,
                     routes_schedule.leaving_time,
-                    routes_schedule.id AS route_schedule_id
+                    routes_schedule.id AS route_schedule_id,
+                    vehicles.capacity AS vehicle_capacity,
+                    vehicles.id AS vehicle_id,
+                    (SELECT COUNT(id) FROM tickets WHERE route_schedule_id = routes_schedule.id AND status ='VENDIDO') AS tickets_sale
                 FROM `routes_schedule` 
                 INNER JOIN routes ON routes.id = routes_schedule.route_id
+                LEFT JOIN vehicles ON vehicles.id = routes_schedule.vehicle_id
                 WHERE 1=1";
 
         if (!empty($search_date)) {
@@ -200,6 +207,8 @@ class Ticket
         $sql = "UPDATE `tickets` SET `status`='CANCELADO',`updated_at`= NOW() WHERE `id`='$ticket_id'";
         return ejecutarConsulta($sql);
     }
+
+    
     
 
 

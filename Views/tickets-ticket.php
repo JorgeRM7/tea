@@ -7,101 +7,76 @@
 <!--HEADER-->
 
 <style>
-    .ticket-card {
-        border: 2px solid #e0e0e0;
-        border-radius: 16px;
-        /* background: #fff; */
-        position: relative;
-        overflow: hidden;
-    }
+    :root{--naranja:#f07d42;--verde:#28c76f;--rojo:#ef4444;--amarillo:#f59e0b;--azul:#1f2a44;}
+    /* body{background:linear-gradient(180deg,#f8fafc 0%,#eef2f6 100%)} */
+    .card-main{border:0;border-radius:18px;box-shadow:0 10px 30px rgba(2,8,20,.05)}
+    .time-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:.75rem}
+    .time-card{border:1px solid #e5e7eb;border-radius:12px;padding:.85rem;cursor:pointer;transition:.2s}
+    .time-card:hover{border-color:var(--naranja);box-shadow:0 0 0 2px rgba(240,125,66,.15)}
+    .time-card.disabled{opacity:.55;pointer-events:none}
+    .time-card.active{border-color:var(--verde);background:#ecfdf3}
+    .badge-seats{border:1px solid #e5e7eb}
+    .badge-green{background:#e8fff3;color:#065f46;border-color:#a7f3d0}
+    .badge-yellow{background:#fff7ed;color:#92400e;border-color:#fed7aa}
+    .badge-red{background:#fee2e2;color:#991b1b;border-color:#fecaca}
+    .stub{border:1px dashed #cbd5e1;border-radius:12px;padding:.75rem;color:#64748b}
+    .section-title{font-weight:700}
+    .kpi{border:1px solid #e5e7eb;border-radius:16px;padding:.75rem 1rem}
+    .rule-note{font-size:.85rem;color:#6b7280}
 
-    .ticket-body {
-        padding: 16px;
-    }
-
-    .ticket-divider {
-        border-top: 2px dashed #ccc;
-        margin: 8px 0;
-        position: relative;
-    }
-
-    .ticket-divider::before,
-    .ticket-divider::after {
-        content: "";
-        width: 16px;
-        height: 16px;
-        background: #fff;
-        border: 2px solid #ccc;
-        border-radius: 50%;
-        position: absolute;
-        top: -9px;
-    }
-
-    .ticket-divider::before {
-        left: -18px;
-    }
-
-    .ticket-divider::after {
-        right: -18px;
-    }
-
-    .selectable-card {
+    .time-card {
+        border: 2px solid #e5e7eb;
+        border-radius: 12px;
+        padding: 18px 12px;
+        text-align: center;
         cursor: pointer;
-        transition: all 0.2s ease-in-out;
+        transition: all 0.25s ease;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
     }
-
-    .selectable-card:hover {
-        transform: scale(1.02);
-        border: 2px solid #28c76f;
+    .time-card:hover {
+        border-color: #28c76f;
+        background: #f6fff9;
+        transform: translateY(-4px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.12);
     }
-
-    .selectable-card.active {
-        border: 2px solid #28c76f;
-        background: #e6f8f0;
-        box-shadow: 0 0 10px rgba(40, 199, 111, 0.4);
-    }
-
-    .detail-box .value.text-danger {
-        font-weight: 800;
-    }
-
-    .detail-box .value.text-warning {
+    .time-hour {
+        font-size: 1.4rem;
         font-weight: 700;
+        margin-bottom: 8px;
+    }
+    .time-availability {
+        font-size: 0.85rem;
+        font-weight: 600;
+        padding: 4px 10px;
+        border-radius: 20px;
+        display: inline-block;
+    }
+    .time-availability.bg-success {
+        background: #d1fae5;
+        color: #065f46;
+    }
+    .time-availability.bg-warning {
+        background: #fef9c3;
+        color: #92400e;
+    }
+    .time-availability.bg-danger {
+        background: #fee2e2;
+        color: #991b1b;
     }
 
-    .detail-box .value.text-success {
-        font-weight: 700;
-    }
-    .ticket-divider {
-    border-top: 2px dashed #ccc;
-    position: relative;
-    margin: 16px 0;
-    }
-
-    .ticket-divider::before,
-    .ticket-divider::after {
-    content: "";
-    width: 16px;
-    height: 16px;
-    background: #fff;
-    border: 2px solid #ccc;
-    border-radius: 50%;
-    position: absolute;
-    top: -10px;
-    }
-
-    .ticket-divider::before {
-    left: -10px;
-    }
-
-    .ticket-divider::after {
-    right: -10px;
+    .time-card.selected {
+        border-color: #28c76f;
+        background: #e8fff3;
+        box-shadow: 0 0 8px rgba(40,199,111,0.4);
     }
 
 
 
-
-</style>
+  </style>
 <body>
     <div class="layout-wrapper layout-content-navbar">
         <div class="layout-container">
@@ -114,102 +89,156 @@
                 <!--BARRA DE NAVEGACION-->
                 <div class="content-wrapper">
                     <div class="container-xxl flex-grow-1 container-p-y">
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="card mb-4">
-                                    <div class="card-header d-flex justify-content-between align-items-center">
-                                        <h5 class="mb-0">Busqueda</h5>
-                                        <small class="text-muted float-end">Default label</small>
-                                    </div>
-                                    <div class="card-body">
-                                        <div class="row"> 
-                                            <div class="col-md-4">
-                                                <label for="nameWithTitle" class="form-label">Fecha</label>
-                                                <input type="date" id="search_date" name="search_date" class="form-control" value="<?php echo date('Y-m-d'); ?>"  min="<?php echo date('Y-m-d'); ?>" onchange="schedules()" />
+                        <form name="formulario" id="formulario" method="POST">
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <div class="card mb-4">
+                                        <div class="card-header d-flex justify-content-between align-items-center">
+                                            <h5 class="mb-0">Venta de boletos</h5>
+                                            <small class="text-muted float-end">TEA</small>
+                                        </div>
+                                        <div class="card-body">
+
+                                            <div class="row g-3 mb-3">
+                                                <div class="col-md-7">
+                                                    <label class="form-label section-title">Ruta</label>
+                                                    <select id="search_route" name="search_route" class="form-select form-select-lg">
+                                                        <?php 
+                                                            $sql = "SELECT * FROM `routes` WHERE deleted_at is null";
+                                                            $query = ejecutarConsulta($sql);
+                                                            while($valores = mysqli_fetch_array($query)){
+                                                                echo "<option value='".$valores['id']."'>".$valores['origin']." - ".$valores['destination']."</option>";
+                                                            }
+                                                        ?>
+
+                                                    </select>
+                                                    <div id="routeRules" class="rule-note mt-1"></div>
+                                                </div>
+                                                <div class="col-md-5">
+                                                    <label class="form-label section-title">Fecha</label>
+                                                    <input id="search_date" name="search_name" type="date" class="form-control" value="<?php echo date('Y-m-d'); ?>"/>
+                                                    <div class="rule-note mt-1">Máximo 30 días a futuro. No se venden viajes pasados.</div>
+                                                </div>
                                             </div>
-                                            <div class="col-md-4">
-                                                <label for="nameWithTitle" class="form-label">Ruta</label>
-                                                <select class="form-select select2-container" id="search_route" name="search_route" aria-label="Default select example" onchange="schedules()">
-                                                    <option value="">Selecciona...</option>
-                                                    <?php 
-                                                        $sql = "SELECT * FROM `routes` WHERE deleted_at is null";
-                                                        $query = ejecutarConsulta($sql);
-                                                        while($valores = mysqli_fetch_array($query)){
-                                                            echo "<option value='".$valores['id']."'>".$valores['origin']." - ".$valores['destination']."</option>";
-                                                        }
-                                                    ?>
-                                                </select>
-                                            </div>  
-                                            <div class="col-md-4">
-                                                <label for="nameWithTitle" class="form-label">Horario</label>
-                                                <select class="form-select select2-container" id="search_schedule" name="search_schedule" aria-label="Default select example">
-                                                </select>
+                                            <h6 class="mb-2">Horarios disponibles</h6>
+                                            <div id="times" class="col-md-12"></div>
+                                            
+                                            <hr class="my-4">
+                                            <div class="row g-3 align-items-end">
+                                                
+                                                <div class="col-md-3">
+                                                    <label class="form-label section-title">Cantidad</label>
+                                                    <input id="quantity" name="quantity" type="number" class="form-control" min="1" max="5" value="1" />
+                                                </div>
+                                            
+                                            </div>
+                                            <hr class="my-4">
+                                            <div class="row g-3 mb-2">
+                                                <div class="col-md-4">
+                                                    <label class="form-label section-title">Precio base</label>
+                                                    <input id="price" name="price" type="number" class="form-control" readonly>
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <label class="form-label section-title">Descuentos</label>
+                                                    <div class="d-flex flex-wrap gap-2">
+                                                    <button class="btn btn-outline-primary btn-sm" id="dStudent" data-disc="0.2"><i class="bi bi-mortarboard"></i> Estudiante -20%</button>
+                                                    <button class="btn btn-outline-primary btn-sm" id="dSenior" data-disc="0.3"><i class="bi bi-person-vcard"></i> 3ª edad -30%</button>
+                                                    <button class="btn btn-outline-warning btn-sm" id="dNone"><i class="bi bi-slash-circle"></i> Sin descuento</button>
+                                                    <button class="btn btn-outline-danger btn-sm" id="dCourtesy"><i class="bi bi-star"></i> Cortesía</button>
+                                                    </div>
+                                                    <div class="form-text">Los descuentos se registran en el boleto. Cortesía requiere autorización.</div>
+                                                </div>
+                                            </div>
+                                            <div class="row g-3 align-items-end">
+                                                <div class="col-md-4">
+                                                    <label class="form-label section-title">Total</label>
+                                                    <input id="total" name="total" type="number" class="form-control" readonly>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label class="form-label section-title">Recibido</label>
+                                                    <input id="amount_received" name="amount_received" type="number" class="form-control">
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label class="form-label section-title">Cambio</label>
+                                                    <input id="change_amount" name="change_amount" type="number" class="form-control" readonly>
+                                                    <input id="employee_id" name="employee_id" type="hidden" class="form-control" readonly>
+                                                    <input id="route_schedule_id" name="route_schedule_id" type="hidden" class="form-control" readonly>
+                                                    <input id="route_id" name="route_id" type="hidden" class="form-control" readonly>
+                                                    <input id="vehicle_id" name="vehicle_id" type="hidden" class="form-control" readonly>
+                                                    <input id="branch_office_id" name="branch_office_id" type="hidden" class="form-control" readonly>
+                                                </div>
+                                            </div>
+                                            <div class="row g-3 mt-2">
+                                                <div class="col-md-12 text-end">
+                                                    <button id="btnClear" class="btn btn-outline-secondary" type="button" onclick="clean()">
+                                                        <i class="bi bi-x-circle"></i> Limpiar
+                                                    </button>
+                                                    <button id="btnGenerate" class="btn btn-success btn-lg" type="button" onclick="store()"> 
+                                                        <i class="bi bi-receipt"></i> Generar boleto
+                                                    </button>
+                                                </div>
                                             </div>
                                             
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="card mb-4 100 h-100">
-                                    <div class="card-header d-flex justify-content-between align-items-center">
-                                        <h5 class="mb-0">Rutas</h5>
-                                        <small class="text-muted float-end">Default label</small>
+                                <div class="col-md-4">
+                                    <div class="card kpi mb-3 d-flex justify-content-between">
+                                        <div>
+                                            <div class="small text-muted">Taquillero</div>
+                                            <div class="fw-bold" id="sessionAgent"><?= $_SESSION['name'] ?></div>
+                                        </div>
+                                        <div >
+                                            <div class="small text-muted">Boletos hoy</div>
+                                            <div class="fw-bold" id="kpiCount">1000</div>
+                                        </div>
                                     </div>
-                                    <div class="card-body">
-                                        <div class="row">
-                                            <div class="col-md-12" id="routes"></div>
+
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <i class="bi bi-ticket-perforated"></i> Vista previa
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="small text-muted">Ruta</div>
+                                            <div class="fs-6" id="pvRoute">—</div>
+                                            <div class="row mt-2">
+                                                <div class="col-6">
+                                                    <small>Fecha</small>
+                                                    <div id="pvDate">—</div>
+                                                </div>
+                                                <div class="col-6"><small>Hora</small><div id="pvTime">—</div></div>
+                                            </div>
+                                            <div class="row mt-2">
+                                                <div class="col-6">
+                                                    <small>Unidad</small>
+                                                    <div id="pvUnit">—</div>
+                                                </div>
+                                                <div class="col-6">
+                                                    <small>Chofer</small>
+                                                    <div id="pvDriver">—</div>
+                                                </div>
+                                            </div>
+                                            <hr>
+                                            <div class="row small">
+                                                <div class="col-6">Cantidad<br>
+                                                    <span id="pvQty">—</span>
+                                                </div>
+                                                <div class="col-6">Total<br>
+                                                    <span id="pvTotal">—</span>
+                                                </div>
+                                            </div>
+                                            <!-- <div class="mt-2 small">Descuento: 
+                                                <span id="pvDisc">—</span>
+                                            </div> -->
+                                            <div class="mt-2 small">Pago: 
+                                                <span id="pvPay">Efectivo</span>
+                                            </div>
+                                            <div class="mt-3 stub" id="qrStub">QR/Folio se generará al emitir.</div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-6 ">
-                                <div class="card mb-4 shadow-lg border-0 100 h-100" id="detailsCard" style="display:none;">
-                                    <div class="card-header bg-gradient text-white d-flex justify-content-between align-items-center" style="background: linear-gradient(45deg, #007bff, #0056b3);">
-                                        <h5 class="mb-0"><i class="bi bi-ticket-perforated"></i> Detalles del Boleto</h5>
-                                        <small class="text-light">Información</small>
-                                    </div>
-                                    <div class="card-body" id="detailsBody"></div>
-                                    <div class="card-body border-top">
-                                        <form name="formulario" id="formulario" method="POST">
-                                            <div class="row">
-                                                
-                                                <input type="hidden" id="route_schedule_id" name="route_schedule_id" class="form-control">
-                                                <input type="hidden" id="employee_id" name="employee_id" class="form-control">
-                                                <input type="hidden" id="route_id" name="route_id" class="form-control">
-                                                <input type="hidden" id="cost" name="cost" class="form-control">
-                                                <input type="hidden" id="vehicle_id" name="vehicle_id" class="form-control">
-                                                <!-- <input type="text" id="route_schedule_id" name="route_schedule_id" class="form-control"> -->
-                                                <div class="col-md-12">
-                                                    <h4 class="fw-bold text-uppercase text-primary" id="total_label">Total a pagar: $</h4>
-                                                </div>
-                                                <div class="col-md-12">
-                                                    <h4 class="fw-bold text-uppercase text-primary" id="amount_received_label">Recibi: $</h4>
-                                                </div>
-                                                <div class="col-md-12">
-                                                    <h4 class="fw-bold text-uppercase text-primary" id="change_label">Cambio: $</h4>
-                                                </div>
-                                                
-                                                <div class="col-md-4">
-                                                    <label class="form-label">Cantidad de boletos</label>
-                                                    <input type="number" id="quantity" name="quantity" class="form-control" min="1" value="1">
-                                                </div>
-                                                <div class="col-md-4">
-                                                    <label class="form-label">Monto recibido</label>
-                                                    <input type="number" id="amount_received" name="amount_received" class="form-control" min="0" >
-                                                </div>
-                                            </div>
-                                            
-                                        </form>
-                                    </div>
-                                    <div class="card-footer text-end bg-light">
-                                        <button class="btn btn-success fw-bold" id="confirmBtn" type="button" onclick="store()">
-                                            <i class="bi bi-check-circle me-1"></i> Confirmar boleto
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        </form>
                     </div>
                     
                     <!-- FOOTER -->
@@ -244,10 +273,22 @@
             total();
         });
         routes();
+        let branch_office_id = document.getElementById('branch_office_id_selected').value;
+        $("#branch_office_id").val(branch_office_id);
     });
    
-    
     const store = () => {
+        let route_schedule_id = $("#route_schedule_id").val();
+
+        if( route_schedule_id == '' ){
+            Swal.fire({
+                title: "Ups...",
+                text: "Debes seleccionar un horario.",
+                icon: "warning"
+            });
+            return;
+        }
+
         const formData = new FormData(document.getElementById("formulario"));
         $.ajax({
             url: "../Controllers/ticketsController.php?op=store",
@@ -258,10 +299,8 @@
             data: formData,
             contentType: false,
             processData: false,
-            dataType: "json",   // 👈 importante
+            dataType: "json",
             success: function(response) {
-                console.log(response);
-
                 if (response.success) {
                     Swal.fire({
                         toast: true,
@@ -274,10 +313,8 @@
                         text: 'Registro creado exitosamente.',
                     });
 
-                    let tickets_id = response.ids; // ahora sí es array
+                    let tickets_id = response.ids;
                     console.log("Tickets:", tickets_id);
-
-                    // Pasar los IDs al PDF
                     let url = `../Pdf/ticket.php?tickets_id=${tickets_id.join(",")}`;
                     console.log("URL PDF:", url);
 
@@ -295,6 +332,8 @@
                         }, 1);
                     };
                     iframe.src = url;
+                    
+                    clean();
                 }
             },
             error: function(error) {
@@ -321,11 +360,36 @@
             data: { route_id: route_id, date: date },
             success: function(schedules) {
                 console.log(schedules);
-                let $select = $("#search_schedule");
-                $select.empty().append('<option value="">Selecciona...</option>');
-                schedules.forEach(s => {
-                    $select.append(`<option value="${s.id}">${s.text}</option>`);
+
+                let container = $("#times");
+                container.empty();
+
+                if (schedules.length === 0) {
+                    container.html("<span class='text-muted'>No hay horarios disponibles</span>");
+                    return;
+                }
+
+                schedules.forEach(item => {
+                    let badge = `
+                        <span class="badge bg-primary m-1 schedule-badge" 
+                            data-id="${item.route_schedule_id}" 
+                            style="cursor:pointer;">
+                            <i class="bi bi-clock"></i> ${item.leaving_time}
+                        </span>
+                    `;
+                    container.append(badge);
                 });
+
+                $(".schedule-badge").off("click").on("click", function() {
+                    $(".schedule-badge").removeClass("bg-success").addClass("bg-primary");
+                    $(this).removeClass("bg-primary").addClass("bg-success");
+
+                    let selectedId = $(this).data("id");
+                    console.log("Seleccionado:", selectedId);
+
+                    $("#route_schedule_id").val(selectedId);
+                });
+                
             },
             error: function(e) {
                 console.error("Error cargando horarios:", e.responseText);
@@ -359,7 +423,7 @@
         });
     };
 
-    const routes = () => {
+    const routes = () => {  
         let search_date     = $("#search_date").val();
         let search_schedule = $("#search_schedule").val(); 
         let search_route    = $("#search_route").val();    
@@ -390,56 +454,24 @@
                         </div>`;
                 } else {
                     data.forEach(item => {
-                    
-                        let boletos = 10; 
-                        let boletosClass = "text-success"; 
-                        if (boletos <= 3) {
-                            boletosClass = "text-danger";
-                        } else if (boletos <= 7) {
-                            boletosClass = "text-warning";
-                        }
+                        let disponibilidad = parseInt(item.vehicle_capacity) - parseInt(item.tickets_sale);
+
+                        let badgeClass = "bg-success text-white";
+                        if (disponibilidad === 0) badgeClass = "bg-danger text-white";
+                        else if (disponibilidad < 10) badgeClass = "bg-warning text-dark";
 
                         content += `
-                            <div class="col-md-4 col-sm-6 mb-4">
-                                <div class="ticket-card shadow-sm h-100 selectable-card" 
-                                    onclick="selected_route(this,'${item?.route_schedule_id}')">
-
-                                    <div class="ticket-body d-flex flex-column justify-content-between">
-                                        <div class="text-center mb-3">
-                                            <h6 class="fw-bold text-uppercase text-primary mb-1">
-                                                ${item?.origin}
-                                            </h6>
-                                            <span class="fs-3 fw-bold text-dark">→</span>
-                                            <h6 class="fw-bold text-uppercase text-primary mt-1">
-                                                ${item?.destination}
-                                            </h6>
-                                        </div>
-                                        <div class="ticket-divider my-3"></div>
-                                        <div class="px-2 text-center">
-                                            <div class="detail-box mb-2">
-                                                <i class="bi bi-cash-coin text-success me-1"></i>
-                                                <span class="label">Costo</span>
-                                                <span class="value">$${item?.cost}</span>
-                                            </div>
-                                            <div class="detail-box mb-2">
-                                                <i class="bi bi-clock-history text-primary me-1"></i>
-                                                <span class="label">Salida</span>
-                                                <span class="value">${item?.leaving_time}</span>
-                                            </div>
-                                            <div class="detail-box">
-                                                <i class="bi bi-ticket-detailed me-1 ${boletosClass}"></i>
-                                                <span class="label">Boletos</span>
-                                                <span class="value ${boletosClass}">${boletos}</span>
-                                            </div>
-                                        </div>
-                                    </div>
+                            <div class="col-6 col-md-3 mb-3">
+                                <div class="time-card" data-id="${item.route_schedule_id}" onclick="selected_route(${item.route_schedule_id})">
+                                    <div class="time-hour">${item.leaving_time.substring(0,5)}</div>
+                                    <div class="time-availability ${badgeClass}">${disponibilidad} libres</div>
                                 </div>
                             </div>
                         `;
-                        });
 
-                    }
-                    $("#routes").html(`<div class="row">${content}</div>`);
+                    });
+                }   
+                $("#times").html(`<div class="row">${content}</div>`);
             },
             error: function (xhr, status, error) {
                 console.error("Error en la solicitud:", error);
@@ -453,11 +485,9 @@
         });
     };
 
-   const selected_route = ( card, route_schedule_id ) => {
-        document.querySelectorAll('.selectable-card').forEach(c => c.classList.remove('active'));
-        card.classList.add('active');
-        console.log("Seleccionaste:", route_schedule_id);
-
+    const selected_route = ( route_schedule_id ) => {
+        $(".time-card").removeClass("selected");
+        $(`.time-card[data-id="${route_schedule_id}"]`).addClass("selected");
         $.ajax({
             url: "../Controllers/ticketsController.php?op=details",
             type: "POST",
@@ -471,71 +501,19 @@
             success: function (response) {
                 let data = response;
                 console.log(data)
-                costoUnitario = parseFloat(data.cost); 
-                let content = `
-                <div class="text-center mb-4">
-                    <h4 class="fw-bold text-uppercase text-primary">${data?.origin}</h4>
-                    <span class="fs-3 fw-bold text-dark">→</span>
-                    <h4 class="fw-bold text-uppercase text-primary">${data?.destination}</h4>
-                    <p class="text-muted mb-0"><i class="bi bi-calendar-event"></i> ${data.date} | 
-                    <i class="bi bi-clock-history"></i> ${data?.leaving_time}</p>
-                </div>
-
-                <div class="ticket-divider my-3"></div>
-
-                <div class="row text-center">
-                    <div class="col-6 mb-3">
-                        <div class="p-3 border rounded bg-light">
-                            <i class="bi bi-cash-coin text-success fs-4"></i>
-                            <p class="mb-1 fw-semibold">Costo</p>
-                            <h5 class="mb-0">$${data?.cost}</h5>
-                        </div>
-                    </div>
-                    <div class="col-6 mb-3">
-                        <div class="p-3 border rounded bg-light">
-                            <i class="bi bi-bus-front text-info fs-4"></i>
-                            <p class="mb-1 fw-semibold">Tipo</p>
-                            <h5 class="mb-0">${data?.type}</h5>
-                        </div>
-                    </div>
-                    <div class="col-6">
-                        <div class="p-3 border rounded bg-light">
-                            <i class="bi bi-car-front text-warning fs-4"></i>
-                            <p class="mb-1 fw-semibold">Modelo</p>
-                            <h5 class="mb-0">${data?.model}</h5>
-                        </div>
-                    </div>
-                    <div class="col-6">
-                        <div class="p-3 border rounded bg-light">
-                            <i class="bi bi-person-circle text-danger fs-4"></i>
-                            <p class="mb-1 fw-semibold">Chofer</p>
-                            <h5 class="mb-0">${data?.name}</h5>
-                        </div>
-                    </div>
-                    <div class="col-12 mt-3">
-                        <div class="p-3 border rounded bg-light">
-                            <i class="bi bi-ticket-perforated text-primary fs-4"></i>
-                            <p class="mb-1 fw-semibold">Boletos disponibles</p>
-                            <h5 class="mb-0">${
-                                (Number(data?.vehicle_capacity) && Number(data?.tickets_sale) !== undefined) 
-                                ? (Number(data?.vehicle_capacity) - Number(data?.tickets_sale)) 
-                                : ""
-                            }</h5>
-
-                        </div>
-                    </div>
-                </div>
-                `;
-                $("#detailsBody").html(content);
-                $("#detailsCard").fadeIn();
-                $("#route_schedule_id").val(data?.route_schedule_id);
+                let route = `${data?.origin} ➝ ${data?.destination}`;
+                $("#pvDate").text(data?.date);
+                $("#pvDriver").text(data?.name);
+                $("#pvRoute").text(route);
+                $("#pvTime").text(data?.leaving_time);
+                $("#pvUnit").text(data?.vehicle_id);
+                $("#price").val(data?.cost);
                 $("#route_id").val(data?.route_id);
+                $("#route_schedule_id").val(data?.route_schedule_id);
                 $("#vehicle_id").val(data?.vehicle_id);
                 $("#employee_id").val(data?.employee_id);
-                $("#cost").val(data?.cost);
-                $("#quantity").val(1);
-                $("#amount_received").val(0);
                 total()
+        
             },
             error: function (xhr, status, error) {
                 console.error("Error en la solicitud:", error);
@@ -551,34 +529,38 @@
     }
 
     const total = () => {
-        let cost = parseFloat($("#cost").val()) || 0;
+        let price = parseFloat($("#price").val()) || 0;
         let quantity = parseFloat($("#quantity").val()) || 0;
         let amount_received = parseFloat($("#amount_received").val()) || 0;
 
-        let total = cost * quantity;
+        let total = price * quantity;
         let change = amount_received - total;
 
         if (change < 0) change = 0;
 
-        let total_label = document.querySelector("#total_label");
-        let amount_received_label = document.querySelector("#amount_received_label");
-        let change_label = document.querySelector("#change_label");
-
-        total_label.innerText = `Total a pagar: $${total.toFixed(2)}`;
-        amount_received_label.innerText = `Monto recibido: $${amount_received.toFixed(2)}`;
-        change_label.innerText = `Cambio: $${change.toFixed(2)}`;
+        $("#pvQty").text(quantity);
+        $("#total").val(total);
+        $("#change_amount").val(change);
+        $("#pvTotal").text(total);
+        
     };
 
-    
-    const clean = () => {   
-        $("#brand").val('');
-        $("#user_id").val('');
-        $("#color").val('');
-        $("#model").val('');
-        $("#plate_number").val('');
-        $("#serial_number").val('');
-        $("#type").val('');
-        $("#year").val('');         
+    const clean = () => {  
+        routes(); 
+        $("#pvDate").text('-');
+        $("#pvDriver").text('-');
+        $("#pvRoute").text('-');
+        $("#pvTime").text('-');
+        $("#pvUnit").text('-');
+        $("#price").val('');
+        $("#route_id").val('');
+        $("#route_schedule_id").val('');
+        $("#vehicle_id").val('');
+        $("#employee_id").val('');  
+        $("#pvQty").text('-');
+        $("#total").val(0);
+        $("#change_amount").val(0);
+        $("#pvTotal").text(0);     
     }
     
 </script>

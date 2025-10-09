@@ -18,7 +18,7 @@ foreach ($tickets_ids as $ticket_id) {
     $sql = "
         SELECT 
             tickets.id,
-            tickets.cost,
+            tickets.price,
             routes_schedule.date,
             routes_schedule.leaving_time,
             routes.origin,
@@ -119,8 +119,8 @@ foreach ($tickets_ids as $ticket_id) {
                 <td class='value'>{$item['destination']}</td>
             </tr>
             <tr>
-                <td class='label'>Costo:</td>
-                <td class='value'>$ {$item['cost']}</td>
+                <td class='label'>Precio:</td>
+                <td class='value'>$ {$item['price']}</td>
             </tr>
             <tr>
                 <td class='label'>Unidad:</td>

@@ -18,7 +18,31 @@ switch ($_GET["op"]) {
 
     case 'show':
         $rspta = $User->show( $_POST );
-        echo json_encode($rspta);
+        $data = [];
+        while ($reg = $rspta->fetch_assoc()) {
+            $data[] = [
+                "branch_office_id" => $reg['branch_office_id'],
+                "name" => $reg['name'],
+                "email" => $reg['email'],
+                "user_type_id" => $reg['user_type_id'],
+                "username" => $reg['username'],
+                "user_id" => $reg['id'],
+            ];
+        }
+        echo json_encode($data);
+    break;
+
+    case 'branch_offices':
+        $rspta = $User->branch_offices();
+        $data = [];
+        while ($reg = $rspta->fetch_assoc()) {
+            $data[] = [
+                "branch_office_id" => $reg['id'],
+                "code" => $reg['code'],
+                "name" => $reg['name'],
+            ];
+        }
+        echo json_encode($data);
     break;
     
     case 'deleteItem':

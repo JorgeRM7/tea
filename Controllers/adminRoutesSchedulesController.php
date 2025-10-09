@@ -9,6 +9,7 @@ $RouteSchedule = new RouteSchedule();
 
 switch ($_GET["op"]) {
     case 'store': 
+        // return print_r($_POST);
         $rspta = $RouteSchedule->store($_POST);
         echo json_encode($rspta);
     break;
