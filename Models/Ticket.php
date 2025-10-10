@@ -14,7 +14,7 @@ class Ticket
         $sql ="
             SELECT 
                 tickets.id,
-                tickets.cost,
+                tickets.price,
                 tickets.payment_method,
                 tickets.status,
                 routes_schedule.date,

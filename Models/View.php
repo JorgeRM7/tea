@@ -12,13 +12,15 @@ class View {
         $route = $data["route"];
         $module = $data["module"];
         $title = $data["title"];
+        $icon = $data["icon"];
     
         if( $view_id ){
             $sql="
                 UPDATE `views` SET 
-                    `route`   = '$route',
-                    `module`          = '$module',
-                    `title`          = '$title',
+                    `route`         = '$route',
+                    `module`        = '$module',
+                    `title`         = '$title',
+                    `icon`          = '$icon',
                     `updated_at`     = NOW()
                 WHERE `id` = '$view_id'
             ";
@@ -29,12 +31,14 @@ class View {
                     `route`,
                     `module`,
                     `title`,
+                    `icon`, 
                     `created_at`,
                     `updated_at`
                 ) VALUES (
                     '$route',
                     '$module',
                     '$title',
+                    '$icon',
                     NOW(),
                     NOW()
                 )

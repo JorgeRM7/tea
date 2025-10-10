@@ -8,6 +8,7 @@ $sql = "
         views.title,
         views.route,
         views.module,
+        views.icon,
         permissions.permission_create,
         permissions.permission_view,
         permissions.permission_update,
@@ -15,7 +16,7 @@ $sql = "
     FROM permissions
     INNER JOIN views ON views.id = permissions.view_id
     INNER JOIN users_types ON users_types.id = permissions.user_type_id
-    WHERE permissions.user_type_id = '$user_type_id' AND views.deleted_at is null
+    WHERE permissions.user_type_id = '$user_type_id' AND views.deleted_at is null AND permissions.permission_view = 1
     ORDER BY views.module, views.title
 ";
 $result = ejecutarConsulta($sql);
@@ -53,7 +54,6 @@ while ($row = $result->fetch_assoc()) {
         <?php foreach ($menu_items as $module => $views): ?>
             <li class="menu-item">
                 <a href="<?= htmlspecialchars($module) ?>" class="menu-link menu-toggle">
-                    <i class="menu-icon tf-icons ti ti-folder"></i>
                     <div><?= htmlspecialchars($module) ?></div>
                 </a>
                 <ul class="menu-sub">

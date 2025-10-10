@@ -11,6 +11,7 @@ class User
 
 
     public function store($data){
+        global $conexion;
         $user_id = $data["user_id"];
         $name = $data["name"];
         $email = $data["email"];
@@ -56,7 +57,6 @@ class User
             $sql = "
                 INSERT INTO `users`(
                 `user_type_id`,
-                `branch_office_id`,
                 `name`,
                 `email`,
                 `username`,
@@ -72,7 +72,6 @@ class User
                 `updated_at`
                 ) VALUES (
                     '$user_type_id',
-                    '$branch_office_id',
                     '$name',
                     '$email',
                     '$username',
@@ -88,8 +87,8 @@ class User
                     NOW()
                 )
             ";
-
-            global $conexion;
+            ejecutarConsulta($sql);
+            
             $new_user_id = mysqli_insert_id($conexion);
 
             foreach ($branch_office_ids as $branch_id) {
@@ -109,7 +108,7 @@ class User
                 ejecutarConsulta($sql_branch);
             }
         }
-        return ejecutarConsulta($sql);
+        return $new_user_id;
     }
 
     public function index()

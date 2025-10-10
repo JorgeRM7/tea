@@ -38,6 +38,7 @@ switch ($_GET["op"]) {
                 $reg->route,
                 $reg->module,
                 $reg->title,
+                $reg->icon,
             );
          }
         $results=array(

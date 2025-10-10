@@ -98,6 +98,10 @@
                                                 <input type="text" id="serial_number" name="serial_number" class="form-control" placeholder="Ingresa..." required/>
                                             </div>
                                             <div class="col-md-6">
+                                                <label for="nameWithTitle" class="form-label">Capacidad</label>
+                                                <input type="text" id="capacity" name="capacity" class="form-control" placeholder="Ingresa..." required/>
+                                            </div>
+                                            <div class="col-md-6">
                                                 <label for="nameWithTitle" class="form-label">Tipo</label>
                                                 <input type="text" id="type" name="type" class="form-control" placeholder="Ingresa..." required/>
                                             </div>
@@ -277,7 +281,8 @@
                 $("#plate_number").val(data?.plate_number);
                 $("#serial_number").val(data?.serial_number);
                 $("#type").val(data?.type);
-                $("#year").val(data?.year);                
+                $("#year").val(data?.year);
+                $("#capacity").val(data?.capacity);                
             },
             error: function (xhr, status, error) {
                 console.error("Error en la solicitud:", error);

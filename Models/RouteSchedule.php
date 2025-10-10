@@ -238,8 +238,6 @@ class RouteSchedule {
         return ejecutarConsulta($sql);
     }
     
-   
-
     public function show( $data ) {
         $routes_schedule_id = $data['routes_schedule_id'];
         $sql = "SELECT * FROM routes_schedule WHERE id = '$routes_schedule_id' ";
@@ -290,6 +288,15 @@ class RouteSchedule {
     public function deleted_item ( $data ){
         $item_id_db = $data['item_id_db'];
         $sql="UPDATE `routes_schedule` SET `deleted_at`= NOW() WHERE `id`='$item_id_db'";
+        return ejecutarConsulta($sql);
+    }
+
+    public function deleted_schedules ( $data ){
+        $route_id = $data['route_id'];
+        $week = $data['week'];
+        $year = $data['year'];
+
+        $sql="UPDATE `routes_schedule` SET `deleted_at`= NOW() WHERE `route_id`='$route_id' AND week = '$week' AND year='$year'";
         return ejecutarConsulta($sql);
     }
       

@@ -41,6 +41,7 @@
                                                             <th>Ruta</th>
                                                             <th>Modulo</th>
                                                             <th>Titulo</th>
+                                                            <th>Icono</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
@@ -78,6 +79,10 @@
                                             <div class="col-md-6">
                                                 <label for="nameWithTitle" class="form-label">Titulo</label>
                                                 <input type="text" id="title" name="title" class="form-control" placeholder="Ingresa..." required/>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label for="nameWithTitle" class="form-label">Icono</label>
+                                                <input type="text" id="icon" name="icon" class="form-control" placeholder="Ingresa..." required/>
                                             </div>
                                         </div>
                                     </form>
@@ -207,14 +212,11 @@
             data: { view_id: view_id },
             success: function (response) {
                 let data = response;
-                $("#brand").val(data?.brand);
-                $("#view_id").val(data?.id);
-                $("#color").val(data?.color);
-                $("#model").val(data?.model);
-                $("#plate_number").val(data?.plate_number);
-                $("#serial_number").val(data?.serial_number);
-                $("#type").val(data?.type);
-                $("#year").val(data?.year);                
+                $("#view_id").val(data?.view_id);
+                $("#route").val(data?.route);
+                $("#module").val(data?.module);
+                $("#title").val(data?.title);
+                $("#icon").val(data?.icon);               
             },
             error: function (xhr, status, error) {
                 console.error("Error en la solicitud:", error);
@@ -325,14 +327,11 @@
     };
 
     const clean = () => {   
-        $("#brand").val('');
         $("#view_id").val('');
-        $("#color").val('');
-        $("#model").val('');
-        $("#plate_number").val('');
-        $("#serial_number").val('');
-        $("#type").val('');
-        $("#year").val('');         
+        $("#route").val('');
+        $("#module").val('');
+        $("#title").val('');
+        $("#icon").val('');        
     }
     
 </script>

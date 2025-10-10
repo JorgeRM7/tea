@@ -23,8 +23,9 @@
                                     <div class="card-header d-flex justify-content-between align-items-center">
                                         <h5 class="mb-0">Horarios</h5>
                                         <div class="d-flex justify-content-end">
-                                            <button class="crear btn btn-primary me-2" onclick="filters()">
-                                                <i class="ti ti-cloud-up"></i> Filtros
+                                            <div id="active-filters" class="me-3"></div>
+                                            <button class="btn btn-secondary me-2" onclick="filters()">
+                                                <i class="ti ti-filter"></i> Filtros
                                             </button>
 
                                             <button class="crear btn btn-primary me-2" onclick="create()">
@@ -133,7 +134,7 @@
                                 </div>
                                 <div class="modal-footer">
                                     <button class="crear btn btn-primary me-2" onclick="index()">
-                                        <i class="ti ti-device-floppy"></i> Filtrar
+                                        <i class="ti ti-filter"></i> Filtrar
                                     </button>
                                     <button type="button" class="btn btn-danger" data-bs-dismiss="modal" onclick="clean()">Cerrar</button>
                                 </div>
@@ -165,6 +166,8 @@
         const menuToggle = document.querySelector('a[href="ADMINISTRACION"]').parentElement;
         menuToggle.classList.add('open');
         index();
+        active_filters();
+        
     });
    
     const create = () => {
@@ -174,19 +177,19 @@
     };
 
     const store = () => {
-        // let route_id   = $("#route_id").val();
-        // let week_value = $("#week_number").val();
-        // let isValid = true;
-        // let messages = [];
+        let route_id   = $("#route_id").val();
+        let week_value = $("#week_number").val();
+        let isValid = true;
+        let messages = [];
 
-        // if (!route_id) {
-        //     isValid = false;
-        //     messages.push("Debes seleccionar una ruta.");
-        // }
-        // if (!week_value) {
-        //     isValid = false;
-        //     messages.push("Debes seleccionar una semana.");
-        // }
+        if (!route_id) {
+            isValid = false;
+            messages.push("Debes seleccionar una ruta.");
+        }
+        if (!week_value) {
+            isValid = false;
+            messages.push("Debes seleccionar una semana.");
+        }
 
         // $("[id^='item_schedule_']").each(function () {
         //     let vehicle = $(this).find("select[name='vehicle_id[]']").val();
@@ -199,15 +202,15 @@
         //     }
         // });
 
-        // if (!isValid) {
-        //     Swal.fire({
-        //         icon: "warning",
-        //         title: "Campos incompletos",
-        //         text: messages.join("\n"),
-        //         confirmButtonColor: "#f07d42"
-        //     });
-        //     return;
-        // }
+        if (!isValid) {
+            Swal.fire({
+                icon: "warning",
+                title: "Campos incompletos",
+                text: messages.join("\n"),
+                confirmButtonColor: "#f07d42"
+            });
+            return;
+        }
 
         const formData = new FormData(document.getElementById("formulario"));
         $.ajax({
@@ -248,7 +251,7 @@
     const index = () => {
         $("#routes_leaving_times").html('');
         $('#modal_filters').modal('hide');
-        
+        active_filters();
         $.ajax({
             url: "../Controllers/adminRoutesSchedulesController.php?op=index",
             type: "POST",
@@ -279,7 +282,7 @@
                                             <i class="ti ti-edit"></i> Editar
                                         </a>
                                     </div>
-                                    <a href="javascript:void(0);" class="text-danger" onclick="deleteItem(${item.id})">
+                                    <a href="javascript:void(0);" class="text-danger" onclick="delete_schedules(${item.id})">
                                         <i class="ti ti-trash ti-md"></i>
                                     </a>
                                 </div>
@@ -865,27 +868,34 @@
 
     const add_schedule = ( item_id ) => {
         let html = `
-            <div class="col-md-6 mt-3">
-                <select name="schedules[${item_id}][day][]" class="form-select" required>
-                    <option value="">Día...</option>
-                    <option value="monday">Lunes</option>
-                    <option value="tuesday">Martes</option>
-                    <option value="wednesday">Miércoles</option>
-                    <option value="thursday">Jueves</option>
-                    <option value="friday">Viernes</option>
-                    <option value="saturday">Sábado</option>
-                    <option value="sunday">Domingo</option>
-                </select>
-            </div>
-            <div class="col-md-6 mt-3">
-                <input type="time" name="schedules[${item_id}][leaving_time][]" class="form-control" required>
-            </div>
+            <div class="row mb-2 align-items-end" id="schedule_${item_id}">
+                <div class="col-md-5 mt-3">
+                    <select name="schedules[${item_id}][day][]" class="form-select" required>
+                        <option value="">Día...</option>
+                        <option value="monday">Lunes</option>
+                        <option value="tuesday">Martes</option>
+                        <option value="wednesday">Miércoles</option>
+                        <option value="thursday">Jueves</option>
+                        <option value="friday">Viernes</option>
+                        <option value="saturday">Sábado</option>
+                        <option value="sunday">Domingo</option>
+                    </select>
+                </div>
+                <div class="col-md-5 mt-3">
+                    <input type="time" name="schedules[${item_id}][leaving_time][]" class="form-control" required>
+                </div>
+                <div class="col-md-2 text-end">
+                    <button type="button" class="btn btn-sm btn-outline-danger" onclick="delete_item(${item_id})">
+                        <i class="ti ti-trash"></i>
+                    </button>
+                </div>
+            <div>
         `;
         $(`#schedule_list_${item_id}`).append(html);
     };
 
     const delete_item = ( item_id )  => {
-        $(`#item_schedule_${item_id}`).remove();
+        $(`#schedule_${item_id}`).remove();
     }
 
     const delete_item_db = (item_id, item_id_db) => {
@@ -942,8 +952,88 @@
         });
     };
 
+    const delete_schedules = ( route_id ) => {
+        let weekInput = document.getElementById('week_number_filter').value;
+        let week = null;
+        let year = null;
+        if (weekInput) {
+            [year, week] = weekInput.split("-W");
+        }
+        Swal.fire({
+            title: "¿Estás seguro?",
+            text: `Todos los horarios se eliminará permanentemente de la semana ${week} y el año ${year}.`,
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#d33",
+            cancelButtonColor: "#3085d6",
+            confirmButtonText: "Sí, eliminar",
+            cancelButtonText: "Cancelar"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: "../Controllers/adminRoutesSchedulesController.php?op=deleted-schedules",
+                    type: "POST",
+                    headers: {
+                        "Authorization": "Bearer " + token
+                    },
+                    dataType: "json",
+                    data: { route_id: route_id, week: week, year: year },
+                    success: function (response) {
+                        if (response) {
+                            $(`#schedule_${item_id}`).remove();
+
+                            Swal.fire({
+                                icon: "success",
+                                title: "Eliminado",
+                                text: "Horarios eliminados correctamente.",
+                                confirmButtonColor: "#28c76f"
+                            });
+                            index();
+                        } else {
+                            Swal.fire({
+                                icon: "error",
+                                title: "Error",
+                                text: response.message || "No se pudo eliminar el horario.",
+                                confirmButtonColor: "#f07d42"
+                            });
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("Error en la solicitud:", error);
+                        Swal.fire({
+                            icon: "error",
+                            title: "Error",
+                            text: "Hubo un problema al eliminar el horario.",
+                            confirmButtonColor: "#f07d42"
+                        });
+                    }
+                });
+            }
+        });
+    };
+
     const filters = () => {
         $('#modal_filters').modal('show');
     }
 
+    const active_filters = () => {
+        let weekInput = document.getElementById('week_number_filter').value;
+        let week = null;
+        let year = null;
+        if (weekInput) {
+            [year, week] = weekInput.split("-W");
+        }
+
+        // limpiar antes de volver a pintar
+        $("#active-filters").empty();
+
+        $("#active-filters").append(`
+            <div class="filter-chip d-inline-flex align-items-center me-2 mb-1">
+                <i class="ti ti-calendar-week me-1"></i> 
+                <span class="fw-semibold">Semana ${week}</span>
+                <small class="text-muted ms-1">(${year})</small>
+            </div>
+        `);
+
+    }
 </script>

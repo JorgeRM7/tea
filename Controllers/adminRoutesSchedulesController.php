@@ -64,6 +64,11 @@ switch ($_GET["op"]) {
         echo $rspta;
     break;
 
+    case 'deleted-schedules':
+        $rspta = $RouteSchedule->deleted_schedules ( $_POST );
+        echo $rspta;
+    break;
+
     
 
 

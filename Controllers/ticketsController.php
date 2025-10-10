@@ -30,7 +30,7 @@ switch ($_GET["op"]) {
                     '</span>';
 
            
-            $costo ='💲 ' . number_format($reg->cost, 2);
+            $price ='💲 ' . number_format($reg->price, 2);
 
 
             $leaving_time = '<div>
@@ -61,7 +61,7 @@ switch ($_GET["op"]) {
                 $bonton_borrar,
                 '<span class="fw-bold text-dark">#'.$reg->id.'</span>',
                 $ruta,
-                $costo,
+                $price,
                 $date,
                 $leaving_time,
                 $vehiculo,

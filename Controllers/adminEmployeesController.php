@@ -31,6 +31,18 @@ switch ($_GET["op"]) {
             
             $bonton_editar = '<button type="button" class="editar btn btn-sm btn-warning" onclick="show('.$reg->id.')"><i class="ti ti-edit"></i></button>';
             $bonton_borrar = '<button type="button" class="eliminar btn btn-sm btn-danger" onclick="deleteItem(' . $reg->id . ')"><i class="ti ti-trash"></i></button>';
+
+            switch ($reg->status) {
+                case 'active':
+                    $status = '<span class="badge bg-success">Activo</span>';
+                    break;
+                case 'inactive':
+                    $status = '<span class="badge bg-danger">Inactivo</span>';
+                    break;
+                default:
+                    $status = '<span class="badge bg-warning">Desconocido</span>';
+                    break;
+            }
             
             $data[]=array(
                 $bonton_editar.' '.$bonton_borrar,
@@ -38,7 +50,7 @@ switch ($_GET["op"]) {
                 $reg->name,
                 $reg->paternal_surname,
                 $reg->maternal_surname,
-                $reg->status,
+                $status,
                 
             );
          }

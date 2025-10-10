@@ -17,7 +17,8 @@ class Vehicle {
         $serial_number = $data["serial_number"];
         $type = $data["type"];
         $vehicle_id = $data["vehicle_id"];
-        $vehicle_id = $data["vehicle_id"];
+        $capacity = $data["capacity"];
+        
        
 
         if( $vehicle_id ){
@@ -30,6 +31,7 @@ class Vehicle {
                     `color`          = '$color',
                     `serial_number`  = '$serial_number',
                     `type`           = '$type',
+                    `capacity`       = '$capacity',
                     `updated_at`     = NOW()
                 WHERE `id` = '$vehicle_id'
             ";
@@ -56,6 +58,7 @@ class Vehicle {
                     '$serial_number',
                     '$type',
                     'active',
+                    '$capacity'
                     NOW(),
                     NOW()
                 )
