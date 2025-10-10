@@ -264,8 +264,9 @@
     };
 
     const show = ( user_id ) => {
-        $('#modal_create').modal('show');
         branch_office();
+        $('#modal_create').modal('show');
+        document.getElementById("div_password").style.display = "none";
         $.ajax({
             url: "../Controllers/adminUsersController.php?op=show",
             type: "POST",
@@ -277,17 +278,21 @@
             success: function (response) {
                 let data = response;
                 let user = response[0];
-                $("#name").val(user.name);
-                $("#user_id").val(user.user_id);
-                $("#email").val(user.email);
-                $("#username").val(user.username);
-                $("#user_type_id").val(user.user_type_id);
-                $("input[name='branch_office_id[]']").prop("checked", false);
-                response.forEach(item => {
-                    $(`#branch_${item.branch_office_id}`).prop("checked", true);
-                    togglePlant( item.branch_office_id )
-                });
-                document.getElementById("div_password").style.display = "none";
+                $("#name").val(user?.name);
+                $("#user_id").val(user?.user_id);
+                $("#email").val(user?.email);
+                $("#username").val(user?.username);
+                $("#user_type_id").val(user?.user_type_id);
+                // $("input[name='branch_office_id[]']").prop("checked", false);
+                
+                setTimeout(() => {
+                    $("input[name='branch_office_id[]']").prop("checked", false);
+                    response.forEach(item => {
+                        $(`#branch_${item?.branch_office_id}`).prop("checked", true);
+                        togglePlant(item?.branch_office_id);
+                    });
+                }, 500);
+                
             },
             error: function (xhr, status, error) {
                 console.error("Error en la solicitud:", error);
@@ -300,6 +305,9 @@
             }
         });
     }
+
+
+    
 
     const store_password = () => {
         let change_password = $("#change_password").val();
