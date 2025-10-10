@@ -31,7 +31,7 @@ while ($row = $result->fetch_assoc()) {
     <div class="app-brand demo">
         <a href="" class="app-brand-link">
             <center>
-                <img src="https://tea.systemsorion.com/Librerias/img/logo" alt="TEA" width="50" height="50" style="padding:2px;">
+                <img src="../assets/img/logo.png" alt="TEA" width="50" height="50" style="padding:2px;">
             </center>
             <span class="app-brand-text demo menu-text fw-bold">TEA</span>
         </a>

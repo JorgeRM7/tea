@@ -18,7 +18,7 @@ require_once dirname(__DIR__) . "/Database/conexion.php";
     <title>TEA - <?php echo $title; ?></title>
     <meta name="description" content="" />
    
-    <link rel="icon" type="image/x-icon" href="https://tea.systemsorion.com/Librerias/img/logo" />
+    <link rel="icon" type="image/x-icon" href="../assets/img/logo.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&ampdisplay=swap" rel="stylesheet" />

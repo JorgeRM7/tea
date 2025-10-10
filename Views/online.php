@@ -64,7 +64,7 @@
 <body>
     <div class="ticket-box">
         <div class="text-center mb-4">
-            <img src="https://tea.systemsorion.com/Librerias/img/logo" alt="TEA" width="80" class="mb-3">
+            <img src="../assets/img/logo.png" alt="TEA" width="80" class="mb-3">
             <h3 class="fw-bold text-uppercase">Venta de Boletos</h3>
             <p class="text-white">Selecciona tu viaje y compra tu boleto en línea</p>
 

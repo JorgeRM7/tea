@@ -98,7 +98,6 @@
                     </div>
                     <!--Fin Modal Crear-->
 
-                   
                     <!-- FOOTER -->
                     <?php require_once('footer.php'); ?>
                     <!-- FOOTER -->

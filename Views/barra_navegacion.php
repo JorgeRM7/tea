@@ -88,7 +88,7 @@ if($archivo_actual == 'inicio.php'){
             <li class="nav-item navbar-dropdown dropdown-user dropdown">
                 <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);" data-bs-toggle="dropdown">
                     <div class="avatar avatar-online">
-                        <!-- <img src="https://nominas.grupo-ortiz.site/Librerias/img/Fotos/<?= $_SESSION['nombre'] ?>.jpg" alt class="h-auto rounded-circle" style="width: 30px; height: 30px; object-fit: cover;"/> -->
+                        <img src="../assets/img/user_logo.png" alt class="h-auto rounded-circle" style="width: 40px; height: 40px; object-fit: cover;"/>
                     </div>
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end">
@@ -97,7 +97,7 @@ if($archivo_actual == 'inicio.php'){
                             <div class="d-flex">
                                 <div class="flex-shrink-0 me-3">
                                     <div class="avatar avatar-online">
-                                        <!-- <img src="https://nominas.grupo-ortiz.site/Librerias/img/Fotos/<?= $_SESSION['nombre'] ?>.jpg" alt class="h-auto rounded-circle" style="width: 30px; height: 30px; object-fit: cover;"/> -->
+                                        <img src="../assets/img/user_logo_2.png" alt class="h-auto rounded-circle" style="width: 40px; height: 40px; object-fit: cover;"/>
                                     </div>
                                 </div>
                                 <div class="flex-grow-1">
@@ -133,7 +133,7 @@ if($archivo_actual == 'inicio.php'){
 
 <div id="loader-overlay">
     <div class="loader-content">
-        <img src="https://tea.systemsorion.com/Librerias/img/logo" alt="Logo de TEA" class="loader-logo" />
+        <img src="../assets/img/logo.png" alt="Logo de TEA" class="loader-logo" />
         <div class="loader-text">Cargando sistema...</div>
     </div>
 </div>

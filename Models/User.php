@@ -33,9 +33,11 @@ class User
                     `updated_at`        =  NOW()
                 WHERE `id`              = '$user_id'
             ";
-
+            ejecutarConsulta($sql);
             $sql_delete = "UPDATE branch_offices_user SET deleted_at = NOW()  WHERE user_id = '$user_id'";
             ejecutarConsulta($sql_delete);
+
+
 
             foreach ($branch_office_ids as $branch_id) {
                 $sql_branch = "
@@ -108,7 +110,7 @@ class User
                 ejecutarConsulta($sql_branch);
             }
         }
-        return $new_user_id;
+        return $new_user_id ?? $user_id;
     }
 
     public function index()

@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>TEA - Login</title>
-    <link rel="icon" type="image/x-icon" href="https://tea.systemsorion.com/Librerias/img/logo" />
+    <link rel="icon" type="image/x-icon" href="../assets/img/logo.png" />
     <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
@@ -34,7 +34,7 @@
         }
 
         body {
-            cursor: url('https://tea.systemsorion.com/Librerias/img/logo') 16 16, auto;
+            cursor: url('../assets/img/logo.png') 16 16, auto;
             background: var(--bg-color);
             min-height: 100vh;
             font-family: 'Public Sans', sans-serif;
@@ -256,7 +256,7 @@
             </div>
 
             <div class="logo-container animate__animated animate__zoomIn">
-                <img src="https://tea.systemsorion.com/Librerias/img/logo" class="logo-img" alt="Logo TEA" />
+                <img src="../assets/img/logo.png" class="logo-img" alt="Logo TEA" />
                 </div>
 
             <!--<h4 class="login-title animate__animated animate__fadeInUp">Bienvenido a TEA</h4>-->

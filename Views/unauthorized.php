@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>TEA - No autorizado</title>
-    <link rel="icon" type="image/x-icon" href="https://tea.systemsorion.com/Librerias/img/logo" />
+    <link rel="icon" type="image/x-icon" href="../assets/img/logo.png" />
     <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
@@ -125,7 +125,7 @@
     <div id="particles-js"></div>
     <div class="login-container">
         <div class="login-box animate__animated animate__fadeIn">
-            <img src="https://tea.systemsorion.com/Librerias/img/logo" class="logo-img" alt="Logo TEA" />
+            <img src="../assets/img/logo.png" class="logo-img" alt="Logo TEA" />
             <h4 class="login-title">Acceso denegado</h4>
             <p class="login-subtitle">No tienes permisos para acceder a esta sección.<br>
             Contacta al administrador si crees que es un error.</p>
