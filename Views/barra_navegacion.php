@@ -154,7 +154,7 @@ if($archivo_actual == 'inicio.php'){
                 }
             });
         });
-        permisos();
+        // permisos();
 
         let branch_office_id = localStorage.getItem("branch_office_id");
         if (branch_office_id) {

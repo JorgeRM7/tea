@@ -74,19 +74,19 @@
                                             </div>
 
                                             <div class="col-md-3 mt-3">
-                                                <input class="form-check-input" type="checkbox" id="permission_view" name="permission_view" />
+                                                <input class="form-check-input" type="checkbox" id="permission_view_check" name="permission_view_check" />
                                                 <label class="form-check-label" for="userManagementRead"> Ver </label>
                                             </div>
                                             <div class="col-md-3 mt-3">
-                                                <input class="form-check-input" type="checkbox" id="permission_create" name="permission_create" />
+                                                <input class="form-check-input" type="checkbox" id="permission_create_check" name="permission_create_check" />
                                                 <label class="form-check-label" for="userManagementRead"> Crear </label>
                                             </div>
                                             <div class="col-md-3 mt-3">
-                                                <input class="form-check-input" type="checkbox" id="permission_update" name="permission_update" />
+                                                <input class="form-check-input" type="checkbox" id="permission_update_check" name="permission_update_check" />
                                                 <label class="form-check-label" for="userManagementRead"> Editar </label>
                                             </div>
                                             <div class="col-md-3 mt-3">
-                                                <input class="form-check-input" type="checkbox" id="permission_delete" name="permission_delete" />
+                                                <input class="form-check-input" type="checkbox" id="permission_delete_check" name="permission_delete_check" />
                                                 <label class="form-check-label" for="userManagementRead"> Eliminar </label>
                                             </div>
                                         </div>
@@ -177,8 +177,9 @@
         }
     
         const formData = new FormData(document.getElementById("formulario"));
-        ["permission_view", "permission_create", "permission_update", "permission_delete"].forEach(id => {
-            formData.set(id, document.getElementById(id).checked ? 1 : 0);
+        ["permission_view_check", "permission_create_check", "permission_update_check", "permission_delete_check"].forEach(id => {
+            const el = document.getElementById(id);
+            formData.set(id, el && el.checked ? 1 : 0);
         });
         $.ajax({
             url: "../Controllers/permissionsController.php?op=store",
@@ -415,6 +416,7 @@
                     },
                     data: { permission_id: permission_id },
                     success: function(data, status) {
+                        console.log(data)
                         Swal.fire({
                             toast: true,
                             position: 'top-end',
@@ -447,22 +449,6 @@
         $("#maternal_surname").val('');
         $("#permission_id").val('');
     }
-    
-    
-        
-        
-        
-        
-        
-    
-        
-        
-        
-        
-        
-        
-    
-    
     
     
 </script>

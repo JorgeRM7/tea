@@ -60,10 +60,10 @@ class Permission
     public function store($data){
         $user_type_id = $data["user_type_id"] ?? null;
         $view_id = $data["view_id"] ?? null;
-        $permission_view = $data["permission_view"] ?? null;
-        $permission_create = $data["permission_create"] ?? null;
-        $permission_update = $data["permission_update"] ?? null;
-        $permission_delete = $data["permission_delete"] ?? null;
+        $permission_view = $data["permission_view_check"] ?? null;
+        $permission_create = $data["permission_create_check"] ?? null;
+        $permission_update = $data["permission_update_check"] ?? null;
+        $permission_delete = $data["permission_delete_check"] ?? null;
 
         $sql = "
             INSERT INTO `permissions`(
@@ -91,7 +91,7 @@ class Permission
 
     public function deleteItem ( $data ){
         $permission_id = $data['permission_id'];
-        $sql = "UPDATE `tickets` SET `deleted_at`= NOW() WHERE `user_type_id`='$permission_id'";
+        $sql = "UPDATE `permissions` SET `deleted_at`= NOW() WHERE `user_type_id`='$permission_id'";
         return ejecutarConsulta($sql);
     }
    

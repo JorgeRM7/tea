@@ -1,5 +1,5 @@
 <!doctype html>
-<?php ;$title = "Vehiculos"; ?>
+<?php ;$title = "Usuarios"; ?>
 <html lang="es" class="light-style layout-navbar-fixed layout-menu-fixed layout-compact" dir="ltr"
     data-theme="theme-default" data-assets-path="../assets/" data-template="vertical-menu-template">
 <!--HEADER-->
@@ -192,6 +192,9 @@
     };
 
     const store = () => {
+        if (!validateForm()) {
+            return;
+        }
         const formData = new FormData(document.getElementById("formulario"));
         $.ajax({
             url: "../Controllers/adminUsersController.php?op=store",
@@ -200,23 +203,33 @@
                 "Authorization": "Bearer " + token
             },
             data: formData,
-            contentType: false,
+            dataType: "json",
             processData: false,
+            contentType: false,
             success: function(response) {
                 console.log(response)
-                Swal.fire({
-                    toast: true,
-                    position: 'top-end',
-                    showConfirmButton: false,
-                    timer: 3000,
-                    timerProgressBar: true,
-                    icon: 'success',
-                    title: 'Éxito',
-                    text: 'Registro creado exitosamente.',
-                });
-                $('#modal_create').modal('hide');
-                clean();
-                index();
+
+                if (response.status === "error") {
+                    Swal.fire({
+                        icon: "error",
+                        title: "Error",
+                        text: response.message
+                    });
+                } else {
+                    Swal.fire({
+                        toast: true,
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 3000,
+                        timerProgressBar: true,
+                        icon: 'success',
+                        title: 'Éxito',
+                        text: 'Registro creado exitosamente.',
+                    });
+                    $('#modal_create').modal('hide');
+                    clean();
+                    index();
+                }
             },
             error: function(error) {
                 Swal.fire({
@@ -305,9 +318,6 @@
             }
         });
     }
-
-
-    
 
     const store_password = () => {
         let change_password = $("#change_password").val();
@@ -453,6 +463,35 @@
         });
     }
 
+    function validateForm() {
+        let name = $("#name").val().trim();
+        let email = $("#email").val().trim();
+        let username = $("#username").val().trim();
+        let userType = $("#user_type_id").val();
+
+        if (!name || !email || !username || !userType) {
+            Swal.fire({
+                icon: "warning",
+                title: "Campos incompletos",
+                text: "Por favor llena todos los campos obligatorios."
+            });
+            return false;
+        }
+
+        let plantsChecked = $("input[name='branch_office_id[]']:checked").length;
+        if (plantsChecked === 0) {
+            Swal.fire({
+                icon: "warning",
+                title: "Planta requerida",
+                text: "Debes seleccionar al menos una planta."
+            });
+            return false;
+        }
+
+        return true; 
+    }
+
+    
     function togglePlant(id) {
         // if(id){
             let checkbox = document.getElementById(`plant_check_${id}`);

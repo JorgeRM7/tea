@@ -77,7 +77,7 @@
                                             </div>
                                             <div class="col-md-6">
                                                 <label for="nameWithTitle" class="form-label">Costo</label>
-                                                <input type="text" id="cost" name="cost" class="form-control" placeholder="Ingresa..." required/>
+                                                <input type="number" id="cost" name="cost" class="form-control" placeholder="Ingresa..." required/>
                                             </div>
                                            
                                         </div>
@@ -124,6 +124,37 @@
     };
 
     const store = () => {
+        let origin = $("#origin").val().trim();
+        let destination = $("#destination").val().trim();
+        let cost = $("#cost").val().trim();
+
+        if (!origin) {
+            Swal.fire({
+                icon: "warning",
+                title: "Campo requerido",
+                text: "El campo Origen es obligatorio."
+            });
+            return;
+        }
+
+        if (!destination) {
+            Swal.fire({
+                icon: "warning",
+                title: "Campo requerido",
+                text: "El campo Destino es obligatorio."
+            });
+            return;
+        }
+
+        if (!/^\d+(\.\d{1,2})?$/.test(cost) || parseFloat(cost) < 0) {
+            Swal.fire({
+                icon: "warning",
+                title: "Valor inválido",
+                text: "El costo debe ser un número positivo válido (ej. 100 o 100.50)."
+            });
+            return;
+        }
+
         const formData = new FormData(document.getElementById("formulario"));
         $.ajax({
             url: "../Controllers/adminRoutesController.php?op=store",

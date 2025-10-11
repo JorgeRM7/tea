@@ -8,7 +8,7 @@ $User = new User();
 switch ($_GET["op"]) {
     case 'store':
         $rspta = $User->store ( $_POST );
-        echo $rspta;
+        echo json_encode($rspta);
     break;
 
     case 'store-password':

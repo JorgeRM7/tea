@@ -10,68 +10,176 @@ class User
     }
 
 
+    // public function store($data){
+    //     global $conexion;
+    //     $user_id = $data["user_id"];
+    //     $name = $data["name"];
+    //     $email = $data["email"];
+    //     $username = $data["username"];
+    //     $branch_office_id = $data["branch_office_id"];
+    //     $user_type_id = $data["user_type_id"];
+    //     $password = $data["password"];
+    //     $hashed_password = password_hash($password, PASSWORD_BCRYPT);
+    //     $branch_office_ids = $data["branch_office_id"];
+
+
+    //     if ($user_id) {
+    //         $sql = "
+    //             UPDATE `users` SET 
+    //                 `user_type_id`      = '$user_type_id',
+    //                 `name`              = '$name',
+    //                 `email`             = '$email',
+    //                 `username`          = '$username',
+    //                 `updated_at`        =  NOW()
+    //             WHERE `id`              = '$user_id'
+    //         ";
+    //         ejecutarConsulta($sql);
+    //         $sql_delete = "UPDATE branch_offices_user SET deleted_at = NOW()  WHERE user_id = '$user_id'";
+    //         ejecutarConsulta($sql_delete);
+
+
+
+    //         foreach ($branch_office_ids as $branch_id) {
+    //             $sql_branch = "
+    //                 INSERT INTO `branch_offices_user`(
+    //                     `branch_office_id`,
+    //                     `user_id`,
+    //                     `create_at`,
+    //                     `update_at`
+    //                 ) VALUES (
+    //                     '$branch_id',
+    //                     '$user_id',
+    //                     NOW(),
+    //                     NOW()
+    //                 )
+    //             ";
+    //             ejecutarConsulta($sql_branch);
+    //         }
+    //     } else {
+    //         $sql = "
+    //             INSERT INTO `users`(
+    //             `user_type_id`,
+    //             `name`,
+    //             `email`,
+    //             `username`,
+    //             `email_verified_at`,
+    //             `password`,
+    //             `two_factor_secret`,
+    //             `two_factor_recovery_codes`,
+    //             `two_factor_confirmed_at`,
+    //             `remember_token`,
+    //             `current_team_id`,
+    //             `profile_photo_path`,
+    //             `created_at`,
+    //             `updated_at`
+    //             ) VALUES (
+    //                 '$user_type_id',
+    //                 '$name',
+    //                 '$email',
+    //                 '$username',
+    //                 NULL,
+    //                 '$hashed_password',
+    //                 NULL,
+    //                 NULL,
+    //                 NULL,
+    //                 NULL,
+    //                 NULL,
+    //                 NULL,
+    //                 NOW(),
+    //                 NOW()
+    //             )
+    //         ";
+    //         ejecutarConsulta($sql);
+            
+    //         $new_user_id = mysqli_insert_id($conexion);
+
+    //         foreach ($branch_office_ids as $branch_id) {
+    //             $sql_branch = "
+    //                 INSERT INTO `branch_offices_user`(
+    //                     `branch_office_id`,
+    //                     `user_id`,
+    //                     `create_at`,
+    //                     `update_at`
+    //                 ) VALUES (
+    //                     '$branch_id',
+    //                     '$new_user_id',
+    //                     NOW(),
+    //                     NOW()
+    //                 )
+    //             ";
+    //             ejecutarConsulta($sql_branch);
+    //         }
+    //     }
+    //     return $new_user_id ?? $user_id;
+    // }
+
     public function store($data){
         global $conexion;
-        $user_id = $data["user_id"];
+        $user_id = $data["user_id"] ?? null;
         $name = $data["name"];
         $email = $data["email"];
         $username = $data["username"];
-        $branch_office_id = $data["branch_office_id"];
+        $branch_office_ids = $data["branch_office_id"] ?? [];
         $user_type_id = $data["user_type_id"];
-        $password = $data["password"];
-        $hashed_password = password_hash($password, PASSWORD_BCRYPT);
-        $branch_office_ids = $data["branch_office_id"];
+        $password = $data["password"] ?? null;
+        $hashed_password = $password ? password_hash($password, PASSWORD_BCRYPT) : null;
 
+        // 🔎 Validar que no exista otro usuario con mismo email o username
+        $sql_check = "
+            SELECT id, email, username 
+            FROM users 
+            WHERE (email = '$email' OR username = '$username')
+            " . ($user_id ? "AND id != '$user_id'" : "") . "
+            LIMIT 1
+        ";
+        $res = ejecutarConsulta($sql_check);
+        if ($res && $res->num_rows > 0) {
+            $row = $res->fetch_assoc();
+            if ($row['email'] === $email) {
+                return ["status" => "error", "message" => "El correo ya está en uso."];
+            }
+            if ($row['username'] === $username) {
+                return ["status" => "error", "message" => "El nombre de usuario ya está en uso."];
+            }
+        }
 
+        // 🔧 Actualizar usuario
         if ($user_id) {
             $sql = "
-                UPDATE `users` SET 
-                    `user_type_id`      = '$user_type_id',
-                    `name`              = '$name',
-                    `email`             = '$email',
-                    `username`          = '$username',
-                    `updated_at`        =  NOW()
-                WHERE `id`              = '$user_id'
+                UPDATE users SET 
+                    user_type_id = '$user_type_id',
+                    name         = '$name',
+                    email        = '$email',
+                    username     = '$username',
+                    updated_at   = NOW()
+                WHERE id = '$user_id'
             ";
             ejecutarConsulta($sql);
-            $sql_delete = "UPDATE branch_offices_user SET deleted_at = NOW()  WHERE user_id = '$user_id'";
+
+            // limpiar sucursales
+            $sql_delete = "UPDATE branch_offices_user SET deleted_at = NOW() WHERE user_id = '$user_id'";
             ejecutarConsulta($sql_delete);
-
-
 
             foreach ($branch_office_ids as $branch_id) {
                 $sql_branch = "
-                    INSERT INTO `branch_offices_user`(
-                        `branch_office_id`,
-                        `user_id`,
-                        `create_at`,
-                        `update_at`
+                    INSERT INTO branch_offices_user(
+                        branch_office_id, user_id, create_at, update_at
                     ) VALUES (
-                        '$branch_id',
-                        '$user_id',
-                        NOW(),
-                        NOW()
+                        '$branch_id', '$user_id', NOW(), NOW()
                     )
                 ";
                 ejecutarConsulta($sql_branch);
             }
+
+            return ["status" => "success", "message" => "Usuario actualizado correctamente", "id" => $user_id];
+
         } else {
+            // Crear usuario nuevo
             $sql = "
-                INSERT INTO `users`(
-                `user_type_id`,
-                `name`,
-                `email`,
-                `username`,
-                `email_verified_at`,
-                `password`,
-                `two_factor_secret`,
-                `two_factor_recovery_codes`,
-                `two_factor_confirmed_at`,
-                `remember_token`,
-                `current_team_id`,
-                `profile_photo_path`,
-                `created_at`,
-                `updated_at`
+                INSERT INTO users(
+                    user_type_id, name, email, username,
+                    email_verified_at, password,
+                    created_at, updated_at
                 ) VALUES (
                     '$user_type_id',
                     '$name',
@@ -79,39 +187,29 @@ class User
                     '$username',
                     NULL,
                     '$hashed_password',
-                    NULL,
-                    NULL,
-                    NULL,
-                    NULL,
-                    NULL,
-                    NULL,
                     NOW(),
                     NOW()
                 )
             ";
             ejecutarConsulta($sql);
-            
+
             $new_user_id = mysqli_insert_id($conexion);
 
             foreach ($branch_office_ids as $branch_id) {
                 $sql_branch = "
-                    INSERT INTO `branch_offices_user`(
-                        `branch_office_id`,
-                        `user_id`,
-                        `create_at`,
-                        `update_at`
+                    INSERT INTO branch_offices_user(
+                        branch_office_id, user_id, create_at, update_at
                     ) VALUES (
-                        '$branch_id',
-                        '$new_user_id',
-                        NOW(),
-                        NOW()
+                        '$branch_id', '$new_user_id', NOW(), NOW()
                     )
                 ";
                 ejecutarConsulta($sql_branch);
             }
+
+            return ["status" => "success", "message" => "Usuario creado correctamente", "id" => $new_user_id];
         }
-        return $new_user_id ?? $user_id;
     }
+
 
     public function index()
     {
