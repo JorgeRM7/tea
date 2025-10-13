@@ -116,7 +116,6 @@ class Ticket
         return ejecutarConsulta($sql);
     }
 
-
     public function routes($data) {
         $hour  = date("H:i:s"); 
         $today = date("Y-m-d");
@@ -160,7 +159,7 @@ class Ticket
         return ejecutarConsulta($sql);
     }
     public function details( $data ){
-        $route_schedule_id = $data['route_schedule_id'];
+        $route_schedule_id = $data['route_schedule_id'] ?? 0;
         $sql = "SELECT 
                     routes.id AS route_id,
                     routes_schedule.id AS route_schedule_id,
@@ -199,6 +198,13 @@ class Ticket
 
         $sql .= " ORDER BY tickets.date DESC";
 
+        return ejecutarConsultaSimpleFila($sql);
+    }
+
+    public function tickets_today (){
+        $today    = date("Y-m-d");
+        $user_id = $_SESSION['user_id'];
+        $sql = "SELECT COUNT( id ) AS tickets_today FROM tickets WHERE date ='$today' AND user_id ='$user_id'";
         return ejecutarConsultaSimpleFila($sql);
     }
 

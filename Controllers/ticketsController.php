@@ -107,6 +107,11 @@ switch ($_GET["op"]) {
         echo json_encode($data);
     break;
 
+    case 'tickets-today':
+        $rspta = $Ticket->tickets_today();
+        echo json_encode($rspta);
+    break;
+
     case 'routes':
         $rspta = $Ticket->routes($_POST);
         $data = [];

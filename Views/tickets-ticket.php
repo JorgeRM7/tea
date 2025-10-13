@@ -275,6 +275,7 @@
         routes();
         let branch_office_id = document.getElementById('branch_office_id_selected').value;
         $("#branch_office_id").val(branch_office_id);
+        tickets_today()
     });
    
     const store = () => {
@@ -422,6 +423,33 @@
             }
         });
     };
+
+    const tickets_today = () => {  
+        $.ajax({
+            url: "../Controllers/ticketsController.php?op=tickets-today",
+            type: "POST",
+            headers: {
+                "Authorization": "Bearer " + token
+            },
+            dataType: "json",
+            success: function (response) {
+                let data = response;
+                $("#kpiCount").text(data?.tickets_today ?? 0);
+            },
+            error: function (xhr, status, error) {
+                console.error("Error en la solicitud:", error);
+                Swal.fire({
+                    icon: "error",
+                    title: "Error",
+                    text: "Hubo un problema al procesar los datos.",
+                    confirmButtonColor: "#f07d42"
+                });
+            }
+        });
+    };
+
+
+    setInterval(tickets_today, 60000);
 
     const routes = () => {  
         let search_date     = $("#search_date").val();
