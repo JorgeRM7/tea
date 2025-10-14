@@ -100,7 +100,7 @@
                                         <div class="card-body">
 
                                             <div class="row g-3 mb-3">
-                                                <div class="col-md-7">
+                                                <div class="col-md-4">
                                                     <label class="form-label section-title">Ruta</label>
                                                     <select id="search_route" name="search_route" class="form-select form-select-lg">
                                                         <?php 
@@ -114,10 +114,13 @@
                                                     </select>
                                                     <div id="routeRules" class="rule-note mt-1"></div>
                                                 </div>
-                                                <div class="col-md-5">
+                                                <div class="col-md-4">
+                                                    <label class="form-label section-title">Destino</label>
+                                                    <select id="routes_stop_id" name="routes_stop_id" class="form-select form-select-lg"></select>
+                                                </div>
+                                                <div class="col-md-4">
                                                     <label class="form-label section-title">Fecha</label>
                                                     <input id="search_date" name="search_name" type="date" class="form-control" value="<?php echo date('Y-m-d'); ?>"/>
-                                                    <div class="rule-note mt-1">Máximo 30 días a futuro. No se venden viajes pasados.</div>
                                                 </div>
                                             </div>
                                             <h6 class="mb-2">Horarios disponibles</h6>
@@ -199,8 +202,16 @@
                                             <i class="bi bi-ticket-perforated"></i> Vista previa
                                         </div>
                                         <div class="card-body">
-                                            <div class="small text-muted">Ruta</div>
-                                            <div class="fs-6" id="pvRoute">—</div>
+                                            <div class="row mt-2">
+                                                <div class="col-6">
+                                                    <small>Origen</small>
+                                                    <div id="pvOrigin">—</div>
+                                                </div>
+                                                <div class="col-6">
+                                                    <small>Destino</small>
+                                                    <div id="pvDestination">—</div>
+                                                </div>
+                                            </div>
                                             <div class="row mt-2">
                                                 <div class="col-6">
                                                     <small>Fecha</small>
@@ -264,18 +275,24 @@
         menuToggle.classList.add('open');
         $("#search_route").select2({ width:"100%"});
         $("#search_schedule").select2({ width:"100%"});
+        $("#routes_stop_id").select2({ width:"100%"});
 
         $("#search_date, #search_schedule, #search_route").on("change keyup", function() {
             routes();
+        });
+        
+        $("#search_route").on("change", function() {
+            show_subpaths();
         });
 
         $("#quantity, #amount_received").on("change keyup", function() {
             total();
         });
-        routes();
         let branch_office_id = document.getElementById('branch_office_id_selected').value;
         $("#branch_office_id").val(branch_office_id);
-        tickets_today()
+        routes();
+        tickets_today();
+        show_subpaths()
     });
    
     const store = () => {
@@ -313,11 +330,11 @@
                         title: 'Éxito',
                         text: 'Registro creado exitosamente.',
                     });
-
                     let tickets_id = response.ids;
                     console.log("Tickets:", tickets_id);
                     let url = `../Pdf/ticket.php?tickets_id=${tickets_id.join(",")}`;
                     console.log("URL PDF:", url);
+
 
                     var iframe = document.createElement('iframe');
                     iframe.className = 'pdfIframe';
@@ -398,19 +415,30 @@
         });
     };
 
-    const show = ( route_id ) => {
+    const show_subpaths = () => { 
+        let route_id = $("#search_route").val(); 
         $.ajax({
-            url: "../Controllers/adminRoutesSchedulesController.php?op=show-route",
+            url: "../Controllers/ticketsController.php?op=show-subpaths",
             type: "POST",
             headers: {
                 "Authorization": "Bearer " + token
             },
-            dataType: "json",
             data: { route_id: route_id },
+            dataType: "json",
             success: function (response) {
                 let data = response;
-                
-       
+                console.log(data)
+                let $select = $("#routes_stop_id");
+                $select.empty();
+                $select.append('<option value="">Selecciona destino...</option>');
+                data.forEach(item => {
+                    $select.append(
+                        `<option value="${item.routes_stop}">
+                            ${item.destination}
+                        </option>`
+                    );
+                });
+
             },
             error: function (xhr, status, error) {
                 console.error("Error en la solicitud:", error);
@@ -447,9 +475,6 @@
             }
         });
     };
-
-
-    setInterval(tickets_today, 60000);
 
     const routes = () => {  
         let search_date     = $("#search_date").val();
@@ -514,6 +539,8 @@
     };
 
     const selected_route = ( route_schedule_id ) => {
+        let route_stop_id = $("#routes_stop_id").val(); 
+        
         $(".time-card").removeClass("selected");
         $(`.time-card[data-id="${route_schedule_id}"]`).addClass("selected");
         $.ajax({
@@ -525,6 +552,7 @@
             dataType: "json",
             data: { 
                 route_schedule_id: route_schedule_id,
+                route_stop_id : route_stop_id
             },
             success: function (response) {
                 let data = response;
@@ -532,10 +560,11 @@
                 let route = `${data?.origin} ➝ ${data?.destination}`;
                 $("#pvDate").text(data?.date);
                 $("#pvDriver").text(data?.name);
-                $("#pvRoute").text(route);
+                $("#pvOrigin").text(data?.origin);
+                $("#pvDestination").text(data?.destination);
                 $("#pvTime").text(data?.leaving_time);
                 $("#pvUnit").text(data?.vehicle_id);
-                $("#price").val(data?.cost);
+                $("#price").val(data?.price);
                 $("#route_id").val(data?.route_id);
                 $("#route_schedule_id").val(data?.route_schedule_id);
                 $("#vehicle_id").val(data?.vehicle_id);
@@ -591,4 +620,11 @@
         $("#pvTotal").text(0);     
     }
     
+    document.addEventListener("keydown", function(e) {
+        if (e.key === "Enter") {
+            store();
+        }
+    });
+
+    setInterval(tickets_today, 60000);
 </script>
