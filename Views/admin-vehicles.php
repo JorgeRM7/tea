@@ -38,6 +38,7 @@
                                                         <tr>
                                                             <th>Acciones</th>
                                                             <th>#</th>
+                                                            <th>Unidad</th>
                                                             <th>Placa</th>
                                                             <th>Marca</th>
                                                             <th>Modelo</th>
@@ -76,6 +77,10 @@
                                                 <label for="nameWithTitle" class="form-label">Placa</label>
                                                 <input type="text" id="plate_number" name="plate_number" class="form-control" placeholder="Ingresa..." required/>
                                                 <input type="hidden" id="vehicle_id" name="vehicle_id" class="form-control"/>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label for="nameWithTitle" class="form-label">Unidad</label>
+                                                <input type="number" id="unidad_number" name="unidad_number" class="form-control" placeholder="Ingresa..." required/>
                                             </div>
                                             <div class="col-md-6">
                                                 <label for="nameWithTitle" class="form-label">Marca</label>
@@ -274,6 +279,7 @@
             data: { vehicle_id: vehicle_id },
             success: function (response) {
                 let data = response;
+                $("#unidad_number").val(data?.unidad_number);
                 $("#brand").val(data?.brand);
                 $("#vehicle_id").val(data?.id);
                 $("#color").val(data?.color);
@@ -394,6 +400,7 @@
 
     const clean = () => {   
         $("#brand").val('');
+        $("#unidad_number").val('');
         $("#vehicle_id").val('');
         $("#color").val('');
         $("#model").val('');

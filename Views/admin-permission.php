@@ -108,7 +108,9 @@
                         <div class="modal-dialog modal-dialog-centered" role="document">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h5 class="modal-title" id="exampleModalLabel">Editar</h5>
+                                    <h5 class="modal-title" id="exampleModalLabel">
+                                        <span id="roleName" class="text-primary"></span>                                    
+                                    </h5>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
                                 <div class="modal-body">
@@ -238,7 +240,7 @@
                                 <div class="d-flex justify-content-between align-items-end mt-1">
                                     <div class="role-heading">
                                         <h4 class="mb-1 text-primary">${item.name}</h4>
-                                        <a href="javascript:;" onclick="show_permissions(${item.id})" class="text-success">
+                                        <a href="javascript:;" onclick="show_permissions(${item.id}, '${item.name}')" class="text-success">
                                             <i class="ti ti-edit"></i> Editar
                                         </a>
                                     </div>
@@ -264,88 +266,139 @@
         });
     };
 
-    const show_permissions = ( permission_id ) => {
-        $('#modal_edit').modal('show');
-        $.ajax({
-            url: "../Controllers/permissionsController.php?op=permissions",
-            type: "POST",
-            dataType: "json",
-            headers: {
-                "Authorization": "Bearer " + token
-            },
-            data: { permission_id: permission_id },
-            success: function (response) {
-                let data = response;
-                let container = $("#permissions");
-                container.empty();
+const show_permissions = ( permission_id, roleName ) => {
+    $('#modal_edit').modal('show');
+    $('#roleName').text(roleName);
+    
+    $.ajax({
+        url: "../Controllers/permissionsController.php?op=permissions",
+        type: "POST",
+        dataType: "json",
+        headers: {
+            "Authorization": "Bearer " + token
+        },
+        data: { permission_id: permission_id },
+        success: function (response) {
+            let data = response;
+            let container = $("#permissions");
+            container.empty();
 
-                if (!data || data.length === 0) {
-                    container.html(`
+            if (!data || data.length === 0) {
+                container.html(`
+                    <div class="alert alert-warning text-center" role="alert">
+                        <i class="ti ti-alert-triangle"></i> 
+                        No tienes permisos asignados para esta vista.
+                    </div>
+                `);
+                return;
+            }
+
+            data.forEach(item => {
+                let card = `
+                <div class="col-12 mb-3" id="perm_${item.permission_id}">
+                    <div class="card shadow-sm border">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <h5 class="card-title text-primary">
+                                    <i class="ti ti-lock"></i> ${item.view}
+                                </h5>
+                                <button type="button" class="btn btn-sm btn-outline-danger" 
+                                        onclick="deleteSinglePermission(${item.permission_id})">
+                                    <i class="ti ti-trash"></i> Eliminar
+                                </button>
+                            </div>
+                            <div class="row mt-2">
+                                <div class="col-md-3">
+                                    <input type="checkbox" class="form-check-input" 
+                                        id="view_${item.permission_id}" 
+                                        name="permission_view[]" 
+                                        ${item.permission_view == "1" ? "checked" : ""}>
+                                    <label class="form-check-label">Ver</label>
+                                </div>
+                                <div class="col-md-3">
+                                    <input type="checkbox" class="form-check-input" 
+                                        id="create_${item.permission_id}" 
+                                        name="permission_create[]" 
+                                        ${item.permission_create == "1" ? "checked" : ""}>
+                                    <label class="form-check-label">Crear</label>
+                                </div>
+                                <div class="col-md-3">
+                                    <input type="checkbox" class="form-check-input" 
+                                        id="update_${item.permission_id}" 
+                                        name="permission_update[]" 
+                                        ${item.permission_update == "1" ? "checked" : ""}>
+                                    <label class="form-check-label">Editar</label>
+                                </div>
+                                <div class="col-md-3">
+                                    <input type="checkbox" class="form-check-input" 
+                                        id="delete_${item.permission_id}" 
+                                        name="permission_delete[]" 
+                                        ${item.permission_delete == "1" ? "checked" : ""}>
+                                    <label class="form-check-label">Eliminar</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>`;
+                container.append(card);
+            });
+        },
+        error: function (xhr, status, error) {
+            console.error("Error en la solicitud:", error);
+            Swal.fire({
+                icon: "error",
+                title: "Error",
+                text: "Hubo un problema al procesar los datos.",
+                confirmButtonColor: "#f07d42"
+            });
+        }
+    });
+}
+
+function deleteSinglePermission(permission_id) {
+    Swal.fire({
+        title: "¿Eliminar esta vista?",
+        text: "Se quitarán los permisos de esta vista para el rol.",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Sí, eliminar"
+    }).then(result => {
+        if (!result.isConfirmed) return;
+
+        $.ajax({
+            url: "../Controllers/permissionsController.php?op=deleteSingle",
+            type: "POST",
+            headers: { "Authorization": "Bearer " + token },
+            data: { permission_id },
+            success: function () {
+                // Quitar la card del DOM
+                $("#perm_" + permission_id).remove();
+
+                // Si ya no hay permisos, mostrar aviso
+                if ($("#permissions .card").length === 0) {
+                    $("#permissions").html(`
                         <div class="alert alert-warning text-center" role="alert">
                             <i class="ti ti-alert-triangle"></i> 
                             No tienes permisos asignados para esta vista.
                         </div>
                     `);
-                    return;
                 }
 
-                data.forEach(item => {
-                    let card = `
-                    <div class="col-12 mb-3">
-                        <div class="card shadow-sm border">
-                            <div class="card-body">
-                                <h5 class="card-title text-primary">
-                                    <i class="ti ti-lock"></i> ${item.view}
-                                </h5>
-                                <div class="row">
-                                    <div class="col-md-3">
-                                        <input type="checkbox" class="form-check-input" 
-                                            id="view_${item.permission_id}" 
-                                            name="permission_view[]" 
-                                            ${item.permission_view == "1" ? "checked" : ""}>
-                                        <label class="form-check-label" for="view_${item.permission_id}">Ver</label>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <input type="checkbox" class="form-check-input" 
-                                            id="create_${item.permission_id}" 
-                                            name="permission_create[]" 
-                                            ${item.permission_create == "1" ? "checked" : ""}>
-                                        <label class="form-check-label" for="create_${item.permission_id}">Crear</label>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <input type="checkbox" class="form-check-input" 
-                                            id="update_${item.permission_id}" 
-                                            name="permission_update[]" 
-                                            ${item.permission_update == "1" ? "checked" : ""}>
-                                        <label class="form-check-label" for="update_${item.permission_id}">Editar</label>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <input type="checkbox" class="form-check-input" 
-                                            id="delete_${item.permission_id}" 
-                                            name="permission_delete[]" 
-                                            ${item.permission_delete == "1" ? "checked" : ""}>
-                                        <label class="form-check-label" for="delete_${item.permission_id}">Eliminar</label>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>`;
-                    container.append(card);
-                });
-                
-                
-            },
-            error: function (xhr, status, error) {
-                console.error("Error en la solicitud:", error);
                 Swal.fire({
-                    icon: "error",
-                    title: "Error",
-                    text: "Hubo un problema al procesar los datos.",
-                    confirmButtonColor: "#f07d42"
+                    toast: true, position: "top-end", timer: 2500,
+                    showConfirmButton: false, icon: "success",
+                    title: "Vista eliminada"
                 });
+            },
+            error: function () {
+                Swal.fire({ icon: "error", title: "Error", text: "No se pudo eliminar la vista." });
             }
         });
-    }
+    });
+}
+
 
     const update = () => {
         let permisos = [];

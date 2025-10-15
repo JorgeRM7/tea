@@ -124,8 +124,54 @@
         clean();
     };
 
+    // const store = () => {
+    //     const formData = new FormData(document.getElementById("formulario"));
+    //     $.ajax({
+    //         url: "../Controllers/adminEmployeesController.php?op=store",
+    //         type: "POST",
+    //         headers: {
+    //             "Authorization": "Bearer " + token
+    //         },
+    //         data: formData,
+    //         contentType: false,
+    //         processData: false,
+
+    //         success: function(response) {
+                
+    //             Swal.fire({
+    //                 toast: true,
+    //                 position: 'top-end',
+    //                 showConfirmButton: false,
+    //                 timer: 3000,
+    //                 timerProgressBar: true,
+    //                 icon: 'success',
+    //                 title: 'Éxito',
+    //                 text: 'Registro creado exitosamente.',
+    //             });
+    //             $('#modal_create').modal('hide');
+    //             clean();
+    //             index();
+    //         },
+    //         error: function(error) {
+    //             Swal.fire({
+    //                 title: "Error",
+    //                 text: "No se pudo guardar el registro.",
+    //                 icon: "error"
+    //             });
+    //         }
+    //     });
+    // };
+
     const store = () => {
-        const formData = new FormData(document.getElementById("formulario"));
+        const form = document.getElementById("formulario");
+
+        // Forzar validación nativa de HTML5
+        if (!form.checkValidity()) {
+            form.reportValidity(); // Muestra los mensajes del navegador
+            return;
+        }
+
+        const formData = new FormData(form);
         $.ajax({
             url: "../Controllers/adminEmployeesController.php?op=store",
             type: "POST",
@@ -135,9 +181,7 @@
             data: formData,
             contentType: false,
             processData: false,
-
             success: function(response) {
-                
                 Swal.fire({
                     toast: true,
                     position: 'top-end',
@@ -161,6 +205,8 @@
             }
         });
     };
+
+
 
     const index = () => {
         if ($.fn.DataTable.isDataTable('#tbllistado')) {

@@ -71,6 +71,22 @@ switch ($_GET["op"]) {
         $rspta = $Permission->deleteItem( $_POST );
         echo $rspta;
     break;
+
+    case 'deleteSingle':
+        $permission_id = $_POST['permission_id'] ?? null;
+        if (!$permission_id) {
+            echo json_encode(['success' => false, 'msg' => 'Falta permission_id']);
+            exit;
+        }
+
+        $rspta = $Permission->deleteSingle($permission_id);
+
+        echo json_encode(['success' => $rspta ? true : false]);
+    break;
+
+
+
+
     
 }
 ?>

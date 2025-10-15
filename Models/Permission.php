@@ -95,7 +95,13 @@ class Permission
         return ejecutarConsulta($sql);
     }
    
-    
+    public function deleteSingle($permission_id){
+    $sql = "UPDATE `permissions` 
+            SET `deleted_at` = NOW() 
+            WHERE `id` = '$permission_id'";
+    return ejecutarConsulta($sql);
+}
+
 
 
 }

@@ -9,6 +9,7 @@ class Vehicle {
     
     public function store( $data ) {
         $vehicle_id = $data["vehicle_id"];
+        $unidad_number = $data["unidad_number"];
         $plate_number = $data["plate_number"];
         $brand = $data["brand"];
         $model = $data["model"];
@@ -24,6 +25,7 @@ class Vehicle {
         if( $vehicle_id ){
             $sql="
                 UPDATE `vehicles` SET 
+                    `unidad_number`  = '$unidad_number',
                     `plate_number`   = '$plate_number',
                     `brand`          = '$brand',
                     `model`          = '$model',
@@ -37,32 +39,36 @@ class Vehicle {
             ";
         }else{
             $sql ="
-                INSERT INTO 
-                `vehicles`( 
-                    `plate_number`,
-                    `brand`,
-                    `model`,
-                    `year`,
-                    `color`,
-                    `serial_number`,
-                    `type`,
-                    `status`,
-                    `created_at`,
-                    `updated_at`
-                ) VALUES (
-                    '$plate_number',
-                    '$brand',
-                    '$model',
-                    '$year',
-                    '$color',
-                    '$serial_number',
-                    '$type',
-                    'active',
-                    '$capacity'
-                    NOW(),
-                    NOW()
-                )
-            ";
+                    INSERT INTO 
+                    `vehicles`( 
+                        `unidad_number`,
+                        `plate_number`,
+                        `brand`,
+                        `model`,
+                        `year`,
+                        `color`,
+                        `serial_number`,
+                        `type`,
+                        `capacity`,
+                        `status`,
+                        `created_at`,
+                        `updated_at`
+                    ) VALUES (
+                        '$unidad_number',
+                        '$plate_number',
+                        '$brand',
+                        '$model',
+                        '$year',
+                        '$color',
+                        '$serial_number',
+                        '$type',
+                        '$capacity',
+                        'active',
+                        NOW(),
+                        NOW()
+                    )
+                ";
+
         }
         return ejecutarConsulta($sql);
     }

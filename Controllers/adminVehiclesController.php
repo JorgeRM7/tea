@@ -57,6 +57,7 @@ switch ($_GET["op"]) {
             $data[]=array(
                 $boton_editar.' '.$boton_borrar.' '.$boton_asignar,
                 $reg->id,
+                $reg->unidad_number,
                 $reg->plate_number,
                 $reg->brand,
                 $reg->model,
