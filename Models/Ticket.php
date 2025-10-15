@@ -185,7 +185,7 @@ class Ticket
                 INNER JOIN routes_stop ON routes_stop.route_id = routes.id
                 LEFT JOIN vehicles ON vehicles.id = routes_schedule.vehicle_id
                 LEFT JOIN employees ON employees.id = vehicles.employee_id
-                WHERE routes_schedule.id='$route_schedule_id' AND routes_stop.id ='1'";
+                WHERE routes_schedule.id='$route_schedule_id' AND routes_stop.id ='$route_stop_id'";
                 // echo $sql;
         return ejecutarConsultaSimpleFila($sql);
     }
@@ -213,6 +213,12 @@ class Ticket
         $user_id = $_SESSION['user_id'];
         $sql = "SELECT COUNT( id ) AS tickets_today FROM tickets WHERE date ='$today' AND user_id ='$user_id'";
         return ejecutarConsultaSimpleFila($sql);
+    }
+
+    public function discounts ( $data ){
+        $date = $data['search_date'];
+        $sql = "SELECT * FROM routes_discounts WHERE start_date<='$date'AND end_date>='$date' AND status ='active' AND deleted_at is null";
+        return ejecutarConsulta($sql);
     }
 
     public function deleteItem ( $data ){

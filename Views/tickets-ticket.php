@@ -1,5 +1,5 @@
 <!doctype html>
-<?php ;$title = "Vehiculos"; ?>
+<?php ;$title = "Taqilla"; ?>
 <html lang="es" class="light-style layout-navbar-fixed layout-menu-fixed layout-compact" dir="ltr"
     data-theme="theme-default" data-assets-path="../assets/" data-template="vertical-menu-template">
 <!--HEADER-->
@@ -16,7 +16,7 @@
     .time-card.disabled{opacity:.55;pointer-events:none}
     .time-card.active{border-color:var(--verde);background:#ecfdf3}
     .badge-seats{border:1px solid #e5e7eb}
-    .badge-green{background:#e8fff3;color:#065f46;border-color:#a7f3d0}
+    .badge-green{color:#065f46;border-color:#a7f3d0}
     .badge-yellow{background:#fff7ed;color:#92400e;border-color:#fed7aa}
     .badge-red{background:#fee2e2;color:#991b1b;border-color:#fecaca}
     .stub{border:1px dashed #cbd5e1;border-radius:12px;padding:.75rem;color:#64748b}
@@ -39,7 +39,6 @@
     }
     .time-card:hover {
         border-color: #28c76f;
-        background: #f6fff9;
         transform: translateY(-4px);
         box-shadow: 0 4px 12px rgba(0,0,0,0.12);
     }
@@ -70,7 +69,6 @@
 
     .time-card.selected {
         border-color: #28c76f;
-        background: #e8fff3;
         box-shadow: 0 0 8px rgba(40,199,111,0.4);
     }
 
@@ -116,11 +114,11 @@
                                                 </div>
                                                 <div class="col-md-4">
                                                     <label class="form-label section-title">Destino</label>
-                                                    <select id="routes_stop_id" name="routes_stop_id" class="form-select form-select-lg"></select>
+                                                    <select id="routes_stop_id" name="routes_stop_id" class="form-select form-select-lg" onchange="clean()"></select>
                                                 </div>
                                                 <div class="col-md-4">
                                                     <label class="form-label section-title">Fecha</label>
-                                                    <input id="search_date" name="search_name" type="date" class="form-control" value="<?php echo date('Y-m-d'); ?>"/>
+                                                    <input id="search_date" name="search_date" type="date" class="form-control" value="<?php echo date('Y-m-d'); ?>"/>
                                                 </div>
                                             </div>
                                             <h6 class="mb-2">Horarios disponibles</h6>
@@ -142,14 +140,8 @@
                                                     <input id="price" name="price" type="number" class="form-control" readonly>
                                                 </div>
                                                 <div class="col-md-8">
-                                                    <label class="form-label section-title">Descuentos</label>
-                                                    <div class="d-flex flex-wrap gap-2">
-                                                    <button class="btn btn-outline-primary btn-sm" id="dStudent" data-disc="0.2"><i class="bi bi-mortarboard"></i> Estudiante -20%</button>
-                                                    <button class="btn btn-outline-primary btn-sm" id="dSenior" data-disc="0.3"><i class="bi bi-person-vcard"></i> 3ª edad -30%</button>
-                                                    <button class="btn btn-outline-warning btn-sm" id="dNone"><i class="bi bi-slash-circle"></i> Sin descuento</button>
-                                                    <button class="btn btn-outline-danger btn-sm" id="dCourtesy"><i class="bi bi-star"></i> Cortesía</button>
-                                                    </div>
-                                                    <div class="form-text">Los descuentos se registran en el boleto. Cortesía requiere autorización.</div>
+                                                    <h6>Descuentos</h6>
+                                                    <div class="row" id="discounts"></div>
                                                 </div>
                                             </div>
                                             <div class="row g-3 align-items-end">
@@ -280,7 +272,11 @@
         $("#search_date, #search_schedule, #search_route").on("change keyup", function() {
             routes();
         });
-        
+
+        $("#search_date").on("change", function() {
+            discounts();
+        });
+
         $("#search_route").on("change", function() {
             show_subpaths();
         });
@@ -292,7 +288,8 @@
         $("#branch_office_id").val(branch_office_id);
         routes();
         tickets_today();
-        show_subpaths()
+        show_subpaths();
+        discounts();
     });
    
     const store = () => {
@@ -331,11 +328,7 @@
                         text: 'Registro creado exitosamente.',
                     });
                     let tickets_id = response.ids;
-                    console.log("Tickets:", tickets_id);
                     let url = `../Pdf/ticket.php?tickets_id=${tickets_id.join(",")}`;
-                    console.log("URL PDF:", url);
-
-
                     var iframe = document.createElement('iframe');
                     iframe.className = 'pdfIframe';
                     document.body.appendChild(iframe);
@@ -377,7 +370,6 @@
             dataType: 'json',
             data: { route_id: route_id, date: date },
             success: function(schedules) {
-                console.log(schedules);
 
                 let container = $("#times");
                 container.empty();
@@ -401,10 +393,7 @@
                 $(".schedule-badge").off("click").on("click", function() {
                     $(".schedule-badge").removeClass("bg-success").addClass("bg-primary");
                     $(this).removeClass("bg-primary").addClass("bg-success");
-
                     let selectedId = $(this).data("id");
-                    console.log("Seleccionado:", selectedId);
-
                     $("#route_schedule_id").val(selectedId);
                 });
                 
@@ -427,13 +416,12 @@
             dataType: "json",
             success: function (response) {
                 let data = response;
-                console.log(data)
                 let $select = $("#routes_stop_id");
                 $select.empty();
-                $select.append('<option value="">Selecciona destino...</option>');
+                // $select.append('<option value="">Selecciona destino...</option>');
                 data.forEach(item => {
                     $select.append(
-                        `<option value="${item.routes_stop}">
+                        `<option value="${item.routes_stop_id}">
                             ${item.destination}
                         </option>`
                     );
@@ -495,7 +483,6 @@
             },
             success: function (response) {
                 let data = response;
-                console.log(data);
                 let content = ``;
 
                 if (data.length === 0) {
@@ -556,7 +543,6 @@
             },
             success: function (response) {
                 let data = response;
-                console.log(data)
                 let route = `${data?.origin} ➝ ${data?.destination}`;
                 $("#pvDate").text(data?.date);
                 $("#pvDriver").text(data?.name);
@@ -620,6 +606,63 @@
         $("#pvTotal").text(0);     
     }
     
+    const discounts = () => {
+        let search_date = $("#search_date").val(); 
+        $.ajax({
+            url: "../Controllers/ticketsController.php?op=discounts",
+            type: "POST",
+            headers: {
+                "Authorization": "Bearer " + token
+            },
+            data: { search_date: search_date },
+            dataType: "json",
+            success: function (response) {
+                let data = response;
+                $("#discounts").empty();
+                if (data.length === 0) {
+                    $("#discounts").html("<span class='text-muted'>No hay descuentos disponibles</span>");
+                    return;
+                }
+
+                data.forEach(item => {
+                    let content = `
+                    <div class="col-md-6 col-sm-6">
+                        <label class="switch switch-primary">
+                            <input type="radio" 
+                                class="switch-input discount-radio" 
+                                name="discount" 
+                                id="discount_${item.id}" 
+                                value="${item.id}"
+                                onchange="discount_selected()"/>
+                            <span class="switch-toggle-slider">
+                                <span class="switch-on"><i class="ti ti-check"></i></span>
+                                <span class="switch-off"><i class="ti ti-x"></i></span>
+                            </span>
+                            <span class="switch-label">${item?.name}</span>
+                        </label>
+                    </div>`;
+                    $("#discounts").append(content);
+                });
+
+            },
+            error: function (xhr, status, error) {
+                console.error("Error en la solicitud:", error);
+                Swal.fire({
+                    icon: "error",
+                    title: "Error",
+                    text: "Hubo un problema al procesar los datos.",
+                    confirmButtonColor: "#f07d42"
+                });
+            }
+        });
+        
+    }
+
+    const discount_selected = () => {
+        let activo = $("input.discount-radio:checked").val();
+    }
+    
+
     document.addEventListener("keydown", function(e) {
         if (e.key === "Enter") {
             store();

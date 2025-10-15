@@ -21,13 +21,14 @@ foreach ($tickets_ids as $ticket_id) {
             tickets.price,
             routes_schedule.date,
             routes_schedule.leaving_time,
-            routes.origin,
-            routes.destination,
+            routes_stop.origin,
+            routes_stop.destination,
             CONCAT(employees.name,' ', employees.paternal_surname, ' ', employees.maternal_surname) AS employee,
             vehicles.id AS vehicle_id
         FROM tickets
         LEFT JOIN routes_schedule ON tickets.route_schedule_id = routes_schedule.id
         LEFT JOIN routes ON routes.id = tickets.route_id
+        INNER JOIN routes_stop ON routes_stop.id = tickets.route_stop_id
         LEFT JOIN employees ON employees.id = tickets.employee_id
         LEFT JOIN vehicles ON vehicles.id = tickets.vehicle_id
         WHERE tickets.id = '$ticket_id'

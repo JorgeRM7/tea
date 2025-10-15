@@ -1,6 +1,6 @@
 <?php 
-// require_once "../Middlewares/authMiddleware.php";
-// $userData = verificarToken();
+require_once "../Middlewares/authMiddleware.php";
+$userData = verificarToken();
 require_once "../Models/Ticket.php";
 $Ticket = new Ticket();
 
@@ -109,6 +109,21 @@ switch ($_GET["op"]) {
     case 'tickets-today':
         $rspta = $Ticket->tickets_today();
         echo json_encode($rspta);
+    break;
+
+    case 'discounts':
+        $rspta = $Ticket->discounts($_POST);
+        $data = [];
+        while ($reg = $rspta->fetch_assoc()) {
+            $data[] = [
+                "id" => $reg['id'],
+                "name" => $reg['name'],
+                "percentage" => $reg['percentage'],
+
+            ];
+        }
+
+        echo json_encode($data);
     break;
 
     case 'show-subpaths':

@@ -187,7 +187,7 @@
             "bDestroy": true,
             "iDisplayLength": 10,
             "lengthMenu": [5, 10, 25, 50, 100],
-            // "order": [7, "asc"],
+            "order": [1, "asc"],
             "language": {
                 "url": "//cdn.datatables.net/plug-ins/1.10.24/i18n/Spanish.json"
             },
