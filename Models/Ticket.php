@@ -47,6 +47,7 @@ class Ticket
         $quantity = $data["quantity"] ?? null;
         $user_id = $_SESSION['user_id'];
         $branch_office_id = $data['branch_office_id'];
+        $routes_stop_id = $data['routes_stop_id'];
         $tickets_ids = [];
         $date = date("Y-m-d");
         $hour  = date("H:i:s");  
@@ -60,6 +61,7 @@ class Ticket
                     `vehicle_id`,
                     `branch_office_id`,
                     `user_id`,
+                    `route_stop_id`,
                     `quantity`, 
                     `payment_method`,
                     `price`,
@@ -75,6 +77,7 @@ class Ticket
                     '$vehicle_id',
                     '$branch_office_id',
                     '$user_id',
+                    '$routes_stop_id',
                     '1',
                     'EFECTIVO',
                     '$price',
@@ -160,6 +163,8 @@ class Ticket
     }
     public function details( $data ){
         $route_schedule_id = $data['route_schedule_id'] ?? 0;
+        $route_stop_id = $data['route_stop_id'] ?? 0;
+        
         $sql = "SELECT 
                     routes.id AS route_id,
                     routes_schedule.id AS route_schedule_id,
@@ -168,18 +173,20 @@ class Ticket
                     employees.id AS employee_id,
                     routes_schedule.leaving_time,
                     routes_schedule.date,
-                    routes.origin,
-                    routes.destination,
-                    routes.cost,
+                    routes_stop.origin,
+                    routes_stop.destination,
+                    routes_stop.price,
                     vehicles.type,
                     vehicles.model,
                     employees.name,
                     (SELECT COUNT(id) FROM tickets WHERE route_schedule_id ='$route_schedule_id' AND status ='VENDIDO') AS tickets_sale
                 FROM `routes_schedule`
                 LEFT JOIN routes ON routes.id = routes_schedule.route_id
+                INNER JOIN routes_stop ON routes_stop.route_id = routes.id
                 LEFT JOIN vehicles ON vehicles.id = routes_schedule.vehicle_id
                 LEFT JOIN employees ON employees.id = vehicles.employee_id
-                WHERE routes_schedule.id='$route_schedule_id'";
+                WHERE routes_schedule.id='$route_schedule_id' AND routes_stop.id ='1'";
+                // echo $sql;
         return ejecutarConsultaSimpleFila($sql);
     }
 
@@ -214,6 +221,12 @@ class Ticket
         return ejecutarConsulta($sql);
     }
 
+    public function show_subpaths ( $data ){
+        $route_id = $data['route_id'] ?? null;
+        $sql = "SELECT * FROM `routes_stop` WHERE route_id='$route_id'";
+        return ejecutarConsulta($sql);
+    }
+    
     
     
 
