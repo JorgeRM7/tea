@@ -92,15 +92,15 @@
                                             </div>
                                             <div class="col-md-6">
                                                 <label for="nameWithTitle" class="form-label">Año</label>
-                                                <input type="text" id="year" name="year" class="form-control" placeholder="Ingresa..." required/>
+                                                <input type="number" id="year" name="year" class="form-control" placeholder="Ingresa..." min="1900" max="2100" required/>
                                             </div>
                                             <div class="col-md-6">
                                                 <label for="nameWithTitle" class="form-label">Color</label>
-                                                <input type="text" id="color" name="color" class="form-control" placeholder="Ingresa..." required/>
+                                                <input type="text" id="color" name="color" class="form-control" placeholder="Ingresa..." />
                                             </div>
                                             <div class="col-md-6">
                                                 <label for="nameWithTitle" class="form-label">Numero de serie</label>
-                                                <input type="text" id="serial_number" name="serial_number" class="form-control" placeholder="Ingresa..." required/>
+                                                <input type="text" id="serial_number" name="serial_number" class="form-control" placeholder="Ingresa..." />
                                             </div>
                                             <div class="col-md-6">
                                                 <label for="nameWithTitle" class="form-label">Capacidad</label>
@@ -108,7 +108,7 @@
                                             </div>
                                             <div class="col-md-6">
                                                 <label for="nameWithTitle" class="form-label">Tipo</label>
-                                                <input type="text" id="type" name="type" class="form-control" placeholder="Ingresa..." required/>
+                                                <input type="text" id="type" name="type" class="form-control" placeholder="Ingresa..." />
                                             </div>
                                         </div>
                                     </form>
@@ -193,6 +193,13 @@
     };
 
     const store = () => {
+        const form = document.getElementById("formulario");
+        // Forzar validación nativa de HTML5
+        if (!form.checkValidity()) {
+            form.reportValidity(); // Muestra los mensajes del navegador
+            return;
+        }
+
         const formData = new FormData(document.getElementById("formulario"));
         $.ajax({
             url: "../Controllers/adminVehiclesController.php?op=store",

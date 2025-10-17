@@ -88,7 +88,7 @@
                                             </div>
                                             <div class="col-md-6">
                                                 <label for="nameWithTitle" class="form-label">Correo</label>
-                                                <input type="text" id="email" name="email" class="form-control" placeholder="Ingresa..." required/>
+                                                <input type="email" id="email" name="email" class="form-control" placeholder="Ingresa..." required/>
                                             </div>
                                             <div class="col-md-6">
                                                 <label for="nameWithTitle" class="form-label">Usuario</label>
@@ -192,6 +192,13 @@
     };
 
     const store = () => {
+        const form = document.getElementById("formulario");
+        // Forzar validación nativa de HTML5
+        if (!form.checkValidity()) {
+            form.reportValidity(); // Muestra los mensajes del navegador
+            return;
+        }
+
         if (!validateForm()) {
             return;
         }

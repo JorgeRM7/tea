@@ -82,7 +82,7 @@
                                             </div>
                                             <div class="col-md-6">
                                                 <label for="nameWithTitle" class="form-label">Icono</label>
-                                                <input type="text" id="icon" name="icon" class="form-control" placeholder="Ingresa..." required/>
+                                                <input type="text" id="icon" name="icon" class="form-control" placeholder="Ingresa..." />
                                             </div>
                                         </div>
                                     </form>
@@ -128,6 +128,13 @@
     };
 
     const store = () => {
+        const form = document.getElementById("formulario");
+        // Forzar validación nativa de HTML5
+        if (!form.checkValidity()) {
+            form.reportValidity(); // Muestra los mensajes del navegador
+            return;
+        }
+
         const formData = new FormData(document.getElementById("formulario"));
         $.ajax({
             url: "../Controllers/adminViewsController.php?op=store",

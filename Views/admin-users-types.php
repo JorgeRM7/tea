@@ -118,6 +118,13 @@
     };
 
     const store = () => {
+        const form = document.getElementById("formulario");
+        // Forzar validación nativa de HTML5
+        if (!form.checkValidity()) {
+            form.reportValidity(); // Muestra los mensajes del navegador
+            return;
+        }
+
         const formData = new FormData(document.getElementById("formulario"));
         $.ajax({
             url: "../Controllers/adminUsersTypesController.php?op=store",
