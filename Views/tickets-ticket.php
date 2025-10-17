@@ -141,7 +141,9 @@
                                                 </div>
                                                 <div class="col-md-8">
                                                     <h6>Descuentos</h6>
-                                                    <div class="row" id="discounts"></div>
+                                                    <div class="row" id="discounts">
+                                                        
+                                                    </div>
                                                 </div>
                                             </div>
                                             <div class="row g-3 align-items-end">
@@ -161,6 +163,7 @@
                                                     <input id="route_id" name="route_id" type="hidden" class="form-control" readonly>
                                                     <input id="vehicle_id" name="vehicle_id" type="hidden" class="form-control" readonly>
                                                     <input id="branch_office_id" name="branch_office_id" type="hidden" class="form-control" readonly>
+                                                    <input id="discount" name="discount" type="hidden" class="form-control" readonly>
                                                 </div>
                                             </div>
                                             <div class="row g-3 mt-2">
@@ -226,6 +229,9 @@
                                                 <div class="col-6">Cantidad<br>
                                                     <span id="pvQty">—</span>
                                                 </div>
+                                                <div class="col-6">Descuento<br>
+                                                    <span id="pvDiscount">—</span>
+                                                </div>
                                                 <div class="col-6">Total<br>
                                                     <span id="pvTotal">—</span>
                                                 </div>
@@ -282,7 +288,8 @@
         });
 
         $("#quantity, #amount_received").on("change keyup", function() {
-            total();
+            totales()
+;
         });
         let branch_office_id = document.getElementById('branch_office_id_selected').value;
         $("#branch_office_id").val(branch_office_id);
@@ -555,7 +562,8 @@
                 $("#route_schedule_id").val(data?.route_schedule_id);
                 $("#vehicle_id").val(data?.vehicle_id);
                 $("#employee_id").val(data?.employee_id);
-                total()
+                totales()
+
         
             },
             error: function (xhr, status, error) {
@@ -571,22 +579,31 @@
        
     }
 
-    const total = () => {
+    const totales = () => {
         let price = parseFloat($("#price").val()) || 0;
         let quantity = parseFloat($("#quantity").val()) || 0;
         let amount_received = parseFloat($("#amount_received").val()) || 0;
 
-        let total = price * quantity;
-        let change = amount_received - total;
+        let percentage = parseFloat($("input.discount-radio:checked").val()) || 0;
 
+        
+        let total = price * quantity;
+
+        let discountAmount = (total * percentage) / 100;
+        let totalWithDiscount = total - discountAmount;
+
+        let change = amount_received - totalWithDiscount;
         if (change < 0) change = 0;
 
         $("#pvQty").text(quantity);
-        $("#total").val(total);
-        $("#change_amount").val(change);
-        $("#pvTotal").text(total);
-        
+        $("#total").val(totalWithDiscount.toFixed(2));
+        $("#discount").val(discountAmount.toFixed(2));
+        $("#change_amount").val(change.toFixed(2));
+        $("#pvTotal").text(totalWithDiscount.toFixed(2));
+        $("#pvDiscount").text(discountAmount.toFixed(2));  
+         
     };
+
 
     const clean = () => {  
         routes(); 
@@ -623,7 +640,7 @@
                     $("#discounts").html("<span class='text-muted'>No hay descuentos disponibles</span>");
                     return;
                 }
-
+                console.log(data)
                 data.forEach(item => {
                     let content = `
                     <div class="col-md-6 col-sm-6">
@@ -632,8 +649,9 @@
                                 class="switch-input discount-radio" 
                                 name="discount" 
                                 id="discount_${item.id}" 
-                                value="${item.id}"
-                                onchange="discount_selected()"/>
+                                value="${item.percentage}"
+                                onchange="totales()
+                            "/>
                             <span class="switch-toggle-slider">
                                 <span class="switch-on"><i class="ti ti-check"></i></span>
                                 <span class="switch-off"><i class="ti ti-x"></i></span>
@@ -643,6 +661,26 @@
                     </div>`;
                     $("#discounts").append(content);
                 });
+
+                $("#discounts").append(`
+                    <div class="col-md-6 col-sm-6">
+                        <label class="switch switch-primary">
+                            <input type="radio" 
+                                class="switch-input discount-radio" 
+                                name="discount" 
+                                value="0"
+                                onchange="totales()
+"
+                                checked />
+                            <span class="switch-toggle-slider">
+                            <span class="switch-on"><i class="ti ti-check"></i></span>
+                            <span class="switch-off"><i class="ti ti-x"></i></span>
+                            </span>
+                            <span class="switch-label">Sin descuento</span>
+                        </label>
+                    </div>`
+                );
+                
 
             },
             error: function (xhr, status, error) {
@@ -659,6 +697,7 @@
 
     const discount_selected = () => {
         let activo = $("input.discount-radio:checked").val();
+        console.log(percentage)
     }
     
 

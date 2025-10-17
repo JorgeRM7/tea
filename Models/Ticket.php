@@ -48,6 +48,7 @@ class Ticket
         $user_id = $_SESSION['user_id'];
         $branch_office_id = $data['branch_office_id'];
         $routes_stop_id = $data['routes_stop_id'];
+        $discount = $data['discount'];
         $tickets_ids = [];
         $date = date("Y-m-d");
         $hour  = date("H:i:s");  
@@ -68,6 +69,7 @@ class Ticket
                     `status`, 
                     `date`,
                     `hour`,
+                    `discount`,
                     `created_at`, 
                     `updated_at`
                 ) VALUES (
@@ -84,6 +86,7 @@ class Ticket
                     'VENDIDO',
                     '$date',
                     '$hour',
+                    '$discount',
                     NOW(),
                     NOW()
                 )
