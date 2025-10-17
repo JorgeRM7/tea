@@ -1,15 +1,15 @@
 <?php 
 //ip de la pc servidor base de datos
-define("DB_HOST", "localhost");
+define("DB_HOST", "193.203.166.109");
 
 // nombre de la base de datos
-define("DB_NAME", "tea");
+define("DB_NAME", "u710971143_tea");
 
 //nombre de usuario de base de datos
-define("DB_USERNAME", "root");
+define("DB_USERNAME", "u710971143_tea");
 
 //conraseña del usuario de base de datos
-define("DB_PASSWORD", "");
+define("DB_PASSWORD", "Digitalenigma2025#");
 
 //codificacion de caracteres
 define("DB_ENCODE", "utf8");

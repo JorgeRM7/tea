@@ -229,7 +229,7 @@ class Ticket
 
     public function show_subpaths ( $data ){
         $route_id = $data['route_id'] ?? null;
-        $sql = "SELECT * FROM `routes_stop` WHERE route_id='$route_id'";
+        $sql = "SELECT * FROM `routes_stop` WHERE route_id='$route_id' AND deleted_at is null";
         return ejecutarConsulta($sql);
     }
     

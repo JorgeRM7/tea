@@ -655,7 +655,6 @@
                 });
             }
         });
-        
     }
 
     const discount_selected = () => {
