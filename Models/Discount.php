@@ -14,16 +14,20 @@ class Discount {
         $start_date = $data["start_date"] ?? null;
         $end_date = $data["end_date"] ?? null;
         $status = $data["status"] ?? null;
+        $route_id = $data["route_id"] ?? null;
+        $ticket_amount = $data["ticket_amount"] ?? null;
     
 
         if( $routes_discount_id ){
             $sql="
                 UPDATE `routes_discounts` SET 
+                    `route_id`      = '$route_id',
                     `name`          = '$name',
                     `percentage`    = '$percentage',
                     `start_date`    = '$start_date',
                     `end_date`      = '$end_date',
                     `status`        = '$status',
+                    `ticket_amount` = '$ticket_amount',
                     `updated_at`    = NOW()
                 WHERE `id` = '$routes_discount_id'
             ";
@@ -31,19 +35,23 @@ class Discount {
             $sql ="
                 INSERT INTO 
                 `routes_discounts`( 
+                    `route_id`,
                     `name`,
                     `percentage`,
                     `start_date`,
                     `end_date`,
                     `status`,
+                    `ticket_amount`,
                     `created_at`, 
                     `updated_at`
                 ) VALUES (
+                    '$route_id',
                     '$name',
                     '$percentage',
                     '$start_date',
                     '$end_date',
                     '$status',
+                    '$ticket_amount',
                     NOW(),
                     NOW()
                 )
@@ -53,7 +61,13 @@ class Discount {
     }
     
     public function index() {
-        $sql = "SELECT * FROM routes_discounts WHERE deleted_at IS NULL";
+        $sql = "
+            SELECT 
+                routes_discounts.*,
+                CONCAT(routes.origin, '-', routes.destination) AS route
+            FROM routes_discounts 
+            INNER JOIN routes ON routes.id = routes_discounts.route_id
+            WHERE routes_discounts.deleted_at IS NULL";
         return ejecutarConsulta($sql);
     }
     

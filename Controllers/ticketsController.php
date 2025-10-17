@@ -119,10 +119,10 @@ switch ($_GET["op"]) {
                 "id" => $reg['id'],
                 "name" => $reg['name'],
                 "percentage" => $reg['percentage'],
-
+                "tickets" => $reg['tickets'],
+                "ticket_amount" => $reg['ticket_amount'],
             ];
         }
-
         echo json_encode($data);
     break;
 
