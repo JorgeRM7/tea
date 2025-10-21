@@ -38,6 +38,8 @@
                                                         <tr>
                                                             <th>Acciones</th>
                                                             <th>#</th>
+                                                            <th>Ruta</th>
+                                                            <th>Numero Boletos</th>
                                                             <th>Nombre</th>
                                                             <th>Porcentaje de descuento</th>
                                                             <th>Fecha de inicio</th>
@@ -68,6 +70,20 @@
                                 <div class="modal-body">
                                     <form name="formulario" id="formulario" method="POST">
                                         <div class="row">
+                                            <div class="col-md-12">
+                                                <label class="form-label section-title">Ruta</label>
+                                                <select id="route_id" name="route_id" class="form-select form-select-lg">
+                                                    <?php 
+                                                        $sql = "SELECT * FROM `routes` WHERE deleted_at is null";
+                                                        $query = ejecutarConsulta($sql);
+                                                        while($valores = mysqli_fetch_array($query)){
+                                                            echo "<option value='".$valores['id']."'>".$valores['origin']." - ".$valores['destination']."</option>";
+                                                        }
+                                                    ?>
+
+                                                </select>
+                                                <div id="routeRules" class="rule-note mt-1"></div>
+                                            </div>
                                             <div class="col-md-6">
                                                 <label for="nameWithTitle" class="form-label">Nombre</label>
                                                 <input type="text" id="name" name="name" class="form-control" placeholder="Ingresa..." required/>
@@ -76,6 +92,10 @@
                                             <div class="col-md-6">
                                                 <label for="nameWithTitle" class="form-label">% de Descuento</label>
                                                 <input type="text" id="percentage" name="percentage" class="form-control" placeholder="Ingresa..." required/>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label for="nameWithTitle" class="form-label">Cantidad de boletos</label>
+                                                <input type="text" id="ticket_amount" name="ticket_amount" class="form-control" placeholder="Ingresa..." required/>
                                             </div>
                                             <div class="col-md-6">
                                                 <label for="nameWithTitle" class="form-label">Fecha de inicio</label>
@@ -224,7 +244,9 @@
                 $("#percentage").val(data?.percentage);
                 $("#start_date").val(data?.start_date); 
                 $("#end_date").val(data?.end_date); 
-                $("#status").val(data?.status);             
+                $("#status").val(data?.status); 
+                $("#route_id").val(data?.route_id);
+                $("#ticket_amount").val(data?.ticket_amount);            
             },
             error: function (xhr, status, error) {
                 console.error("Error en la solicitud:", error);
@@ -286,6 +308,8 @@
 
     const clean = () => {   
         $("#routes_discount_id").val('');
+        $("#route_id").val('');
+        $("#ticket_amount").val('');
         $("#name").val('');
         $("#percentage").val('');
         $("#start_date").val('');

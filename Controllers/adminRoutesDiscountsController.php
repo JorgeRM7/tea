@@ -43,6 +43,8 @@ switch ($_GET["op"]) {
             $data[]=array(
                 $bonton_editar.' '.$bonton_borrar,
                 $reg->id,
+                $reg->route,
+                $reg->ticket_amount,
                 $reg->name,
                 $reg->percentage,
                 $reg->start_date,

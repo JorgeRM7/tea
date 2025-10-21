@@ -48,6 +48,7 @@ class Ticket
         $user_id = $_SESSION['user_id'];
         $branch_office_id = $data['branch_office_id'];
         $routes_stop_id = $data['routes_stop_id'];
+        $discount = $data['discount'];
         $tickets_ids = [];
         $date = date("Y-m-d");
         $hour  = date("H:i:s");  
@@ -68,6 +69,7 @@ class Ticket
                     `status`, 
                     `date`,
                     `hour`,
+                    `discount`,
                     `created_at`, 
                     `updated_at`
                 ) VALUES (
@@ -84,6 +86,7 @@ class Ticket
                     'VENDIDO',
                     '$date',
                     '$hour',
+                    '$discount',
                     NOW(),
                     NOW()
                 )
@@ -216,8 +219,18 @@ class Ticket
     }
 
     public function discounts ( $data ){
-        $date = $data['search_date'];
-        $sql = "SELECT * FROM routes_discounts WHERE start_date<='$date'AND end_date>='$date' AND status ='active' AND deleted_at is null";
+        $date = $data['search_date'] ?? null;
+        $search_route = $data['search_route'] ?? null;
+        $sql = "
+            SELECT 
+                routes_discounts.*,
+                COUNT(tickets.id) AS tickets
+            FROM routes_discounts 
+            LEFT JOIN tickets ON tickets.route_discount_id = routes_discounts.id
+            WHERE routes_discounts.start_date<='$date'
+            AND routes_discounts.end_date>='$date' 
+            AND routes_discounts.status ='active' 
+            AND routes_discounts.deleted_at is null AND routes_discounts.route_id='$search_route'";
         return ejecutarConsulta($sql);
     }
 

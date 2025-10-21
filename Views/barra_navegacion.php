@@ -246,6 +246,11 @@ if($archivo_actual == 'inicio.php'){
         color: white;
     }
 
+    .select2-container--default .select2-results__option--selected {
+        background-color: #38b449;
+        color: white;
+    }
+
     #tbllistado {
         /*table-layout: fixed;*/
         /*width: 100%;*/

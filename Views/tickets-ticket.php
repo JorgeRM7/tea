@@ -140,7 +140,7 @@
                                                     <input id="price" name="price" type="number" class="form-control" readonly>
                                                 </div>
                                                 <div class="col-md-8">
-                                                    <h6>Descuentos</h6>
+                                                    <label class="form-label section-title">Descuentos</label>
                                                     <div class="row" id="discounts"></div>
                                                 </div>
                                             </div>
@@ -161,6 +161,7 @@
                                                     <input id="route_id" name="route_id" type="hidden" class="form-control" readonly>
                                                     <input id="vehicle_id" name="vehicle_id" type="hidden" class="form-control" readonly>
                                                     <input id="branch_office_id" name="branch_office_id" type="hidden" class="form-control" readonly>
+                                                    <input id="discount" name="discount" type="hidden" class="form-control" readonly>
                                                 </div>
                                             </div>
                                             <div class="row g-3 mt-2">
@@ -183,9 +184,15 @@
                                             <div class="small text-muted">Taquillero</div>
                                             <div class="fw-bold" id="sessionAgent"><?= $_SESSION['name'] ?></div>
                                         </div>
-                                        <div >
-                                            <div class="small text-muted">Boletos hoy</div>
-                                            <div class="fw-bold" id="kpiCount">1000</div>
+                                        <div class="row mt-2">
+                                            <div class="col-6">
+                                                <small>Boletos hoy</small>
+                                                <div id="kpiCount">—</div>
+                                            </div>
+                                            <!-- <div class="col-6">
+                                                <small>Descuento</small>
+                                                <div id="pvDescount">—</div>
+                                            </div> -->
                                         </div>
                                     </div>
 
@@ -225,6 +232,9 @@
                                             <div class="row small">
                                                 <div class="col-6">Cantidad<br>
                                                     <span id="pvQty">—</span>
+                                                </div>
+                                                <div class="col-6">Descuento<br>
+                                                    <span id="pvDiscount">—</span>
                                                 </div>
                                                 <div class="col-6">Total<br>
                                                     <span id="pvTotal">—</span>
@@ -282,7 +292,8 @@
         });
 
         $("#quantity, #amount_received").on("change keyup", function() {
-            total();
+            totales()
+;
         });
         let branch_office_id = document.getElementById('branch_office_id_selected').value;
         $("#branch_office_id").val(branch_office_id);
@@ -294,6 +305,16 @@
    
     const store = () => {
         let route_schedule_id = $("#route_schedule_id").val();
+        let quantity = $("#quantity").val();
+
+        if( quantity == '' ){
+            Swal.fire({
+                title: "Ups...",
+                text: "La cantidad de boleros no puede ser vacio o 0.",
+                icon: "warning"
+            });
+            return;
+        }
 
         if( route_schedule_id == '' ){
             Swal.fire({
@@ -345,6 +366,7 @@
                     iframe.src = url;
                     
                     clean();
+                    tickets_today();
                 }
             },
             error: function(error) {
@@ -447,10 +469,11 @@
             headers: {
                 "Authorization": "Bearer " + token
             },
+
             dataType: "json",
             success: function (response) {
                 let data = response;
-                $("#kpiCount").text(data?.tickets_today ?? 0);
+                $("#kpiCount").text(data?.tickets_today ?? 0);               
             },
             error: function (xhr, status, error) {
                 console.error("Error en la solicitud:", error);
@@ -555,7 +578,8 @@
                 $("#route_schedule_id").val(data?.route_schedule_id);
                 $("#vehicle_id").val(data?.vehicle_id);
                 $("#employee_id").val(data?.employee_id);
-                total()
+                totales()
+
         
             },
             error: function (xhr, status, error) {
@@ -571,21 +595,37 @@
        
     }
 
-    const total = () => {
+    const totales = () => {
         let price = parseFloat($("#price").val()) || 0;
         let quantity = parseFloat($("#quantity").val()) || 0;
         let amount_received = parseFloat($("#amount_received").val()) || 0;
 
-        let total = price * quantity;
-        let change = amount_received - total;
+        let percentage = parseFloat($("input.discount-radio:checked").val()) || 0;
 
+        if( percentage > 1 &&  quantity > 1 ){
+            Swal.fire({
+                icon: "warning",
+                title: "Ups...",
+                text: "Los boletos con descuentos deben ser individuales.",
+                confirmButtonColor: "#f07d42"
+            });
+            $("#quantity").val('')
+        }
+        let total = price * quantity;
+
+        let discountAmount = (total * percentage) / 100;
+        let totalWithDiscount = total - discountAmount;
+
+        let change = amount_received - totalWithDiscount;
         if (change < 0) change = 0;
 
         $("#pvQty").text(quantity);
-        $("#total").val(total);
-        $("#change_amount").val(change);
-        $("#pvTotal").text(total);
-        
+        $("#total").val(totalWithDiscount.toFixed(2));
+        $("#discount").val(discountAmount.toFixed(2));
+        $("#change_amount").val(change.toFixed(2));
+        $("#pvTotal").text(totalWithDiscount.toFixed(2));
+        $("#pvDiscount").text(discountAmount.toFixed(2));  
+         
     };
 
     const clean = () => {  
@@ -599,7 +639,8 @@
         $("#route_id").val('');
         $("#route_schedule_id").val('');
         $("#vehicle_id").val('');
-        $("#employee_id").val('');  
+        $("#employee_id").val('');
+        $("#quantity").val('');  
         $("#pvQty").text('-');
         $("#total").val(0);
         $("#change_amount").val(0);
@@ -608,42 +649,60 @@
     
     const discounts = () => {
         let search_date = $("#search_date").val(); 
+        let search_route = $("#search_route").val(); 
+        
         $.ajax({
             url: "../Controllers/ticketsController.php?op=discounts",
             type: "POST",
             headers: {
                 "Authorization": "Bearer " + token
             },
-            data: { search_date: search_date },
+            data: { search_date: search_date, search_route: search_route  },
             dataType: "json",
             success: function (response) {
                 let data = response;
                 $("#discounts").empty();
-                if (data.length === 0) {
+                if (data.length < 1) {
                     $("#discounts").html("<span class='text-muted'>No hay descuentos disponibles</span>");
                     return;
                 }
-
+                console.log(data)
+                // $("#pvDescount").text(data?.tickets ?? 0);
                 data.forEach(item => {
                     let content = `
-                    <div class="col-md-6 col-sm-6">
-                        <label class="switch switch-primary">
-                            <input type="radio" 
-                                class="switch-input discount-radio" 
-                                name="discount" 
-                                id="discount_${item.id}" 
-                                value="${item.id}"
-                                onchange="discount_selected()"/>
-                            <span class="switch-toggle-slider">
-                                <span class="switch-on"><i class="ti ti-check"></i></span>
-                                <span class="switch-off"><i class="ti ti-x"></i></span>
-                            </span>
-                            <span class="switch-label">${item?.name}</span>
-                        </label>
-                    </div>`;
+                    <div class="row">
+                        ${data.map(item => `
+                        <div class="col-6">
+                            <div class="border rounded p-2 d-flex justify-content-between align-items-center small">
+                                <div class="form-check m-0">
+                                    <input class="form-check-input discount-radio" type="radio" 
+                                        name="discount" id="discount_${item.id}" 
+                                        value="${item.percentage}" onchange="totales()">
+                                    <label class="form-check-label ms-1" for="discount_${item.id}">
+                                    ${item.name}
+                                    </label>
+                                </div>
+                                <span class="badge bg-info">${item.percentage}%</span>
+                            </div>
+                        </div>
+                        `).join("")}
+
+                        <div class="col-6">
+                            <div class="border rounded p-2 d-flex justify-content-between align-items-center small">
+                                <div class="form-check m-0">
+                                    <input class="form-check-input discount-radio" type="radio" 
+                                            name="discount" id="discount_none" 
+                                            value="0" onchange="totales()" checked>
+                                    <label class="form-check-label ms-1" for="discount_none">
+                                        Sin descuento
+                                    </label>
+                                </div>
+                            </div>
+                            </div>
+                        </div>
+                    `;
                     $("#discounts").append(content);
                 });
-
             },
             error: function (xhr, status, error) {
                 console.error("Error en la solicitud:", error);
@@ -659,9 +718,9 @@
 
     const discount_selected = () => {
         let activo = $("input.discount-radio:checked").val();
+        console.log(percentage)
     }
     
-
     document.addEventListener("keydown", function(e) {
         if (e.key === "Enter") {
             store();
