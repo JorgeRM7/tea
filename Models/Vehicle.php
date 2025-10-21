@@ -1,5 +1,7 @@
 <?php 
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 require_once dirname(__DIR__) . "/Database/conexion.php";
 
 class Vehicle {
@@ -120,5 +122,41 @@ class Vehicle {
         return ejecutarConsulta($sql);
     }  
  
+    public function isAvailable($vehicle_id, $start_date, $end_date, $excludeTripId = null) {
+        $excludeClause = $excludeTripId ? "AND id != '$excludeTripId'" : "";
+        $sql = "SELECT COUNT(*) as total 
+                FROM special_trips
+                WHERE vehicle_id = '$vehicle_id'
+                AND status = 'in_progress'
+                AND deleted_at IS NULL
+                AND (
+                    (start_date <= '$end_date' AND end_date >= '$start_date')
+                )
+                $excludeClause";
+        $res = ejecutarConsultaSimpleFila($sql);
+        return ($res && $res['total'] == 0); // true si está libre
+    }
+
+    public function setStatus($vehicle_id, $status) {
+        $sql = "UPDATE vehicles SET status = '$status', updated_at = NOW() WHERE id = '$vehicle_id'";
+        return ejecutarConsulta($sql);
+    }
+
+    public function refreshStatus($vehicle_id) {
+        $sql = "SELECT COUNT(*) as total 
+                FROM special_trips 
+                WHERE vehicle_id = '$vehicle_id' 
+                AND status = 'in_progress' 
+                AND deleted_at IS NULL";
+        $res = ejecutarConsultaSimpleFila($sql);
+
+        if ($res && $res['total'] > 0) {
+            $this->setStatus($vehicle_id, "occupied");
+        } else {
+            $this->setStatus($vehicle_id, "active");
+        }
+    }
+
+
 }   
 ?>
