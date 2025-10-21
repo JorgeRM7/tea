@@ -189,10 +189,10 @@
                                                 <small>Boletos hoy</small>
                                                 <div id="kpiCount">—</div>
                                             </div>
-                                            <div class="col-6">
+                                            <!-- <div class="col-6">
                                                 <small>Descuento</small>
                                                 <div id="pvDescount">—</div>
-                                            </div>
+                                            </div> -->
                                         </div>
                                     </div>
 
@@ -305,6 +305,16 @@
    
     const store = () => {
         let route_schedule_id = $("#route_schedule_id").val();
+        let quantity = $("#quantity").val();
+
+        if( quantity == '' ){
+            Swal.fire({
+                title: "Ups...",
+                text: "La cantidad de boleros no puede ser vacio o 0.",
+                icon: "warning"
+            });
+            return;
+        }
 
         if( route_schedule_id == '' ){
             Swal.fire({
@@ -356,6 +366,7 @@
                     iframe.src = url;
                     
                     clean();
+                    tickets_today();
                 }
             },
             error: function(error) {
@@ -591,7 +602,15 @@
 
         let percentage = parseFloat($("input.discount-radio:checked").val()) || 0;
 
-        
+        if( percentage > 1 &&  quantity > 1 ){
+            Swal.fire({
+                icon: "warning",
+                title: "Ups...",
+                text: "Los boletos con descuentos deben ser individuales.",
+                confirmButtonColor: "#f07d42"
+            });
+            $("#quantity").val('')
+        }
         let total = price * quantity;
 
         let discountAmount = (total * percentage) / 100;
@@ -620,7 +639,8 @@
         $("#route_id").val('');
         $("#route_schedule_id").val('');
         $("#vehicle_id").val('');
-        $("#employee_id").val('');  
+        $("#employee_id").val('');
+        $("#quantity").val('');  
         $("#pvQty").text('-');
         $("#total").val(0);
         $("#change_amount").val(0);
@@ -647,22 +667,22 @@
                     return;
                 }
                 console.log(data)
-                $("#pvDescount").text(data?.tickets ?? 0);
+                // $("#pvDescount").text(data?.tickets ?? 0);
                 data.forEach(item => {
                     let content = `
                     <div class="row">
                         ${data.map(item => `
                         <div class="col-6">
                             <div class="border rounded p-2 d-flex justify-content-between align-items-center small">
-                            <div class="form-check m-0">
-                                <input class="form-check-input discount-radio" type="radio" 
-                                    name="discount" id="discount_${item.id}" 
-                                    value="${item.percentage}" onchange="totales()">
-                                <label class="form-check-label ms-1" for="discount_${item.id}">
-                                ${item.name}
-                                </label>
-                            </div>
-                            <span class="badge bg-info">${item.percentage}%</span>
+                                <div class="form-check m-0">
+                                    <input class="form-check-input discount-radio" type="radio" 
+                                        name="discount" id="discount_${item.id}" 
+                                        value="${item.percentage}" onchange="totales()">
+                                    <label class="form-check-label ms-1" for="discount_${item.id}">
+                                    ${item.name}
+                                    </label>
+                                </div>
+                                <span class="badge bg-info">${item.percentage}%</span>
                             </div>
                         </div>
                         `).join("")}
