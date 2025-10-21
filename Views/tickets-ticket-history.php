@@ -86,7 +86,9 @@
                                                             <th>Acciones</th>
                                                             <th>#</th>
                                                             <th>Ruta</th>
-                                                            <th>Costo</th>
+                                                            <th>Precio</th>
+                                                            <th>Descuento</th>
+                                                            <th>Total</th>
                                                             <th>Fecha</th>
                                                             <th>Hora de salida</th>
                                                             <th>Vehiculo</th>

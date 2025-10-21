@@ -31,7 +31,8 @@ switch ($_GET["op"]) {
 
            
             $price ='💲 ' . number_format($reg->price, 2);
-
+            $discount ='💲 ' . number_format($reg->discount, 2);
+            $total ='💲 ' . number_format($reg->price - $reg->discount, 2);
 
             $leaving_time = '<div>
                                 <i class="ti ti-clock"></i> ' . $reg->leaving_time . '
@@ -62,6 +63,8 @@ switch ($_GET["op"]) {
                 '<span class="fw-bold text-dark">#'.$reg->id.'</span>',
                 $ruta,
                 $price,
+                $discount,
+                $total,
                 $date,
                 $leaving_time,
                 $vehiculo,

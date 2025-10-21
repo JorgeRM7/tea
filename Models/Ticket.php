@@ -12,23 +12,25 @@ class Ticket
     public function index ( $data ){
         $date = $data['date'] ?? null;
         $sql ="
-            SELECT 
+            SELECT
                 tickets.id,
-                tickets.price,
                 tickets.payment_method,
+                tickets.price,
                 tickets.status,
-                routes_schedule.date,
-                routes_schedule.leaving_time,
-                routes.origin,
-                routes.destination,
+                tickets.hour,
+                tickets.date,
+                tickets.discount,
+                routes_stop.origin,
+                routes_stop.destination,
                 CONCAT(employees.name,' ', employees.paternal_surname, ' ', employees.maternal_surname) AS employee,
-                vehicles.id AS vehicle_id
+                vehicles.id AS vehicle_id,
+                routes_schedule.leaving_time
+                
             FROM `tickets`
+            INNER JOIN routes_stop ON routes_stop.id = tickets.route_stop_id
             LEFT JOIN routes_schedule ON tickets.route_schedule_id=routes_schedule.id
-            LEFT JOIN routes ON routes.id = tickets.route_id
             LEFT JOIN employees ON employees.id = tickets.employee_id
             LEFT JOIN vehicles ON vehicles.id = tickets.vehicle_id
-
         ";
         if (!empty($date)) {
             $sql .= " WHERE tickets.date = '$date'";
@@ -52,6 +54,7 @@ class Ticket
         $tickets_ids = [];
         $date = date("Y-m-d");
         $hour  = date("H:i:s");  
+        $expiration_date = date('Y-m-d', strtotime($date . ' +1 day'));
 
         for ($i = 1; $i <= $quantity; $i++) {
             $sql = "
@@ -70,6 +73,7 @@ class Ticket
                     `date`,
                     `hour`,
                     `discount`,
+                    `expires_at`,
                     `created_at`, 
                     `updated_at`
                 ) VALUES (
@@ -87,6 +91,7 @@ class Ticket
                     '$date',
                     '$hour',
                     '$discount',
+                    '$expiration_date',
                     NOW(),
                     NOW()
                 )

@@ -10,6 +10,8 @@ $conexion->set_charset('utf8mb4');
 
 $conexion = new mysqli(DB_HOST, DB_USERNAME, DB_PASSWORD, DB_NAME);
 
+date_default_timezone_set('America/Mexico_City');
+
 if (mysqli_connect_errno()) {
 	printf("Ups parece que falló en la conexion con la base de datos: %s\n",mysqli_connect_error());
 	exit();

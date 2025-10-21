@@ -292,8 +292,7 @@
         });
 
         $("#quantity, #amount_received").on("change keyup", function() {
-            totales()
-;
+            totales();
         });
         let branch_office_id = document.getElementById('branch_office_id_selected').value;
         $("#branch_office_id").val(branch_office_id);
