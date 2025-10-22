@@ -256,10 +256,16 @@ class Ticket
         return ejecutarConsulta($sql);
     }
 
+    public function show ( $data ){
+        $ticket_id = $data['ticket_id'] ?? null;
+        $sql = "SELECT * FROM `tickets` WHERE id='$ticket_id'";
+        return ejecutarConsultaSimpleFila($sql);
+    }
+
     public function check_ticket ( $data ){
         $ticket_id = $data['ticket_id'];
         $today = date("Y-m-d H:i:s");
-        $sql = "UPDATE `tickets` SET `status_check`='VALIDADO', `date_check`='$today' `updated_at`= NOW() WHERE `id`='$ticket_id'";
+        $sql = "UPDATE `tickets` SET `status_check`='VALIDADO', `date_check`='$today', `updated_at`= NOW() WHERE `id`='$ticket_id'";
         return ejecutarConsulta($sql);
     }
 }

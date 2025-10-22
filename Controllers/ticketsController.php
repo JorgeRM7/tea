@@ -109,6 +109,11 @@ switch ($_GET["op"]) {
         echo json_encode($data);
     break;
 
+    case 'show':
+        $data = $Ticket->show($_GET);
+        echo json_encode($data);
+    break;
+
     case 'tickets-today':
         $rspta = $Ticket->tickets_today();
         echo json_encode($rspta);
@@ -173,7 +178,7 @@ switch ($_GET["op"]) {
     break;
 
     case 'check-ticket':
-        $rspta = $Ticket->deleteItem ( $_POST );
+        $rspta = $Ticket->check_ticket ( $_POST );
         echo $rspta;
     break;
 }

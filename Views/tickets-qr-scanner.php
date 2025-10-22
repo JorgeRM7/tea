@@ -152,15 +152,53 @@
 
     function onScanSuccess(ticket_id) {
         $.ajax({
-            url: "../Controllers/ticketsController.php?op=check-ticket",
-            type: "POST",
+            url: "../Controllers/ticketsController.php?op=show",
+            type: "GET",
             headers: {
                 "Authorization": "Bearer " + token
             },
+            dataType: "json",
             data: { ticket_id: ticket_id },
             success: function(data, status) {
-                $("#result-text").text(ticket_id);
-                $("#qr-reader-results").removeClass("d-none");
+                console.log(data)
+                if( data?.status_check =='VALIDADO' ){
+                    Swal.fire({
+                        title: "Error",
+                        text: `Este boleto ya ha sido validado el dia: ${data?.date_check}`,
+                        icon: "error"
+                    });
+                    return;
+                }
+
+                if( data?.status =='CANCELADO'){
+                    Swal.fire({
+                        title: "Error",
+                        text: `Este boleto ya expiro o ha sido cancelado`,
+                        icon: "error"
+                    });
+                    return;
+                }
+
+                $.ajax({
+                    url: "../Controllers/ticketsController.php?op=check-ticket",
+                    type: "POST",
+                    headers: {
+                        "Authorization": "Bearer " + token
+                    },
+                    data: { ticket_id: ticket_id },
+                    success: function(data, status) {
+                        $("#result-text").text(ticket_id);
+                        $("#qr-reader-results").removeClass("d-none");
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("Error:", error);
+                        Swal.fire({
+                            title: "Error",
+                            text: "No se pudo obtener la información del registro.",
+                            icon: "error"
+                        });
+                    }
+                });
             },
             error: function(xhr, status, error) {
                 console.error("Error:", error);
@@ -171,6 +209,9 @@
                 });
             }
         });
+
+
+        
 
         // Si quieres detener la cámara después de leer
         // html5QrCode.stop().then(() => console.log("Escaneo detenido"));
