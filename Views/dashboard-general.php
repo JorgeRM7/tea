@@ -118,6 +118,8 @@ $title = "Inicio"; ?>
     $(document).ready(function () {
         const menuItem = document.querySelector('a[href="dashboard-general.php"]').parentElement;
         menuItem.classList.add('active');
+        const menuToggle = document.querySelector('a[href="DASHBOARD"]').parentElement;
+        menuToggle.classList.add('open');
         index()
     });
 
