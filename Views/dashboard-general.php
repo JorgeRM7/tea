@@ -116,7 +116,7 @@ $title = "Inicio"; ?>
 </html>
 <script>
     $(document).ready(function () {
-        const menuItem = document.querySelector('a[href="dashboard.php"]').parentElement;
+        const menuItem = document.querySelector('a[href="dashboard-general.php"]').parentElement;
         menuItem.classList.add('active');
         index()
     });
