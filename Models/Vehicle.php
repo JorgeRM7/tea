@@ -117,6 +117,18 @@ class Vehicle {
         return ejecutarConsulta($sql);
     }
 
+    public function change_status ( $data ){
+        $vehicle_id = $data['vehicle_status_id'];
+        $status = $data['status'];
+        $sql="
+        UPDATE 
+        `vehicles` SET
+            `updated_at` = NOW(), 
+            `status`= '$status'
+        WHERE `id`='$vehicle_id'";
+        return ejecutarConsulta($sql);
+    }
+
     public function vehicles (){
         $sql = "SELECT id, plate_number, brand, model FROM vehicles WHERE deleted_at IS NULL";
         return ejecutarConsulta($sql);

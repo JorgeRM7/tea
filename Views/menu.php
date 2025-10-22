@@ -45,9 +45,9 @@ while ($row = $result->fetch_assoc()) {
     <ul class="menu-inner py-1">
        
         <li class="menu-item">
-            <a href="inicio.php" class="menu-link">
+            <a href="dashboard.php" class="menu-link">
                 <i class="menu-icon tf-icons ti ti-home"></i>
-                <div data-i18n="INICIO">INICIO</div>
+                <div data-i18n="Dashboard">Dashboard </div>
             </a>
         </li>
 

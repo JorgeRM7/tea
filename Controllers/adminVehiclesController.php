@@ -31,7 +31,8 @@ switch ($_GET["op"]) {
             
             $boton_editar = '<button type="button" class="editar btn btn-sm btn-warning" onclick="show('.$reg->id.')"><i class="ti ti-edit"></i></button>';
             $boton_borrar = '<button type="button" class="eliminar btn btn-sm btn-danger" onclick="deleteItem(' . $reg->id . ')"><i class="ti ti-trash"></i></button>';
-            $boton_asignar = '<button type="button" class="eliminar btn btn-sm btn-info" onclick="show_assign(' . $reg->id . ')"><i class="ti ti-users-plus"></i></button>';
+            $boton_asignar = '<button type="button" class="editar btn btn-sm btn-info" onclick="show_assign(' . $reg->id . ')"><i class="ti ti-users-plus"></i></button>';
+            $boton_status = '<button type="button" class="editar btn btn-sm btn-secondary" onclick="show_status(' . $reg->id . ',`'.$reg->status.'`)"><i class="ti ti-settings-check"></i></button>';
 
             $employee = $reg->employee_name 
                 ? '<i class="ti ti-user-check text-success"></i> ' . $reg->employee_name
@@ -55,7 +56,7 @@ switch ($_GET["op"]) {
             }
             
             $data[]=array(
-                $boton_editar.' '.$boton_borrar.' '.$boton_asignar,
+                $boton_editar.' '.$boton_borrar.' '.$boton_asignar.' '.$boton_status,
                 $reg->id,
                 $reg->unidad_number,
                 $reg->plate_number,
@@ -80,6 +81,11 @@ switch ($_GET["op"]) {
 
     case 'assign':
         $rspta = $Vehicle->assign ( $_POST );
+        echo $rspta;
+    break;
+
+    case 'change-status':
+        $rspta = $Vehicle->change_status ( $_POST );
         echo $rspta;
     break;
 

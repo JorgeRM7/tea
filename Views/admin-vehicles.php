@@ -162,6 +162,41 @@
                         </div>
                     </div>
                     <!--Fin Modal Asignar-->
+
+                    <!--Inicio Modal Estatus-->
+                    <div class="modal animate__animated animate__flipInX" id="modal_status" aria-labelledby="flipInXAnimationModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel">Estado del vehiculo</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <form name="formulario" id="formulario" method="POST">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <label for="nameWithTitle" class="form-label">Estatus</label>
+                                                <select class="form-select select2-container" id="status" name="status" aria-label="Default select example" required>
+                                                    <option value="active">Activo</option>
+                                                    <option value="inactive">Inactivo</option>
+                                                    <option value="maintenance">En Mantenimiento</option>
+                                                    <option value="occupie">Ocupado</option>        
+                                                </select>
+                                                <input type="hidden" id="vehicle_status_id" name="vehicle_status_id" class="form-control"/>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <button class="crear btn btn-primary me-2" onclick="change_status()">
+                                        <i class="ti ti-device-floppy"></i> Guardar
+                                    </button>
+                                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal" onclick="clean()">Cerrar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!--Fin Modal Estatus-->
                     
                     <!-- FOOTER -->
                     <?php require_once('footer.php'); ?>
@@ -356,6 +391,13 @@
     const show_assign = ( vehicle_id ) => {
         $('#modal_assign').modal('show');
         $("#vehicle_id").val(vehicle_id);
+        
+    }
+
+    const show_status = ( vehicle_id, status ) => {
+        $('#modal_status').modal('show');
+        $("#vehicle_status_id").val(vehicle_id);
+        $("#status").val(status);
     }
 
     const assign = () => {
@@ -391,6 +433,53 @@
                         });
                         index();
                         $('#modal_assign').modal('hide');
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("Error:", error);
+                        Swal.fire({
+                            title: "Error",
+                            text: "No se pudo obtener la información del registro.",
+                            icon: "error"
+                        });
+                    }
+                });
+            }
+        });
+    };
+
+    const change_status = () => {
+        let status = $("#status").val();
+        let vehicle_status_id = $("#vehicle_status_id").val();
+        Swal.fire({
+            title: "Alerta",
+            text: "¿Estas seguro de realizar esta acción?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Si"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: "../Controllers/adminVehiclesController.php?op=change-status",
+                    type: "POST",
+                    headers: {
+                        "Authorization": "Bearer " + token
+                    },
+                    data: { vehicle_status_id: vehicle_status_id, status: status },
+                    success: function(data) {
+                        Swal.fire({
+                            toast: true,
+                            position: 'top-end',
+                            showConfirmButton: false,
+                            timer: 3000,
+                            timerProgressBar: true,
+                            icon: 'success',
+                            title: 'Éxito',
+                            text: 'Acción realizada exitosamente.',
+                        });
+                        index();
+                        $('#modal_status').modal('hide');
                     },
                     error: function(xhr, status, error) {
                         console.error("Error:", error);
