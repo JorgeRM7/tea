@@ -133,6 +133,10 @@
 </html>
 <script>
     let html5QrCode;
+    let lastResult = null;
+    let lastScanTime = 0;
+    const SCAN_COOLDOWN = 2000;
+
     const config = { fps: 10, qrbox: { width: 250, height: 250 } };
 
     $(document).ready(function () {
@@ -151,6 +155,12 @@
     });
 
     function onScanSuccess(ticket_id) {
+        const now = Date.now();
+
+        if (ticket_id === lastResult && (now - lastScanTime < SCAN_COOLDOWN)) {
+            return;
+        }
+
         $.ajax({
             url: "../Controllers/ticketsController.php?op=show",
             type: "GET",
