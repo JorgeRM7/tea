@@ -56,15 +56,15 @@
     }
     .time-availability.bg-success {
         background: #d1fae5;
-        color: #065f46;
+        /* color: #065f46; */
     }
     .time-availability.bg-warning {
         background: #fef9c3;
-        color: #92400e;
+        /* color: #92400e; */
     }
     .time-availability.bg-danger {
         background: #fee2e2;
-        color: #991b1b;
+        /* color: #991b1b; */
     }
 
     .time-card.selected {
@@ -162,6 +162,7 @@
                                                     <input id="vehicle_id" name="vehicle_id" type="hidden" class="form-control" readonly>
                                                     <input id="branch_office_id" name="branch_office_id" type="hidden" class="form-control" readonly>
                                                     <input id="discount" name="discount" type="hidden" class="form-control" readonly>
+                                                    <input id="route_discount_id" name="route_discount_id" type="hidden" class="form-control" readonly>
                                                 </div>
                                             </div>
                                             <div class="row g-3 mt-2">
@@ -366,6 +367,7 @@
                     
                     clean();
                     tickets_today();
+                    discounts();
                 }
             },
             error: function(error) {
@@ -600,6 +602,10 @@
         let amount_received = parseFloat($("#amount_received").val()) || 0;
 
         let percentage = parseFloat($("input.discount-radio:checked").val()) || 0;
+        let selectedId = $("input.discount-radio:checked").attr("id");
+        let route_discount_id = selectedId.replace("discount_", ""); 
+         $("#route_discount_id").val(route_discount_id)
+        
 
         if( percentage > 1 &&  quantity > 1 ){
             Swal.fire({
@@ -608,7 +614,7 @@
                 text: "Los boletos con descuentos deben ser individuales.",
                 confirmButtonColor: "#f07d42"
             });
-            $("#quantity").val('')
+            $("#quantity").val(1)
         }
         let total = price * quantity;
 
@@ -639,7 +645,7 @@
         $("#route_schedule_id").val('');
         $("#vehicle_id").val('');
         $("#employee_id").val('');
-        $("#quantity").val('');  
+        $("#quantity").val(1    );  
         $("#pvQty").text('-');
         $("#total").val(0);
         $("#change_amount").val(0);
@@ -665,43 +671,50 @@
                     $("#discounts").html("<span class='text-muted'>No hay descuentos disponibles</span>");
                     return;
                 }
-                console.log(data)
-                // $("#pvDescount").text(data?.tickets ?? 0);
-                data.forEach(item => {
-                    let content = `
-                    <div class="row">
-                        ${data.map(item => `
-                        <div class="col-6">
-                            <div class="border rounded p-2 d-flex justify-content-between align-items-center small">
-                                <div class="form-check m-0">
-                                    <input class="form-check-input discount-radio" type="radio" 
-                                        name="discount" id="discount_${item.id}" 
-                                        value="${item.percentage}" onchange="totales()">
-                                    <label class="form-check-label ms-1" for="discount_${item.id}">
-                                    ${item.name}
-                                    </label>
-                                </div>
-                                <span class="badge bg-info">${item.percentage}%</span>
+                let content = `
+                <div class="row">
+                    ${data.map(item => `
+                    <div class="col-6 mt-2">
+                        <div class="border rounded p-2 small h-100">
+                            <div class="form-check">
+                                <input class="form-check-input discount-radio" type="radio" 
+                                    name="discount" id="discount_${item.id}" 
+                                    value="${item.percentage}" 
+                                    data-id="${item.id}" 
+                                    ${item.tickets == 0 ? "disabled" : ""} 
+                                    onchange="totales()">
+                                <label class="form-check-label fw-semibold ms-1" for="discount_${item.id}">
+                                ${item.name}
+                                </label>
+                            </div>
+                            <div class="mt-2 d-flex flex-wrap gap-1">
+                                <span class="badge bg-info px-2 py-1">${item.percentage}%</span>
+                                <span class="badge ${item.tickets > 0 ? "bg-primary" : "bg-danger"} px-2 py-1">
+                                🎟️ ${item.tickets}
+                                </span>
                             </div>
                         </div>
-                        `).join("")}
+                    </div>
+                    `).join("")}
 
-                        <div class="col-6">
-                            <div class="border rounded p-2 d-flex justify-content-between align-items-center small">
-                                <div class="form-check m-0">
-                                    <input class="form-check-input discount-radio" type="radio" 
-                                            name="discount" id="discount_none" 
-                                            value="0" onchange="totales()" checked>
-                                    <label class="form-check-label ms-1" for="discount_none">
-                                        Sin descuento
-                                    </label>
-                                </div>
-                            </div>
+                    <div class="col-6 mt-2">
+                        <div class="border rounded p-2 small h-100">
+                            <div class="form-check">
+                            <input class="form-check-input discount-radio" type="radio" 
+                                    name="discount" id="discount_none" 
+                                    value="0" onchange="totales()" checked>
+                            <label class="form-check-label fw-semibold ms-1" for="discount_none">
+                                Sin descuento
+                            </label>
                             </div>
                         </div>
-                    `;
-                    $("#discounts").append(content);
-                });
+                    </div>
+                </div>
+                `;
+
+                $("#discounts").append(content);
+
+
             },
             error: function (xhr, status, error) {
                 console.error("Error en la solicitud:", error);

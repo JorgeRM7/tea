@@ -23,7 +23,7 @@ class Ticket
                 routes_stop.origin,
                 routes_stop.destination,
                 CONCAT(employees.name,' ', employees.paternal_surname, ' ', employees.maternal_surname) AS employee,
-                vehicles.id AS vehicle_id,
+                vehicles.unidad_number,
                 routes_schedule.leaving_time
                 
             FROM `tickets`
@@ -55,6 +55,7 @@ class Ticket
         $date = date("Y-m-d");
         $hour  = date("H:i:s");  
         $expiration_date = date('Y-m-d', strtotime($date . ' +1 day'));
+        $route_discount_id = $data['route_discount_id'];
 
         for ($i = 1; $i <= $quantity; $i++) {
             $sql = "
@@ -66,6 +67,7 @@ class Ticket
                     `branch_office_id`,
                     `user_id`,
                     `route_stop_id`,
+                    `route_discount_id`,
                     `quantity`, 
                     `payment_method`,
                     `price`,
@@ -84,6 +86,7 @@ class Ticket
                     '$branch_office_id',
                     '$user_id',
                     '$routes_stop_id',
+                    '$route_discount_id',
                     '1',
                     'EFECTIVO',
                     '$price',
@@ -235,7 +238,9 @@ class Ticket
             WHERE routes_discounts.start_date<='$date'
             AND routes_discounts.end_date>='$date' 
             AND routes_discounts.status ='active' 
-            AND routes_discounts.deleted_at is null AND routes_discounts.route_id='$search_route'";
+            AND routes_discounts.deleted_at is null AND routes_discounts.route_id='$search_route'
+            GROUP BY routes_discounts.id
+            HAVING COUNT(tickets.id) < routes_discounts.ticket_amount;";
         return ejecutarConsulta($sql);
     }
 
@@ -250,10 +255,12 @@ class Ticket
         $sql = "SELECT * FROM `routes_stop` WHERE route_id='$route_id' AND deleted_at is null";
         return ejecutarConsulta($sql);
     }
-    
-    
-    
 
-
+    public function check_ticket ( $data ){
+        $ticket_id = $data['ticket_id'];
+        $today = date("Y-m-d H:i:s");
+        $sql = "UPDATE `tickets` SET `status_check`='VALIDADO', `date_check`='$today' `updated_at`= NOW() WHERE `id`='$ticket_id'";
+        return ejecutarConsulta($sql);
+    }
 }
 ?>

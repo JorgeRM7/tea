@@ -131,7 +131,6 @@
     </div>
 </body>
 </html>
-
 <script>
     let html5QrCode;
     const config = { fps: 10, qrbox: { width: 250, height: 250 } };
@@ -144,21 +143,37 @@
             $(this).addClass("d-none");
             startQrScanner();
         });
+
         const menuItem = document.querySelector('a[href="tickets-qr-scanner.php"]').parentElement;
         menuItem.classList.add('active');
         const menuToggle = document.querySelector('a[href="BOLETOS"]').parentElement;
         menuToggle.classList.add('open');
-        
     });
 
-    function onScanSuccess(decodedText) {
-        $("#result-text").text(decodedText);
-        $("#qr-reader-results").removeClass("d-none");
-        $("#btnRestart").removeClass("d-none");
+    function onScanSuccess(ticket_id) {
+        $.ajax({
+            url: "../Controllers/ticketsController.php?op=check-ticket",
+            type: "POST",
+            headers: {
+                "Authorization": "Bearer " + token
+            },
+            data: { ticket_id: ticket_id },
+            success: function(data, status) {
+                $("#result-text").text(ticket_id);
+                $("#qr-reader-results").removeClass("d-none");
+            },
+            error: function(xhr, status, error) {
+                console.error("Error:", error);
+                Swal.fire({
+                    title: "Error",
+                    text: "No se pudo obtener la información del registro.",
+                    icon: "error"
+                });
+            }
+        });
 
-        // html5QrCode.stop().then(() => {
-        //     console.log("Escaneo detenido");
-        // }).catch(err => console.error("Error al detener:", err));
+        // Si quieres detener la cámara después de leer
+        // html5QrCode.stop().then(() => console.log("Escaneo detenido"));
     }
 
     function onScanFailure(error) {
@@ -167,16 +182,23 @@
 
     function startQrScanner() {
         html5QrCode = new Html5Qrcode("qr-reader");
-        Html5Qrcode.getCameras().then(devices => {
-            if (devices && devices.length) {
-                let backCamera = devices.find(d =>
-                    d.label.toLowerCase().includes("back") || d.label.toLowerCase().includes("environment")
-                );
-                let cameraId = backCamera ? backCamera.id : devices[0].id;
-
-                html5QrCode.start(cameraId, config, onScanSuccess, onScanFailure)
-                    .catch(err => console.error("No se pudo iniciar:", err));
-            }
+        html5QrCode.start(
+            { facingMode: { exact: "environment" } },
+            config,
+            onScanSuccess,
+            onScanFailure
+        ).catch(err => {
+            console.error("Error al iniciar cámara:", err);
+            Html5Qrcode.getCameras().then(devices => {
+                if (devices && devices.length) {
+                    let backCamera = devices.find(d =>
+                        d.label.toLowerCase().includes("back") ||
+                        d.label.toLowerCase().includes("environment")
+                    );
+                    let cameraId = backCamera ? backCamera.id : devices[0].id;
+                    html5QrCode.start(cameraId, config, onScanSuccess, onScanFailure);
+                }
+            });
         });
     }
 </script>

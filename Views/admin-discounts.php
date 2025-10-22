@@ -155,7 +155,64 @@
         clean();
     };
 
+    const validateForm = () => {
+        let route_id       = $("#route_id").val();
+        let name           = $("#name").val().trim();
+        let percentage     = $("#percentage").val().trim();
+        let ticket_amount  = $("#ticket_amount").val().trim();
+        let start_date     = $("#start_date").val();
+        let end_date       = $("#end_date").val();
+        let status         = $("#status").val();
+
+        // Reglas de validación
+        if (!route_id) {
+            Swal.fire("Atención", "Debes seleccionar una ruta.", "warning");
+            return false;
+        }
+
+        if (name === "") {
+            Swal.fire("Atención", "El nombre es obligatorio.", "warning");
+            return false;
+        }
+
+        if (percentage === "" || isNaN(percentage) || percentage <= 0 || percentage > 100) {
+            Swal.fire("Atención", "El porcentaje debe ser un número entre 1 y 100.", "warning");
+            return false;
+        }
+
+        if (ticket_amount === "" || isNaN(ticket_amount) || ticket_amount <= 0) {
+            Swal.fire("Atención", "La cantidad de boletos debe ser un número mayor a 0.", "warning");
+            return false;
+        }
+
+        if (!start_date) {
+            Swal.fire("Atención", "La fecha de inicio es obligatoria.", "warning");
+            return false;
+        }
+
+        if (!end_date) {
+            Swal.fire("Atención", "La fecha de fin es obligatoria.", "warning");
+            return false;
+        }
+
+        if (new Date(start_date) > new Date(end_date)) {
+            Swal.fire("Atención", "La fecha de inicio no puede ser mayor que la fecha de fin.", "warning");
+            return false;
+        }
+
+        if (!status) {
+            Swal.fire("Atención", "Debes seleccionar un estatus.", "warning");
+            return false;
+        }
+
+        return true;
+    };
+
+
     const store = () => {
+        if (!validateForm()) {
+            return;
+        }
         const formData = new FormData(document.getElementById("formulario"));
         $.ajax({
             url: "../Controllers/adminRoutesDiscountsController.php?op=store",

@@ -218,7 +218,7 @@
             data: { view_id: view_id },
             success: function (response) {
                 let data = response;
-                $("#view_id").val(data?.view_id);
+                $("#view_id").val(data?.id);
                 $("#route").val(data?.route);
                 $("#module").val(data?.module);
                 $("#title").val(data?.title);

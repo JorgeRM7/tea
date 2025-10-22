@@ -43,8 +43,8 @@ switch ($_GET["op"]) {
                         <i class="ti ti-calendar"></i> ' . $reg->date . '
                     </div>';
 
-            $vehiculo = '<span class="badge bg-info text-dark">
-                            🚍 ' . $reg->vehicle_id . '
+            $vehiculo = '<span class="badge bg-success text-white">
+                            🚍 ' . $reg->unidad_number . '
                         </span>';
 
 
@@ -60,7 +60,7 @@ switch ($_GET["op"]) {
 
             $data[] = array(
                 $bonton_borrar,
-                '<span class="fw-bold text-dark">#'.$reg->id.'</span>',
+                '<span class="fw-bold text-dark">'.$reg->id.'</span>',
                 $ruta,
                 $price,
                 $discount,
@@ -168,6 +168,11 @@ switch ($_GET["op"]) {
     break;
 
     case 'deleteItem':
+        $rspta = $Ticket->deleteItem ( $_POST );
+        echo $rspta;
+    break;
+
+    case 'check-ticket':
         $rspta = $Ticket->deleteItem ( $_POST );
         echo $rspta;
     break;
