@@ -26,6 +26,7 @@ class ComposerStaticInit5ce13f389270716aa74fac6c4293dda4
             'Mpdf\\PsrLogAwareTrait\\' => 22,
             'Mpdf\\PsrHttpMessageShim\\' => 24,
             'Mpdf\\' => 5,
+            'MercadoPago\\' => 12,
         ),
         'F' => 
         array (
@@ -70,6 +71,10 @@ class ComposerStaticInit5ce13f389270716aa74fac6c4293dda4
         'Mpdf\\' => 
         array (
             0 => __DIR__ . '/..' . '/mpdf/mpdf/src',
+        ),
+        'MercadoPago\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/mercadopago/dx-php/src/MercadoPago',
         ),
         'Firebase\\JWT\\' => 
         array (

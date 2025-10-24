@@ -87,12 +87,23 @@ $title = "Inicio"; ?>
                                     </div>
                                 </div>
                                 <div class="col-sm-6 col-lg-6">
-                                    <div class="card mt-4">
+                                    <div class="card mt-2">
                                         <div class="card-header bg-white">
                                             <h5 class="mb-0"><i class="bi bi-graph-up-arrow me-1 text-primary"></i> Ventas por Fecha</h5>
                                         </div>
                                         <div class="card-body">
                                             <canvas id="salesByDateChart" height="100%"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-6 col-lg-6">
+                                    <div class="card mt-2">
+                                        <div class="card-header bg-white">
+                                            <h5 class="mb-0"><i class="bi bi-graph-up-arrow me-1 text-primary"></i> Ventas por Sucursal</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <canvas id="salesByBranchBar" height="100%"></canvas>
                                         </div>
                                     </div>
                                 </div>
@@ -163,6 +174,11 @@ $title = "Inicio"; ?>
                 if (data.sales_by_date) {
                     renderSalesByDateChart(data.sales_by_date);
                 }
+
+                if (data.sales_by_date) {
+                    renderSalesByBranchCharts(data.sales_by_branch_office);
+                }
+
                 
             },
             error: function(e) {
@@ -171,16 +187,15 @@ $title = "Inicio"; ?>
         });
     };
 
-
+    
     function renderSalesByDateChart(salesByDate) {
-        // Preparamos los datos
         const labels = salesByDate.map(item => item.date);
         const values = salesByDate.map(item => parseInt(item.total_sales));
 
         const ctx = document.getElementById('salesByDateChart').getContext('2d');
 
         new Chart(ctx, {
-            type: 'line', // puedes cambiar a 'bar' o 'area' (con fill:true)
+            type: 'line',
             data: {
                 labels: labels,
                 datasets: [{
@@ -189,7 +204,7 @@ $title = "Inicio"; ?>
                     borderColor: '#007bff',
                     backgroundColor: 'rgba(0, 123, 255, 0.2)',
                     borderWidth: 3,
-                    tension: 0.3, // suaviza las líneas
+                    tension: 0.3,
                     fill: true,
                     pointBackgroundColor: '#007bff',
                     pointRadius: 5,
@@ -217,6 +232,47 @@ $title = "Inicio"; ?>
                         ticks: {
                             callback: value => '$' + value.toLocaleString(),
                             color: '#6c757d'
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    function renderSalesByBranchCharts(data) {
+        const labels = data.map(item => item.branch_office);
+        const values = data.map(item => parseFloat(item.total_sales));
+
+        // Colores dinámicos
+        const colors = ['#007bff','#28a745','#ffc107','#dc3545','#6610f2'];
+
+        // Gráfico de barras
+        new Chart(document.getElementById('salesByBranchBar'), {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Ventas ($)',
+                    data: values,
+                    backgroundColor: colors,
+                    borderRadius: 8
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: (context) => "$" + context.raw.toLocaleString()
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: value => "$" + value.toLocaleString()
                         }
                     }
                 }
