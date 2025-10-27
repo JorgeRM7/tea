@@ -1,19 +1,19 @@
 <?php 
-require_once "../Middlewares/authMiddleware.php";
-$userData = verificarToken();
+// require_once "../Middlewares/authMiddleware.php";
+// $userData = verificarToken();
 require_once "../Models/SaleOnline.php";
 $SaleOnline = new SaleOnline();
 
 
 switch ($_GET["op"]) {
    
-    // case 'buy':
-    //     $rspta = $SaleOnline->buy ( $_POST );
-    //     echo json_encode([
-    //         "success" => true,
-    //         "ids" => $rspta
-    //     ]);
-    // break;
+    case 'buy':
+        $rspta = $SaleOnline->buy ( $_POST );
+        echo json_encode([
+            "success" => true,
+            "ids" => $rspta
+        ]);
+    break;
 
     // case 'get-public-key':
     //     $config = include "../Config/config.php";

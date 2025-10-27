@@ -81,7 +81,7 @@ require_once dirname(__DIR__) . "/Database/conexion.php";
             <p class="text-white">Selecciona tu viaje y compra tu boleto en línea</p>
         </div>
 
-        <form id="ticketForm">
+        <!-- <form id="ticketForm"> -->
             <div class="mb-3">
                 <label class="form-label"><i class="bi bi-geo-alt-fill"></i> Origen</label>
                 <select class="form-select" id="origin" name="origin">
@@ -126,14 +126,18 @@ require_once dirname(__DIR__) . "/Database/conexion.php";
                 <p id="summary">Total: $120</p>
             </div>
 
+            <div id="paymentBrick_container" class="mt-4"></div>
+
+
             <button type="button" class="btn btn-buy w-100 mt-3" onclick="buyTicket()">
                 <i class="bi bi-credit-card"></i> Comprar Boleto
             </button>
-        </form>
+        <!-- </form> -->
     </div>
 </body>
 
 </html>
+<script src="https://sdk.mercadopago.com/js/v2"></script>
 <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
 <script>
     let token = localStorage?.token;
@@ -148,6 +152,71 @@ require_once dirname(__DIR__) . "/Database/conexion.php";
         });
        
     });
+
+    const buyTicket = () => { 
+        let origin      = $("#origin").val();
+        let destination = $("#destination").val();
+        let date        = $("#date").val();
+        let schedule    = $("#schedule").val();
+        let quantity    = $("#quantity").val();
+        let price       = $("#price").val();
+
+        $.ajax({
+            url: "../Controllers/salesOnlineController.php?op=buy",
+            type: "POST",
+            headers: {
+                "Authorization": "Bearer " + token
+            },
+            data: { 
+                origin: origin,
+                destination: destination,
+                date: date,
+                schedule: schedule,
+                quantity: quantity,
+                price: price 
+            },
+            dataType: "json",
+            success: function (response) {
+                console.log(response)
+                if (response.success) {
+                    const preferenceId = response.ids.id;
+                    // window.location.href = `https://sandbox.mercadopago.com.mx/checkout/v1/redirect?pref_id=${preferenceId}`;
+                    renderWalletBrick(preferenceId);
+                } else {
+                    Swal.fire({
+                    icon: "error",
+                    title: "Compra",
+                    text: "No se pudo crear la preferencia."
+                    });
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error("Error en la solicitud:", error);
+                Swal.fire({
+                    icon: "error",
+                    title: "Error",
+                    text: "Hubo un problema al procesar los datos.",
+                    confirmButtonColor: "#f07d42"
+                });
+            }
+        });
+    };
+
+    const renderWalletBrick = (preferenceId) => {
+  const mp = new MercadoPago("TEST-80a3b7a8-e43d-4b7f-8b8d-aee3d96dca7f", { locale: "es-MX" });
+
+  mp.bricks().create("wallet", "paymentBrick_container", {
+    initialization: { preferenceId },
+    customization: {
+      visual: { style: { theme: "default" } },
+      texts: { valueProp: 'smart_option' }
+    },
+    callbacks: {
+      onReady: () => console.log("Wallet Brick listo"),
+      onError: (error) => console.error("Error en Wallet Brick:", error)
+    }
+  });
+};
 
     const show_subpaths = () => { 
         let origin = $("#origin").val(); 

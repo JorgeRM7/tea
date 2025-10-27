@@ -184,11 +184,12 @@
   var tabla, TRIP_TYPES_CACHE = [];
 
   $(document).ready(function () {
+    let module = $("#module").val();
     // evita fallo por i18n CDN si estás offline
     $.fn.dataTable.ext.errMode = 'none';
     const menuItem = document.querySelector('a[href="admin-special-trip-types.php"]').parentElement;
     menuItem.classList.add('active');
-    const menuToggle = document.querySelector('a[href="ADMINISTRACION"]').parentElement;
+    const menuToggle = document.querySelector(`a[href="${module}"]`).parentElement;
     menuToggle.classList.add('open');        
     index();
   });

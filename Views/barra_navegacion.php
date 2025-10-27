@@ -8,7 +8,8 @@ $sql ="SELECT
             permissions.permission_view,
             permissions.permission_update,
             permissions.permission_delete,
-            views.title  
+            views.title,
+            views.module 
         FROM `permissions`
         INNER JOIN users_types ON users_types.id = permissions.user_type_id
         INNER JOIN views ON views.id = permissions.view_id
@@ -19,6 +20,8 @@ while ($item = mysqli_fetch_array($resultado_permisos)) {
     $permission_update = $item['permission_update'] ?? 0;
     $permission_delete = $item['permission_delete'] ?? 0;
     $permission_view = $item['permission_view'] ?? 0;
+    $module = $item['module'] ?? 0;
+    
 }
 if($archivo_actual == 'inicio.php'){
     $permission_view = 1;
@@ -32,6 +35,7 @@ if($archivo_actual == 'inicio.php'){
 <input type="hidden" name="permission_update" id="permission_update" value="<?php echo $permission_update ?>">
 <input type="hidden" name="permission_delete" id="permission_delete" value="<?php echo $permission_delete ?>">
 <input type="hidden" name="permission_view" id="permission_view" value="<?php echo $permission_view ?>">
+<input type="hidden" name="module" id="module" value="<?php echo $module ?>">
 
 
 <nav class="layout-navbar navbar navbar-expand-md navbar-detached align-items-center bg-navbar-theme p-3" id="layout-navbar">

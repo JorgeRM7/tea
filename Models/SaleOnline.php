@@ -1,51 +1,73 @@
 <?php
 session_start();
 require_once dirname(__DIR__) . "/Database/conexion.php";
+require_once __DIR__ . '/../vendor/autoload.php';
 
-use MercadoPago\SDK;
-use MercadoPago\Preference;
-use MercadoPago\Item;
+use MercadoPago\MercadoPagoConfig;
+use MercadoPago\Client\Preference\PreferenceClient;
+use MercadoPago\Exceptions\MPApiException;
+
 
 class SaleOnline
 {
 
-    // private $config;
+    private $config;
     public function __construct(){
-        // $this->config = include dirname(__DIR__) . "/Config/config.php";
-        // SDK::setAccessToken($this->config['mp_access_token']);
+        $this->config = include dirname(__DIR__) . "/Config/config.php";
+        MercadoPagoConfig::setAccessToken($this->config['mp_access_token']);
     }
 
-    // public function buy($data) {
-    //     $ticket_id =600;
-    //     $origin      = $data['origin'];
-    //     $destination = $data['destination'];
-    //     $schedule_id = $data['schedule_id'];
-    //     $price       = (float)$data['price'];
-    //     $quantity    = (int)$data['quantity'];
+    public function buy($data) {
+        if (!class_exists(MercadoPagoConfig::class)) {
+            throw new \RuntimeException("MercadoPago SDK no está cargado (autoload.php).");
+        }
+        if (empty($this->config['mp_access_token'])) {
+            throw new \RuntimeException("mp_access_token vacío en Config/config.php");
+        }
+        MercadoPagoConfig::setAccessToken($this->config['mp_access_token']);
 
+        $ticket_id   = random_int(1000, 9999);
+        $origin      = 'Morelia';
+        $destination = 'Angamacutiro';
+        $price       = (float)120.00;
+        $quantity    = (int)1;
 
-    //     $preference = new Preference();
+        $client = new PreferenceClient();
 
-    //     $item = new Item();
-    //     $item->title = "Boleto $origin → $destination";
-    //     $item->quantity = $quantity;
-    //     $item->unit_price = $price;
-    //     $preference->items = [$item];
+        try {
+            $pref = $client->create([
+                "items" => [[
+                    "title"       => "Boleto {$origin} → {$destination}",
+                    "quantity"    => $quantity,
+                    "unit_price"  => $price,
+                    "currency_id" => "MXN",
+                ]],
+                // Para Bricks puedes omitir back_urls; si quieres dejarlas, déjalas sin auto_return
+                // "back_urls" => [
+                //   "success" => "https://tu-dominio/Views/success.php?ticket_id={$ticket_id}",
+                //   "failure" => "https://tu-dominio/Views/failure.php?ticket_id={$ticket_id}",
+                //   "pending" => "https://tu-dominio/Views/pending.php?ticket_id={$ticket_id}",
+                // ],
+                // SIN auto_return
+                "external_reference" => "ticket_{$ticket_id}",
+            ]);
 
-    //     $preference->back_urls = [
-    //         "success" => "http://localhost/Views/success.php?ticket_id=$ticket_id",
-    //         "failure" => "http://localhost/Views/failure.php?ticket_id=$ticket_id",
-    //         "pending" => "http://localhost/Views/pending.php?ticket_id=$ticket_id"
-    //     ];
-    //     $preference->auto_return = "approved";
-    //     $preference->save();
+            return [
+                "id"        => $pref->id,
+                "ticket_id" => $ticket_id,
+            ];
 
-    //     return [
-    //         "id" => $preference->id,
-    //         "ticket_id" => $ticket_id
-    //     ];
-
-    // }
+        } catch (MPApiException $e) {
+            $resp = $e->getApiResponse();
+            $status = method_exists($resp,'getStatus') ? $resp->getStatus() : (method_exists($resp,'getStatusCode') ? $resp->getStatusCode() : null);
+            $rawBody = method_exists($resp,'getContent') ? $resp->getContent() : (method_exists($resp,'getBody') ? $resp->getBody() : null);
+            $bodyArr = is_string($rawBody) ? json_decode($rawBody, true) : (is_array($rawBody) ? $rawBody : null);
+            $msg = $bodyArr['message'] ?? $bodyArr['error'] ?? $e->getMessage();
+            throw new \RuntimeException("MercadoPago API error (" . ($status ?? 400) . "): " . $msg, (int)($status ?? 400));
+        } catch (\Throwable $e) {
+            throw new \RuntimeException("Error inesperado: ".$e->getMessage(), 500);
+        }
+    }
 
     public function schedules($data) {
         $hour     = date("H:i:s"); 
