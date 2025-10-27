@@ -682,7 +682,6 @@
                                     name="discount" id="discount_${item.id}" 
                                     value="${item.percentage}" 
                                     data-id="${item.id}" 
-                                    ${item.tickets == 0 ? "disabled" : ""} 
                                     onchange="totales()">
                                 <label class="form-check-label fw-semibold ms-1" for="discount_${item.id}">
                                 ${item.name}

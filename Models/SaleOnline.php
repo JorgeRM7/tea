@@ -50,6 +50,7 @@ class SaleOnline
                 // ],
                 // SIN auto_return
                 "external_reference" => "ticket_{$ticket_id}",
+                "notification_url" => "https://tea.digitalenigma.mx/Controllers/salesOnlineController.php?op=webhook"
             ]);
 
             return [

@@ -51,7 +51,7 @@ class Login
                 "iss" => "http://tu-sistema.com", // quién emite
                 "aud" => "http://tu-sistema.com", // quién recibe
                 "iat" => time(),                  // emitido en
-                "exp" => time() + (60 * 60 * 8),      // expira en 8 horas
+                "exp" => time() + (60 * 60 * 8),      // expira en 8 hora
                 "data" => [
                     "id"    => $user->id,
                     "name"  => $user->name,

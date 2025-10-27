@@ -1,6 +1,6 @@
 <?php 
-// require_once "../Middlewares/authMiddleware.php";
-// $userData = verificarToken();
+require_once "../Middlewares/authMiddleware.php";
+$userData = verificarToken();
 require_once "../Models/SaleOnline.php";
 $SaleOnline = new SaleOnline();
 
@@ -15,10 +15,37 @@ switch ($_GET["op"]) {
         ]);
     break;
 
-    // case 'get-public-key':
-    //     $config = include "../Config/config.php";
-    //     echo json_encode(["public_key" => $config["mp_public_key"]]);
-    // break;
+    case 'webhook':
+        $body = file_get_contents("php://input");
+        $data = json_decode($body, true);
+
+        if (isset($data["type"]) && $data["type"] === "payment") {
+            $paymentId = $data["data"]["id"];
+
+            $client = new \MercadoPago\Client\Payment\PaymentClient();
+            $payment = $client->get($paymentId);
+
+            if ($payment->status === "approved") {
+                $ticketId = $payment->external_reference;
+                $amount   = $payment->transaction_amount;
+                $payer    = $payment->payer->email;
+
+                $rspta = $SaleOnline->store([
+                    "ticket_id"   => $ticketId,
+                    "amount"      => $amount,
+                    "payer_email" => $payer,
+                    "status"      => "approved",
+                    "origin"      => $origin ?? null,
+                    "destination" => $destination ?? null
+                ]);
+
+                echo json_encode(["success" => true, "data" => $rspta]);
+            }
+        }
+
+        http_response_code(200);
+    break;
+
 
     case 'schedules':
         $rspta = $SaleOnline->schedules($_GET);
