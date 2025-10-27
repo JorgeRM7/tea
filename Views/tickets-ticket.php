@@ -682,6 +682,7 @@
                                     name="discount" id="discount_${item.id}" 
                                     value="${item.percentage}" 
                                     data-id="${item.id}" 
+                                    ${item.ticket_amount -item.tickets == 0 ? "disabled" : ""} 
                                     onchange="totales()">
                                 <label class="form-check-label fw-semibold ms-1" for="discount_${item.id}">
                                 ${item.name}
@@ -690,7 +691,7 @@
                             <div class="mt-2 d-flex flex-wrap gap-1">
                                 <span class="badge bg-info px-2 py-1">${item.percentage}%</span>
                                 <span class="badge ${item.tickets > 0 ? "bg-primary" : "bg-danger"} px-2 py-1">
-                                🎟️ ${item.tickets}
+                                🎟️ ${ item.ticket_amount -item.tickets }
                                 </span>
                             </div>
                         </div>
