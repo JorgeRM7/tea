@@ -167,7 +167,7 @@ class SaleOnline
         $logEntry = "[" . date("Y-m-d H:i:s") . "] Webhook recibido:\n" . $rawInput . "\n\n";
         file_put_contents($logFile, $logEntry, FILE_APPEND);
 
-        // 3. Validar y procesar
+        
         if (isset($body['data']['id'])) {
             try {
                 $paymentId = $body['data']['id'];
@@ -179,20 +179,21 @@ class SaleOnline
                 $status = $payment->status;                  // approved, rejected, pending
                 $externalRef = $payment->external_reference; // tu ticket_id
 
-                // Registrar también en el log lo que se obtuvo del API
-                $logApi = "[" . date("Y-m-d H:i:s") . "] Pago consultado: ID={$paymentId}, Status={$status}, Ref={$externalRef}\n";
-                file_put_contents($logFile, $logApi, FILE_APPEND);
-
                 if ($status === 'approved') {
                     $sql = "UPDATE tickets SET status='VENDIDO' WHERE id='$externalRef'";
-                    ejecutarConsulta($sql);
+                    
                 } elseif ($status === 'rejected') {
                     $sql = "UPDATE tickets SET status='RECHAZADO' WHERE id='$externalRef'";
-                    ejecutarConsulta($sql);
                 } else {
                     $sql = "UPDATE tickets SET status='PENDIENTE' WHERE id='$externalRef'";
-                    ejecutarConsulta($sql);
                 }
+
+                // Registrar también en el log lo que se obtuvo del API
+                $logApi = "[" . date("Y-m-d H:i:s") . "] Pago consultado: ID={$paymentId}, Status={$status}, Ref={$externalRef}, sql={$sql}\n" ;
+                file_put_contents($logFile, $logApi, FILE_APPEND);
+
+                ejecutarConsulta($sql);
+
             } catch (\Exception $e) {
                 $logError = "[" . date("Y-m-d H:i:s") . "] ERROR al procesar pago: " . $e->getMessage() . "\n";
                 file_put_contents($logFile, $logError, FILE_APPEND);
