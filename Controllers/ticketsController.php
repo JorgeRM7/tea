@@ -31,8 +31,8 @@ switch ($_GET["op"]) {
 
            
             $price ='💲 ' . number_format($reg->price, 2);
-            $discount ='💲 ' . number_format($reg->discount, 2);
-            $total ='💲 ' . number_format($reg->price - $reg->discount, 2);
+            $discount ='💲 ' . $reg->discount ?? 0;
+            $total ='💲 ' . number_format($reg->price - (float)$reg->discount, 2);
 
             $leaving_time = '<div>
                                 <i class="ti ti-clock"></i> ' . $reg->leaving_time . '

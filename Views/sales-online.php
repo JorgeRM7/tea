@@ -210,12 +210,12 @@ $token = $config['token'];
         };
 
         const buyTicket = () => {
-            let origin = $("#origin").val();
+            let origin      = $("#origin").val();
             let destination = $("#destination").val();
-            let date = $("#date").val();
-            let schedule = $("#schedule").val();
-            let quantity = $("#quantity").val();
-            let price = $("#price").val();
+            let date        = $("#date").val();
+            let schedule    = $("#schedule").val();
+            let quantity    = $("#quantity").val();
+            let price       = $("#price").val();
 
             $.ajax({
                 url: "../Controllers/salesOnlineController.php?op=buy",
@@ -225,17 +225,19 @@ $token = $config['token'];
                 dataType: "json",
                 success: function (response) {
                     if (response.success) {
-                        const preferenceId = response.ids.id;
-                        renderWalletBrick(preferenceId);
+                        console.log(response)
+                        window.location.href = response.url;
                     } else {
-                        Swal.fire({ icon: "error", title: "Compra", text: "No se pudo crear la preferencia." });
+                        Swal.fire({ icon: "error", title: "Compra", text: response.error || "No se pudo crear la preferencia." });
                     }
                 },
-                error: function (xhr) {
+                error: function () {
                     Swal.fire({ icon: "error", title: "Error", text: "Hubo un problema al procesar los datos." });
                 }
             });
         };
+
+
 
         const renderWalletBrick = (preferenceId) => {
             const mp = new MercadoPago(MP_PUBLIC_KEY, { locale: "es-MX" });
@@ -261,6 +263,63 @@ $token = $config['token'];
                 }
             });
         };
+
+
+//     const buyTicket = () => {
+//     let origin      = $("#origin").val();
+//     let destination = $("#destination").val();
+//     let date        = $("#date").val();
+//     let schedule    = $("#schedule").val();
+//     let quantity    = $("#quantity").val();
+//     let price       = $("#price").val();
+
+//     $.ajax({
+//         url: "../Controllers/salesOnlineController.php?op=buy",
+//         type: "POST",
+//         headers: { "Authorization": "Bearer " + token },
+//         data: { origin, destination, date, schedule, quantity, price },
+//         dataType: "json",
+//         success: function (response) {
+//             if (response.success) {
+//                 const preferenceId = response.ids.id;
+//                 console.log("Preference creada:", preferenceId);
+//                 renderWalletBrick(preferenceId);
+//             } else {
+//                 Swal.fire({
+//                     icon: "error",
+//                     title: "Compra",
+//                     text: "No se pudo crear la preferencia."
+//                 });
+//             }
+//         },
+//         error: function () {
+//             Swal.fire({
+//                 icon: "error",
+//                 title: "Error",
+//                 text: "Hubo un problema al procesar los datos."
+//             });
+//         }
+//     });
+// };
+
+// const renderWalletBrick = (preferenceId) => {
+//     const mp = new MercadoPago(MP_PUBLIC_KEY, { locale: "es-MX" });
+
+//     mp.bricks().create("wallet", "paymentBrick_container", {
+//         initialization: { preferenceId },
+//         customization: {
+//             visual: { style: { theme: "default" } },
+//             texts: { valueProp: 'smart_option' }
+//         },
+//         callbacks: {
+//             onReady: () => console.log("Wallet Brick listo"),
+//             onError: (error) => console.error("Error en Wallet Brick:", error)
+//         }
+//     });
+// };
+
+
+
 
     </script>
 </body>

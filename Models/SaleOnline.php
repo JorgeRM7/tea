@@ -17,6 +17,62 @@ class SaleOnline
         MercadoPagoConfig::setAccessToken($this->config['mp_access_token']);
     }
 
+    // public function buy($data) {
+    //     if (!class_exists(MercadoPagoConfig::class)) {
+    //         throw new \RuntimeException("MercadoPago SDK no está cargado (autoload.php).");
+    //     }
+    //     if (empty($this->config['mp_access_token'])) {
+    //         throw new \RuntimeException("mp_access_token vacío en Config/config.php");
+    //     }
+    //     MercadoPagoConfig::setAccessToken($this->config['mp_access_token']);
+
+    //     $ticket_id   = random_int(1000, 9999);
+    //     $origin      = 'Morelia';
+    //     $destination = 'Angamacutiro';
+    //     $price       = (float)120.00;
+    //     $quantity    = (int)1;
+
+    //     $client = new PreferenceClient();
+
+    //     try {
+    //         $pref = $client->create([
+    //             "items" => [[
+    //                 "title"       => "Boleto {$origin} → {$destination}",
+    //                 "quantity"    => $quantity,
+    //                 "unit_price"  => $price,
+    //                 "currency_id" => "MXN",
+    //             ]],
+    //             // Para Bricks puedes omitir back_urls; si quieres dejarlas, déjalas sin auto_return
+    //             // "back_urls" => [
+    //             //   "success" => "https://tu-dominio/Views/success.php?ticket_id={$ticket_id}",
+    //             //   "failure" => "https://tu-dominio/Views/failure.php?ticket_id={$ticket_id}",
+    //             //   "pending" => "https://tu-dominio/Views/pending.php?ticket_id={$ticket_id}",
+    //             // ],
+    //             // SIN auto_return
+    //             "external_reference" => "ticket_{$ticket_id}",
+    //             "notification_url" => "https://tea.digitalenigma.mx/Controllers/salesOnlineController.php?op=webhook",
+    //             "payer" => [
+    //                 "email" => "TESTUSER9144971605651731392" // 👈 usa tu test_user del panel
+    //             ]
+    //         ]);
+
+    //         return [
+    //             "id"        => $pref->id,
+    //             "ticket_id" => $ticket_id,
+    //         ];
+
+    //     } catch (MPApiException $e) {
+    //         $resp = $e->getApiResponse();
+    //         $status = method_exists($resp,'getStatus') ? $resp->getStatus() : (method_exists($resp,'getStatusCode') ? $resp->getStatusCode() : null);
+    //         $rawBody = method_exists($resp,'getContent') ? $resp->getContent() : (method_exists($resp,'getBody') ? $resp->getBody() : null);
+    //         $bodyArr = is_string($rawBody) ? json_decode($rawBody, true) : (is_array($rawBody) ? $rawBody : null);
+    //         $msg = $bodyArr['message'] ?? $bodyArr['error'] ?? $e->getMessage();
+    //         throw new \RuntimeException("MercadoPago API error (" . ($status ?? 400) . "): " . $msg, (int)($status ?? 400));
+    //     } catch (\Throwable $e) {
+    //         throw new \RuntimeException("Error inesperado: ".$e->getMessage(), 500);
+    //     }
+    // }
+
     public function buy($data) {
         if (!class_exists(MercadoPagoConfig::class)) {
             throw new \RuntimeException("MercadoPago SDK no está cargado (autoload.php).");
@@ -27,48 +83,102 @@ class SaleOnline
         MercadoPagoConfig::setAccessToken($this->config['mp_access_token']);
 
         $ticket_id   = random_int(1000, 9999);
-        $origin      = 'Morelia';
-        $destination = 'Angamacutiro';
-        $price       = (float)120.00;
-        $quantity    = (int)1;
+        $origin      = $data['origin'] ?? 'Morelia';
+        $destination = $data['destination'] ?? 'Angamacutiro';
+        $price       = (float)($data['price'] ?? 120.00);
+        $quantity    = (int)($data['quantity'] ?? 1);
+        $date = $data['date'];
+        $hour  = date("H:i:s");  
+        $expiration_date = date('Y-m-d', strtotime($date . ' +1 day'));
+        $route_schedule_id = $data['schedule'];
+
+
+        $sql_fields ="
+            SELECT 
+                routes_stop.id AS routes_stop_id,
+                routes_schedule.route_id,
+                routes_schedule.vehicle_id
+            FROM `routes_stop`
+            INNER JOIN routes_schedule ON routes_schedule.route_id =routes_stop.route_id
+            WHERE routes_stop.origin='$origin' AND routes_stop.destination='$destination' AND routes_schedule.id='$route_schedule_id'
+        ";
+        $result_fields = ejecutarConsulta($sql_fields);
+        if ( $result_fields ) {
+            while ($item = mysqli_fetch_assoc($result_fields)) {
+                $route_id = $item['route_id'];
+                $employee_id = 1;
+                $vehicle_id = $item['vehicle_id'];
+                $routes_stop_id = $item['routes_stop_id'];
+            }
+        } 
+
+        $sql = "
+            INSERT INTO `tickets`(
+                `route_schedule_id`,
+                `route_id`,
+                `employee_id`,
+                `vehicle_id`,
+                `route_stop_id`,
+                `quantity`, 
+                `payment_method`,
+                `price`,
+                `status`, 
+                `date`,
+                `hour`,
+                `expires_at`,
+                `created_at`, 
+                `updated_at`
+            ) VALUES (
+                '$route_schedule_id',
+                '$route_id',
+                '$employee_id',
+                '$vehicle_id',
+                '$routes_stop_id',
+                '1',
+                'TARJETA',
+                '$price',
+                'PENDIENTE',
+                '$date',
+                '$hour',
+                '$expiration_date',
+                NOW(),
+                NOW()
+            )
+        ";
+        $result = ejecutarConsulta($sql);
+
+        if ( $result ) {
+            global $conexion;
+            $ticket_id = mysqli_insert_id($conexion);
+        }
 
         $client = new PreferenceClient();
+        $pref = $client->create([
+            "items" => [[
+                "title"       => "Boleto {$origin} → {$destination}",
+                "quantity"    => $quantity,
+                "unit_price"  => $price,
+                "currency_id" => "MXN",
+            ]],
+            "back_urls" => [
+                "success" => "localhost/tea/Views/sales-online-success.php?ticket_id={$ticket_id}",
+                "failure" => "localhost/tea/Views/sales-online-failure.php?ticket_id={$ticket_id}",
+                "pending" => "localhost/tea/Views/sales-online-pending.php?ticket_id={$ticket_id}",
+            ],
+            "auto_return" => "approved",
+            "external_reference" => "ticket_{$ticket_id}",
+            "notification_url" => "https://tea.digitalenigma.mx/Controllers/salesOnlineController.php?op=webhook"
+        ]);
 
-        try {
-            $pref = $client->create([
-                "items" => [[
-                    "title"       => "Boleto {$origin} → {$destination}",
-                    "quantity"    => $quantity,
-                    "unit_price"  => $price,
-                    "currency_id" => "MXN",
-                ]],
-                // Para Bricks puedes omitir back_urls; si quieres dejarlas, déjalas sin auto_return
-                // "back_urls" => [
-                //   "success" => "https://tu-dominio/Views/success.php?ticket_id={$ticket_id}",
-                //   "failure" => "https://tu-dominio/Views/failure.php?ticket_id={$ticket_id}",
-                //   "pending" => "https://tu-dominio/Views/pending.php?ticket_id={$ticket_id}",
-                // ],
-                // SIN auto_return
-                "external_reference" => "ticket_{$ticket_id}",
-                "notification_url" => "https://tea.digitalenigma.mx/Controllers/salesOnlineController.php?op=webhook"
-            ]);
+        
 
-            return [
-                "id"        => $pref->id,
-                "ticket_id" => $ticket_id,
-            ];
-
-        } catch (MPApiException $e) {
-            $resp = $e->getApiResponse();
-            $status = method_exists($resp,'getStatus') ? $resp->getStatus() : (method_exists($resp,'getStatusCode') ? $resp->getStatusCode() : null);
-            $rawBody = method_exists($resp,'getContent') ? $resp->getContent() : (method_exists($resp,'getBody') ? $resp->getBody() : null);
-            $bodyArr = is_string($rawBody) ? json_decode($rawBody, true) : (is_array($rawBody) ? $rawBody : null);
-            $msg = $bodyArr['message'] ?? $bodyArr['error'] ?? $e->getMessage();
-            throw new \RuntimeException("MercadoPago API error (" . ($status ?? 400) . "): " . $msg, (int)($status ?? 400));
-        } catch (\Throwable $e) {
-            throw new \RuntimeException("Error inesperado: ".$e->getMessage(), 500);
-        }
+        return [
+            "url"       => $pref->init_point,
+            "ticket_id" => $ticket_id,
+        ];
     }
+
+
 
     public function schedules($data) {
         $hour     = date("H:i:s"); 

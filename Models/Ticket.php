@@ -179,7 +179,7 @@ class Ticket
         $sql = "SELECT 
                     routes.id AS route_id,
                     routes_schedule.id AS route_schedule_id,
-                    vehicles.id AS vehicle_id,
+                    vehicles.unidad_number AS vehicle_id,
                     vehicles.capacity AS vehicle_capacity,
                     employees.id AS employee_id,
                     routes_schedule.leaving_time,

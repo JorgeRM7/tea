@@ -19,12 +19,13 @@ foreach ($tickets_ids as $ticket_id) {
         SELECT 
             tickets.id,
             tickets.price,
+            tickets.discount,
             routes_schedule.date,
             routes_schedule.leaving_time,
             routes_stop.origin,
             routes_stop.destination,
             CONCAT(employees.name,' ', employees.paternal_surname, ' ', employees.maternal_surname) AS employee,
-            vehicles.id AS vehicle_id
+            vehicles.unidad_number AS vehicle_id
         FROM tickets
         LEFT JOIN routes_schedule ON tickets.route_schedule_id = routes_schedule.id
         LEFT JOIN routes ON routes.id = tickets.route_id
@@ -39,6 +40,10 @@ foreach ($tickets_ids as $ticket_id) {
     if (!$item) {
         continue;
     }
+
+    $price    = (float) $item['price'];
+    $discount = (float) $item['discount'] ?? 0;
+    $total    = $price - $discount;
 
     // Generar QR
     $text = $item['id'];
@@ -121,7 +126,7 @@ foreach ($tickets_ids as $ticket_id) {
             </tr>
             <tr>
                 <td class='label'>Precio:</td>
-                <td class='value'>$ {$item['price']}</td>
+                <td class='value'>$ {$total}</td>
             </tr>
             <tr>
                 <td class='label'>Unidad:</td>
