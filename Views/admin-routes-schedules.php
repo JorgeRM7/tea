@@ -181,34 +181,37 @@
         let route_id   = $("#route_id").val();
         let week_value = $("#week_number").val();
         let isValid = true;
-        let messages = [];
+        let message = "";
 
-        if (!route_id) {
-            isValid = false;
-            messages.push("Debes seleccionar una ruta.");
-        }
-        if (!week_value) {
-            isValid = false;
-            messages.push("Debes seleccionar una semana.");
-        }
+        // Recorre todos los selects de vehículo
+        document.querySelectorAll("[id^=vehicle_id_]").forEach(sel => {
+            if (sel.value === "") {
+                isValid = false;
+                message = "Debes seleccionar un vehículo en todas las tarjetas.";
+            }
+        });
 
-        // $("[id^='item_schedule_']").each(function () {
-        //     let vehicle = $(this).find("select[name='vehicle_id[]']").val();
-        //     let day     = $(this).find("select[name='day[]']").val();
-        //     let time    = $(this).find("input[name='leaving_time[]']").val();
+        // Recorre todos los selects de días
+        document.querySelectorAll("select[name^='schedules'][name$='[day][]']").forEach(sel => {
+            if (sel.value === "") {
+                isValid = false;
+                message = "Debes seleccionar un día en todos los horarios.";
+            }
+        });
 
-        //     if (!vehicle || !day || !time) {
-        //         isValid = false;
-        //         messages.push("Debes llenar Vehículo, Día y Hora en todos los horarios.");
-        //     }
-        // });
+        // Recorre todos los inputs de hora
+        document.querySelectorAll("input[name^='schedules'][name$='[leaving_time][]']").forEach(input => {
+            if (input.value === "") {
+                isValid = false;
+                message = "Debes colocar una hora de salida en todos los horarios.";
+            }
+        });
 
         if (!isValid) {
             Swal.fire({
                 icon: "warning",
                 title: "Campos incompletos",
-                text: messages.join("\n"),
-                confirmButtonColor: "#f07d42"
+                text: message
             });
             return;
         }
@@ -224,7 +227,6 @@
             contentType: false,
             processData: false,
             success: function(response) {
-                console.log(response)
                 Swal.fire({
                     toast: true,
                     position: 'top-end',
@@ -266,7 +268,6 @@
             // },
             success: function (response) {
                 let data = response;
-                console.log(data);
                 $("#permission").empty();
                 data.forEach(item => {
                     let card = `
@@ -334,8 +335,6 @@
             },
             success: function (response) {
                 let data = response;
-                console.log(data);
-
                 let container = $(`#leaving_times_${route_id}`);
                 container.empty();
 
@@ -761,7 +760,6 @@
             dataType: "json",
             data: { route_id: route_id, week: week, year: year },
             success: function (response) {
-                console.log(response);
                 let grouped = {};
                 response.forEach(item => {
                     if (!grouped[item.vehicle_id]) {
@@ -774,13 +772,14 @@
                     item_id++;
                     let current_id = item_id;
                     let horarios = grouped[vehicleId];
+                    let unidadNumber = horarios[0].unidad_number;
 
                     let schedule = `
                         <div class="col-md-6 mt-2" id="item_schedule_${current_id}">
                             <div class="card mb-4">
                                 <div class="card-header d-flex justify-content-between align-items-center">
-                                    <h5 class="mb-0">Unidad #${vehicleId}</h5>
-                                    <button type="button" class="btn btn-sm btn-danger" onclick="delete_vehicle(${vehicleId}, ${current_id})">
+                                    <h5 class="mb-0">Unidad #${unidadNumber}</h5>
+                                    <button type="button" class="btn btn-sm btn-danger" onclick="delete_schedules_by_vehicle(${vehicleId}, ${current_id})">
                                         <i class="ti ti-trash"></i> Eliminar todos
                                     </button>
                                 </div>
@@ -1012,6 +1011,67 @@
             }
         });
     };
+
+    const delete_schedules_by_vehicle = ( vehicle_id, div_id ) => {
+        let weekInput = document.getElementById('week_number_filter').value;
+        let week = null;
+        let year = null;
+        if (weekInput) {
+            [year, week] = weekInput.split("-W");
+        }
+        Swal.fire({
+            title: "¿Estás seguro?",
+            text: `Todos los horarios se eliminará permanentemente de la semana ${week} y el año ${year}.`,
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#d33",
+            cancelButtonColor: "#3085d6",
+            confirmButtonText: "Sí, eliminar",
+            cancelButtonText: "Cancelar"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: "../Controllers/adminRoutesSchedulesController.php?op=deleted-schedules-by-vehicle",
+                    type: "POST",
+                    headers: {
+                        "Authorization": "Bearer " + token
+                    },
+                    dataType: "json",
+                    data: { vehicle_id: vehicle_id, week: week, year: year },
+                    success: function (response) {
+                        if (response) {
+                            $(`#item_schedule_${div_id}`).remove();
+
+                            Swal.fire({
+                                icon: "success",
+                                title: "Eliminado",
+                                text: "Horarios eliminados correctamente.",
+                                confirmButtonColor: "#28c76f"
+                            });
+                            index();
+                        } else {
+                            Swal.fire({
+                                icon: "error",
+                                title: "Error",
+                                text: response.message || "No se pudo eliminar el horario.",
+                                confirmButtonColor: "#f07d42"
+                            });
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("Error en la solicitud:", error);
+                        Swal.fire({
+                            icon: "error",
+                            title: "Error",
+                            text: "Hubo un problema al eliminar el horario.",
+                            confirmButtonColor: "#f07d42"
+                        });
+                    }
+                });
+            }
+        });
+    };
+
 
     const filters = () => {
         $('#modal_filters').modal('show');

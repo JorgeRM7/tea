@@ -53,6 +53,8 @@ switch ($_GET["op"]) {
                 "vehicle_id" => $reg['vehicle_id'],
                 "leaving_time" => $reg['leaving_time'],
                 "day" => $reg['day'],
+                "unidad_number" => $reg['unidad_number'],
+                
             ];
         }
 
@@ -66,6 +68,11 @@ switch ($_GET["op"]) {
 
     case 'deleted-schedules':
         $rspta = $RouteSchedule->deleted_schedules ( $_POST );
+        echo $rspta;
+    break;
+
+    case 'deleted-schedules-by-vehicle':
+        $rspta = $RouteSchedule->deleted_schedules_by_vehicle ( $_POST );
         echo $rspta;
     break;
 

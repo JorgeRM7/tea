@@ -281,7 +281,15 @@ class RouteSchedule {
         $week = $data['week'];
         $year = $data['year'];
 
-        $sql = "SELECT * FROM routes_schedule WHERE route_id='$route_id' AND week=$week AND year=$year AND deleted_at IS NULL";
+        $sql = "
+            SELECT 
+                routes_schedule.*,
+                vehicles.unidad_number
+            FROM routes_schedule 
+            INNER JOIN vehicles ON vehicles.id= routes_schedule.vehicle_id
+            WHERE route_id='$route_id' 
+            AND routes_schedule.week=$week AND routes_schedule.year=$year 
+            AND routes_schedule.deleted_at IS NULL";
         return ejecutarConsulta($sql);
     }
 
@@ -297,6 +305,15 @@ class RouteSchedule {
         $year = $data['year'];
 
         $sql="UPDATE `routes_schedule` SET `deleted_at`= NOW() WHERE `route_id`='$route_id' AND week = '$week' AND year='$year'";
+        return ejecutarConsulta($sql);
+    }
+
+    public function deleted_schedules_by_vehicle ( $data ){
+        $vehicle_id = $data['vehicle_id'];
+        $week = $data['week'];
+        $year = $data['year'];
+
+        $sql="UPDATE `routes_schedule` SET `deleted_at`= NOW() WHERE `vehicle_id`='$vehicle_id' AND week = '$week' AND year='$year'";
         return ejecutarConsulta($sql);
     }
       

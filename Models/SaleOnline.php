@@ -113,9 +113,6 @@ class SaleOnline
             "external_reference" => "ticket_{$ticket_id}",
             "notification_url" => "https://tea.digitalenigma.mx/Controllers/salesOnlineController.php?op=webhook"
         ]);
-
-        
-
         return [
             "url"       => $pref->init_point,
             "ticket_id" => $ticket_id,
@@ -200,7 +197,7 @@ class SaleOnline
             $logEmpty = "[" . date("Y-m-d H:i:s") . "] Webhook sin data válida: " . $rawInput . "\n";
             file_put_contents($logFile, $logEmpty, FILE_APPEND);
         }
-        
+
         http_response_code(200);
         echo "OK";
     }

@@ -3,7 +3,7 @@ require_once dirname(__DIR__) . "/Database/conexion.php";
 require_once __DIR__ . '/../vendor/autoload.php';
 use Mpdf\Mpdf;
 
-$tickets_ids = isset($_GET['tickets_id']) ? explode(",", $_GET['tickets_id']) : []; 
+$tickets_ids = 315556;
 
 $mpdf = new Mpdf([
     'format' => [80, 70], // 80mm x 70mm
@@ -13,7 +13,7 @@ $mpdf = new Mpdf([
     'margin_bottom' => 3
 ]);
 
-foreach ($tickets_ids as $ticket_id) {
+
 
     $sql = "
         SELECT 
@@ -37,9 +37,6 @@ foreach ($tickets_ids as $ticket_id) {
     $result = ejecutarConsulta($sql);
     $item = mysqli_fetch_assoc($result);
 
-    if (!$item) {
-        continue;
-    }
 
     $price    = (float) $item['price'];
     $discount = (float) $item['discount'] ?? 0;
@@ -144,7 +141,5 @@ foreach ($tickets_ids as $ticket_id) {
     ";
 
     $mpdf->WriteHTML($html);
-    // $mpdf->AddPage();
-}
 
 $mpdf->Output("item.pdf", "I");
