@@ -17,62 +17,6 @@ class SaleOnline
         MercadoPagoConfig::setAccessToken($this->config['mp_access_token']);
     }
 
-    // public function buy($data) {
-    //     if (!class_exists(MercadoPagoConfig::class)) {
-    //         throw new \RuntimeException("MercadoPago SDK no está cargado (autoload.php).");
-    //     }
-    //     if (empty($this->config['mp_access_token'])) {
-    //         throw new \RuntimeException("mp_access_token vacío en Config/config.php");
-    //     }
-    //     MercadoPagoConfig::setAccessToken($this->config['mp_access_token']);
-
-    //     $ticket_id   = random_int(1000, 9999);
-    //     $origin      = 'Morelia';
-    //     $destination = 'Angamacutiro';
-    //     $price       = (float)120.00;
-    //     $quantity    = (int)1;
-
-    //     $client = new PreferenceClient();
-
-    //     try {
-    //         $pref = $client->create([
-    //             "items" => [[
-    //                 "title"       => "Boleto {$origin} → {$destination}",
-    //                 "quantity"    => $quantity,
-    //                 "unit_price"  => $price,
-    //                 "currency_id" => "MXN",
-    //             ]],
-    //             // Para Bricks puedes omitir back_urls; si quieres dejarlas, déjalas sin auto_return
-    //             // "back_urls" => [
-    //             //   "success" => "https://tu-dominio/Views/success.php?ticket_id={$ticket_id}",
-    //             //   "failure" => "https://tu-dominio/Views/failure.php?ticket_id={$ticket_id}",
-    //             //   "pending" => "https://tu-dominio/Views/pending.php?ticket_id={$ticket_id}",
-    //             // ],
-    //             // SIN auto_return
-    //             "external_reference" => "ticket_{$ticket_id}",
-    //             "notification_url" => "https://tea.digitalenigma.mx/Controllers/salesOnlineController.php?op=webhook",
-    //             "payer" => [
-    //                 "email" => "TESTUSER9144971605651731392" // 👈 usa tu test_user del panel
-    //             ]
-    //         ]);
-
-    //         return [
-    //             "id"        => $pref->id,
-    //             "ticket_id" => $ticket_id,
-    //         ];
-
-    //     } catch (MPApiException $e) {
-    //         $resp = $e->getApiResponse();
-    //         $status = method_exists($resp,'getStatus') ? $resp->getStatus() : (method_exists($resp,'getStatusCode') ? $resp->getStatusCode() : null);
-    //         $rawBody = method_exists($resp,'getContent') ? $resp->getContent() : (method_exists($resp,'getBody') ? $resp->getBody() : null);
-    //         $bodyArr = is_string($rawBody) ? json_decode($rawBody, true) : (is_array($rawBody) ? $rawBody : null);
-    //         $msg = $bodyArr['message'] ?? $bodyArr['error'] ?? $e->getMessage();
-    //         throw new \RuntimeException("MercadoPago API error (" . ($status ?? 400) . "): " . $msg, (int)($status ?? 400));
-    //     } catch (\Throwable $e) {
-    //         throw new \RuntimeException("Error inesperado: ".$e->getMessage(), 500);
-    //     }
-    // }
-
     public function buy($data) {
         if (!class_exists(MercadoPagoConfig::class)) {
             throw new \RuntimeException("MercadoPago SDK no está cargado (autoload.php).");
@@ -212,6 +156,57 @@ class SaleOnline
         $sql = "SELECT * FROM `routes_stop` WHERE origin='$origin' AND deleted_at is null";
         return ejecutarConsulta($sql);
     }
+
+    public function update_payment(){
+        // 1. Capturar el cuerpo crudo
+        $rawInput = file_get_contents("php://input");
+        $body = json_decode($rawInput, true);
+
+        // 2. Guardar log en el mismo directorio de controladores (Controllers/)
+        $logFile = __DIR__ . "/mercadopago_webhook.log";
+        $logEntry = "[" . date("Y-m-d H:i:s") . "] Webhook recibido:\n" . $rawInput . "\n\n";
+        file_put_contents($logFile, $logEntry, FILE_APPEND);
+
+        // 3. Validar y procesar
+        if (isset($body['data']['id'])) {
+            try {
+                $paymentId = $body['data']['id'];
+
+                // Consultar el pago con el SDK
+                $client = new \MercadoPago\Client\Payment\PaymentClient();
+                $payment = $client->get($paymentId);
+
+                $status = $payment->status;                  // approved, rejected, pending
+                $externalRef = $payment->external_reference; // tu ticket_id
+
+                // Registrar también en el log lo que se obtuvo del API
+                $logApi = "[" . date("Y-m-d H:i:s") . "] Pago consultado: ID={$paymentId}, Status={$status}, Ref={$externalRef}\n";
+                file_put_contents($logFile, $logApi, FILE_APPEND);
+
+                if ($status === 'approved') {
+                    $sql = "UPDATE tickets SET status='VENDIDO' WHERE id='$externalRef'";
+                    ejecutarConsulta($sql);
+                } elseif ($status === 'rejected') {
+                    $sql = "UPDATE tickets SET status='RECHAZADO' WHERE id='$externalRef'";
+                    ejecutarConsulta($sql);
+                } else {
+                    $sql = "UPDATE tickets SET status='PENDIENTE' WHERE id='$externalRef'";
+                    ejecutarConsulta($sql);
+                }
+            } catch (\Exception $e) {
+                $logError = "[" . date("Y-m-d H:i:s") . "] ERROR al procesar pago: " . $e->getMessage() . "\n";
+                file_put_contents($logFile, $logError, FILE_APPEND);
+            }
+        } else {
+            $logEmpty = "[" . date("Y-m-d H:i:s") . "] Webhook sin data válida: " . $rawInput . "\n";
+            file_put_contents($logFile, $logEmpty, FILE_APPEND);
+        }
+
+        // 4. Siempre responde a MP para que no reintente infinitamente
+        http_response_code(200);
+        echo "OK";
+    }
+
 
     
 
