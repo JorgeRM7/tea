@@ -158,11 +158,9 @@ class SaleOnline
     }
 
     public function update_payment(){
-        // 1. Capturar el cuerpo crudo
         $rawInput = file_get_contents("php://input");
         $body = json_decode($rawInput, true);
 
-        // 2. Guardar log en el mismo directorio de controladores (Controllers/)
         $logFile = __DIR__ . "/mercadopago_webhook.log";
         $logEntry = "[" . date("Y-m-d H:i:s") . "] Webhook recibido:\n" . $rawInput . "\n\n";
         file_put_contents($logFile, $logEntry, FILE_APPEND);
@@ -172,23 +170,23 @@ class SaleOnline
             try {
                 $paymentId = $body['data']['id'];
 
-                // Consultar el pago con el SDK
                 $client = new \MercadoPago\Client\Payment\PaymentClient();
                 $payment = $client->get($paymentId);
 
-                $status = $payment->status;                  // approved, rejected, pending
-                $externalRef = $payment->external_reference; // tu ticket_id
+                $status = $payment->status;
+                $externalRef = $payment->external_reference;
+                $externalRef = $payment->external_reference;
+                $ticketId = str_replace("ticket_", "", $externalRef);
 
                 if ($status === 'approved') {
-                    $sql = "UPDATE tickets SET status='VENDIDO' WHERE id='$externalRef'";
+                    $sql = "UPDATE tickets SET status='VENDIDO' WHERE id='$ticketId'";
                     
                 } elseif ($status === 'rejected') {
-                    $sql = "UPDATE tickets SET status='RECHAZADO' WHERE id='$externalRef'";
+                    $sql = "UPDATE tickets SET status='RECHAZADO' WHERE id='$ticketId'";
                 } else {
-                    $sql = "UPDATE tickets SET status='PENDIENTE' WHERE id='$externalRef'";
+                    $sql = "UPDATE tickets SET status='PENDIENTE' WHERE id='$ticketId'";
                 }
 
-                // Registrar también en el log lo que se obtuvo del API
                 $logApi = "[" . date("Y-m-d H:i:s") . "] Pago consultado: ID={$paymentId}, Status={$status}, Ref={$externalRef}, sql={$sql}\n" ;
                 file_put_contents($logFile, $logApi, FILE_APPEND);
 
@@ -202,8 +200,7 @@ class SaleOnline
             $logEmpty = "[" . date("Y-m-d H:i:s") . "] Webhook sin data válida: " . $rawInput . "\n";
             file_put_contents($logFile, $logEmpty, FILE_APPEND);
         }
-
-        // 4. Siempre responde a MP para que no reintente infinitamente
+        
         http_response_code(200);
         echo "OK";
     }
