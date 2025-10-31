@@ -7,6 +7,7 @@
   <link rel="icon" type="image/x-icon" href="../assets/img/logo.png" />
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+  <link rel="icon" type="image/x-icon" href="../assets/img/logo.png" />
   <style>
     body { background: linear-gradient(135deg, #0d1a1e, #5a0a0a); color: #fff; font-family: 'Public Sans', sans-serif; min-height: 100vh; display: flex; align-items: center; justify-content: center; }
     .ticket-box { background: rgba(255, 255, 255, 0.1); border-radius: 20px; padding: 2rem; max-width: 500px; backdrop-filter: blur(15px); box-shadow: 0 10px 25px rgba(0,0,0,.4); }

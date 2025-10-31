@@ -158,7 +158,7 @@ if($archivo_actual == 'inicio.php'){
                 }
             });
         });
-        // permisos();
+        permisos();
 
         let branch_office_id = localStorage.getItem("branch_office_id");
         if (branch_office_id) {
@@ -174,6 +174,7 @@ if($archivo_actual == 'inicio.php'){
     }
 
     function permisos() {
+        console.log('permisos')
         let createPerm = document.getElementById("permission_create").value;
         let updatePerm = document.getElementById("permission_update").value;
         let deletePerm = document.getElementById("permission_delete").value;

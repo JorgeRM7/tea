@@ -80,6 +80,9 @@ $token = $config['token'];
         #paymentBrick_container {
             display: none;
         }
+        .is-invalid {
+            border: 2px solid #dc3545 !important;
+        }
     </style>
 </head>
 
@@ -191,6 +194,7 @@ $token = $config['token'];
                 dataType: 'json',
                 data: { origin, destination, date },
                 success: function (data) {
+                    console.log(data)
                     $("#price").val(data[0]?.price || 0);
                     updateSummary();
 
@@ -216,6 +220,38 @@ $token = $config['token'];
             let schedule    = $("#schedule").val();
             let quantity    = $("#quantity").val();
             let price       = $("#price").val();
+
+            if (!origin || origin === "Selecciona origen") {
+                Swal.fire({ icon: "warning", title: "Campo faltante", text: "Por favor selecciona un origen." });
+                return;
+            }
+            if (!destination || destination === "Selecciona destino...") {
+                Swal.fire({ icon: "warning", title: "Campo faltante", text: "Por favor selecciona un destino." });
+                return;
+            }
+            if (!date) {
+                Swal.fire({ icon: "warning", title: "Campo faltante", text: "Por favor selecciona una fecha válida." });
+                return;
+            }
+            if (!schedule || schedule === "Selecciona horario...") {
+                Swal.fire({ icon: "warning", title: "Campo faltante", text: "Por favor selecciona un horario." });
+                return;
+            }
+            if (!quantity || quantity <= 0) {
+                Swal.fire({ icon: "warning", title: "Campo faltante", text: "Por favor ingresa una cantidad válida." });
+                return;
+            }
+            if (!price || parseFloat(price) <= 0) {
+                Swal.fire({ icon: "warning", title: "Campo faltante", text: "El costo del boleto no puede ser $0." });
+                return;
+            }
+
+            $("#origin, #destination, #date, #schedule, #quantity").removeClass("is-invalid");
+            if (!origin) $("#origin").addClass("is-invalid");
+            if (!destination) $("#destination").addClass("is-invalid");
+            if (!date) $("#date").addClass("is-invalid");
+            if (!schedule) $("#schedule").addClass("is-invalid");
+            if (!quantity || quantity <= 0) $("#quantity").addClass("is-invalid");
 
             $.ajax({
                 url: "../Controllers/salesOnlineController.php?op=buy",
@@ -263,64 +299,6 @@ $token = $config['token'];
                 }
             });
         };
-
-
-//     const buyTicket = () => {
-//     let origin      = $("#origin").val();
-//     let destination = $("#destination").val();
-//     let date        = $("#date").val();
-//     let schedule    = $("#schedule").val();
-//     let quantity    = $("#quantity").val();
-//     let price       = $("#price").val();
-
-//     $.ajax({
-//         url: "../Controllers/salesOnlineController.php?op=buy",
-//         type: "POST",
-//         headers: { "Authorization": "Bearer " + token },
-//         data: { origin, destination, date, schedule, quantity, price },
-//         dataType: "json",
-//         success: function (response) {
-//             if (response.success) {
-//                 const preferenceId = response.ids.id;
-//                 console.log("Preference creada:", preferenceId);
-//                 renderWalletBrick(preferenceId);
-//             } else {
-//                 Swal.fire({
-//                     icon: "error",
-//                     title: "Compra",
-//                     text: "No se pudo crear la preferencia."
-//                 });
-//             }
-//         },
-//         error: function () {
-//             Swal.fire({
-//                 icon: "error",
-//                 title: "Error",
-//                 text: "Hubo un problema al procesar los datos."
-//             });
-//         }
-//     });
-// };
-
-// const renderWalletBrick = (preferenceId) => {
-//     const mp = new MercadoPago(MP_PUBLIC_KEY, { locale: "es-MX" });
-
-//     mp.bricks().create("wallet", "paymentBrick_container", {
-//         initialization: { preferenceId },
-//         customization: {
-//             visual: { style: { theme: "default" } },
-//             texts: { valueProp: 'smart_option' }
-//         },
-//         callbacks: {
-//             onReady: () => console.log("Wallet Brick listo"),
-//             onError: (error) => console.error("Error en Wallet Brick:", error)
-//         }
-//     });
-// };
-
-
-
-
     </script>
 </body>
 

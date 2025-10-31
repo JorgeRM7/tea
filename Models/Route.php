@@ -2,6 +2,7 @@
 session_start();
 require_once dirname(__DIR__) . "/Database/conexion.php";
 
+
 class Route {
 
     public function __construct() {}

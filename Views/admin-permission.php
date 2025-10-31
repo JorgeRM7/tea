@@ -241,11 +241,11 @@
                                 <div class="d-flex justify-content-between align-items-end mt-1">
                                     <div class="role-heading">
                                         <h4 class="mb-1 text-primary">${item.name}</h4>
-                                        <a href="javascript:;" onclick="show_permissions(${item.id}, '${item.name}')" class="text-success">
+                                        <a href="javascript:;" onclick="show_permissions(${item.id}, '${item.name}')" class="editar text-success">
                                             <i class="ti ti-edit"></i> Editar
                                         </a>
                                     </div>
-                                    <a href="javascript:void(0);" class="text-danger" onclick="deleteItem(${item.id})">
+                                    <a href="javascript:void(0);" class="eliminar text-danger" onclick="deleteItem(${item.id})">
                                         <i class="ti ti-trash ti-md"></i>
                                     </a>
                                 </div>

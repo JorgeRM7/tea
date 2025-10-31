@@ -121,6 +121,36 @@ class SaleOnline
 
 
 
+    // public function schedules($data) {
+    //     $hour     = date("H:i:s"); 
+    //     $today    = date("Y-m-d");
+    //     $origin   = $data['origin'];
+    //     $destination = $data['destination'];
+    //     $date     = $data['date'] ?? '2025-10-24';
+
+    //     $sql = "SELECT 
+    //                 routes_schedule.id AS schedule_id,
+    //                 routes_schedule.leaving_time,
+    //                 routes_stop.price,
+    //                 (SELECT COUNT(id) FROM tickets WHERE tickets.route_stop_id = routes_stop.id) AS tickets_sale,
+    //                 (SELECT capacity FROM vehicles WHERE vehicles.id = routes_schedule.vehicle_id) AS capacity
+    //             FROM routes_schedule
+    //             INNER JOIN routes_stop ON routes_stop.route_id = routes_schedule.route_id
+    //             WHERE routes_stop.origin = '$origin' 
+    //             AND routes_stop.destination = '$destination'";
+
+    //     if ($date == $today) {
+    //         $sql .= " AND routes_schedule.date = '$date' AND routes_schedule.leaving_time >= '$hour'";
+    //     } elseif ($date > $today) {
+    //         $sql .= " AND routes_schedule.date = '$date'";
+    //     } else {
+    //         $sql .= " AND 1=0";
+    //     }
+
+    //     return ejecutarConsulta($sql);
+    // }
+
+
     public function schedules($data) {
         $hour     = date("H:i:s"); 
         $today    = date("Y-m-d");
@@ -131,22 +161,36 @@ class SaleOnline
         $sql = "SELECT 
                     routes_schedule.id AS schedule_id,
                     routes_schedule.leaving_time,
-                    routes_stop.price
-                FROM routes_schedule routes_schedule
-                INNER JOIN routes_stop ON routes_stop.route_id = routes_schedule.route_id
+                    routes_stop.price,
+                    (SELECT COUNT(id) 
+                        FROM tickets 
+                        WHERE tickets.route_schedule_id = routes_schedule.id 
+                        AND tickets.status IN ('VENDIDO')
+                    ) AS tickets_sale,
+                    (SELECT capacity 
+                        FROM vehicles 
+                        WHERE vehicles.id = routes_schedule.vehicle_id
+                    ) AS capacity
+                FROM routes_schedule
+                INNER JOIN routes_stop 
+                    ON routes_stop.route_id = routes_schedule.route_id
                 WHERE routes_stop.origin = '$origin' 
                 AND routes_stop.destination = '$destination'";
 
         if ($date == $today) {
-            $sql .= " AND routes_schedule.date = '$date' AND routes_schedule.leaving_time >= '$hour'";
+            $sql .= " AND routes_schedule.date = '$date' 
+                    AND routes_schedule.leaving_time >= '$hour'";
         } elseif ($date > $today) {
             $sql .= " AND routes_schedule.date = '$date'";
         } else {
             $sql .= " AND 1=0";
         }
 
+        $sql .= " HAVING tickets_sale < capacity";
+
         return ejecutarConsulta($sql);
     }
+
 
     public function show_subpaths ( $data ){
         $origin = $data['origin'] ?? null;

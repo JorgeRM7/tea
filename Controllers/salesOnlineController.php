@@ -43,6 +43,9 @@ switch ($_GET["op"]) {
                 "schedule_id" => $reg['schedule_id'],
                 "price" => $reg['price'],
                 "leaving_time" => $reg['leaving_time'],
+                "tickets_sale" => $reg['tickets_sale'],
+                "capacity" => $reg['capacity'],
+                
             ];
         }
 
