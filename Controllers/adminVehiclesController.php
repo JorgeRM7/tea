@@ -95,7 +95,7 @@ switch ($_GET["op"]) {
         while ($reg = $rspta->fetch_assoc()) {
             $data[] = [
                 "id" => $reg['id'],
-                "text" => $reg['plate_number'] . " - " . $reg['brand'] . " " . $reg['model']
+                "text" => $reg['unidad_number'] . " - " . $reg['brand'] . " " . $reg['model']
             ];
         }
 
