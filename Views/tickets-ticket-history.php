@@ -18,54 +18,70 @@
                 <div class="content-wrapper">
                     <div class="container-xxl flex-grow-1 container-p-y">
                         <div class="row">
-                            <div class="col-md-4">
-                                <div class="card shadow-sm border-0 rounded-3 h-100">
-                                    <div class="card-body text-center">
-                                        <h5 class="card-title text-success d-flex align-items-center justify-content-center gap-2">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-ticket" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                                <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                                                <path d="M15 5l0 2" />
-                                                <path d="M15 11l0 2" />
-                                                <path d="M15 17l0 2" />
-                                                <path d="M5 5h14a2 2 0 0 1 2 2v2a2 2 0 0 0 0 4v2a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-2a2 2 0 0 0 0 -4v-2a2 2 0 0 1 2 -2" />
-                                            </svg>
-                                            Boletos Vendidos
-                                        </h5>
-                                        <h2 class="fw-bold text-success mt-2" id="totalVendidos">0</h2>
+                            <div class="col-sm-3 col-lg-3 mt-2">
+                                <div class="card card-border-shadow-success">
+                                    <div class="card-body">
+                                        <div class="d-flex align-items-center mb-2 pb-1">
+                                            <div class="avatar me-2">
+                                                <span class="avatar-initial rounded bg-label-success">
+                                                    <i class="ti ti-ticket ti-md"></i>
+                                                </span>
+                                            </div>
+                                            <h4 class="ms-1 mb-0" id="totalVendidos">0</h4>
+                                        </div>
+                                        <p class="mb-1">Boletos Vendidos</p>  
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-4">
-                                <div class="card shadow-sm border-0 rounded-3 h-100">
-                                    <div class="card-body text-center">
-                                        <h5 class="card-title text-danger d-flex align-items-center justify-content-center gap-2">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-x" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                                <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                                                <path d="M18 6l-12 12" />
-                                                <path d="M6 6l12 12" />
-                                            </svg>
-                                            Boletos Cancelados
-                                        </h5>
-                                        <h2 class="fw-bold text-danger mt-2" id="totalCancelados">0</h2>
+
+                            <div class="col-sm-3 col-lg-3 mt-2">
+                                <div class="card card-border-shadow-danger">
+                                    <div class="card-body">
+                                        <div class="d-flex align-items-center mb-2 pb-1">
+                                            <div class="avatar me-2">
+                                                <span class="avatar-initial rounded bg-label-danger">
+                                                    <i class="ti ti-ticket-off ti-md"></i>
+                                                </span>
+                                            </div>
+                                            <h4 class="ms-1 mb-0" id="totalCancelados">0</h4>
+                                        </div>
+                                        <p class="mb-1">Boletos Cancelados</p>  
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-4">
-                                <div class="card shadow-sm border-0 rounded-3 h-100">
-                                    <div class="card-body text-center">
-                                        <h5 class="card-title text-primary d-flex align-items-center justify-content-center gap-2">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-database" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                                <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                                                <ellipse cx="12" cy="6" rx="8" ry="3" />
-                                                <path d="M4 6v12a8 3 0 0 0 16 0v-12" />
-                                                <path d="M4 12a8 3 0 0 0 16 0" />
-                                            </svg>
-                                            Total Boletos
-                                        </h5>
-                                        <h2 class="fw-bold text-primary mt-2" id="totalBoletos">0</h2>
+
+                            <div class="col-sm-3 col-lg-3 mt-2">
+                                <div class="card card-border-shadow-success">
+                                    <div class="card-body">
+                                        <div class="d-flex align-items-center mb-2 pb-1">
+                                            <div class="avatar me-2">
+                                                <span class="avatar-initial rounded bg-label-success">
+                                                    <i class="ti ti-database ti-md"></i>
+                                                </span>
+                                            </div>
+                                            <h4 class="ms-1 mb-0" id="totalBoletos">0</h4>
+                                        </div>
+                                        <p class="mb-1">Total Boletos</p>  
                                     </div>
                                 </div>
                             </div>
+
+                            <div class="col-sm-3 col-lg-3 mt-2">
+                                <div class="card card-border-shadow-success">
+                                    <div class="card-body">
+                                        <div class="d-flex align-items-center mb-2 pb-1">
+                                            <div class="avatar me-2">
+                                                <span class="avatar-initial rounded bg-label-success">
+                                                    <i class="ti ti-coin ti-md"></i>
+                                                </span>
+                                            </div>
+                                            <h4 class="ms-1 mb-0" id="importeTotal">0</h4>
+                                        </div>
+                                        <p class="mb-1">Importe Total</p>  
+                                    </div>
+                                </div>
+                            </div>
+
                             <!--Tabla de asistencias-->
                             <div class="col-xl-12 col-lg-12 col-md-12 order-0 order-md-1 mt-3">
                                 <div class="card">
@@ -196,6 +212,9 @@
             },
             "responsive": false,
         }).DataTable();
+        $('#tbllistado').on('draw.dt', function() {
+            permisos();
+        });
     };
 
     const show = ( routes_schedule_id ) => {
@@ -285,7 +304,6 @@
 
     const tickets = () => {
         let date = $("#date").val();
-
         $.ajax({
             url: "../Controllers/ticketsController.php?op=tickets",
             type: "GET",
@@ -297,9 +315,10 @@
                 date: date,
             },
             success: function (data) {
-                $("#totalVendidos").text(data.vendidos);
-                $("#totalCancelados").text(data.cancelados);
-                $("#totalBoletos").text(data.total);
+                $("#totalVendidos").text(`${parseFloat(data.vendidos).toLocaleString()}` ?? 0);
+                $("#totalCancelados").text(`${parseFloat(data.cancelados).toLocaleString()}` ?? 0);
+                $("#totalBoletos").text(`${parseFloat(data.total).toLocaleString()}` ?? 0);
+                $("#importeTotal").text(`${parseFloat(data.importe_total).toLocaleString()}` ?? 0);
             },
             error: function (xhr, status, error) {
                 console.error("Error cargando resumen:", error);

@@ -11,6 +11,7 @@ class Ticket
 
     public function index ( $data ){
         $date = $data['date'] ?? null;
+        $user_id = $_SESSION['user_id'];
         $sql ="
             SELECT
                 tickets.id,
@@ -31,9 +32,10 @@ class Ticket
             LEFT JOIN routes_schedule ON tickets.route_schedule_id=routes_schedule.id
             LEFT JOIN employees ON employees.id = tickets.employee_id
             LEFT JOIN vehicles ON vehicles.id = tickets.vehicle_id
+            WHERE tickets.user_id = $user_id
         ";
         if (!empty($date)) {
-            $sql .= " WHERE tickets.date = '$date'";
+            $sql .= " AND tickets.date = '$date'";
         }
 
         $sql .= " ORDER BY tickets.date DESC";
@@ -203,15 +205,20 @@ class Ticket
 
     public function tickets ( $data ){
         $date = $data['date'];
+        $user_id = $_SESSION['user_id'];
         $sql = "
             SELECT 
                 SUM(CASE WHEN status = 'VENDIDO' THEN 1 ELSE 0 END) AS vendidos,
                 SUM(CASE WHEN status = 'CANCELADO' THEN 1 ELSE 0 END) AS cancelados,
+                SUM(CASE WHEN status = 'VENDIDO' THEN price - discount ELSE 0 END) AS importe_total,
                 COUNT(*) AS total
             FROM tickets
         ";
+        $sql .= " WHERE tickets.user_id = '" .$user_id. "'";
+
+    
         if (!empty($date)) {
-            $sql .= " WHERE tickets.date = '$date'";
+            $sql .= " AND tickets.date = '$date'";
         }
 
         $sql .= " ORDER BY tickets.date DESC";

@@ -30,26 +30,12 @@ $title = "Inicio"; ?>
                                             <h5 class="fw-bold mb-3"><i class="ti ti-bell"></i> Filtros</h5>
                                             <div class="row g-3 mb-3">
                                                 <div class="col-md-4">
-                                                    <label class="form-label section-title">Ruta</label>
-                                                    <select id="search_route" name="search_route" class="form-select">
-                                                        <?php 
-                                                            $sql = "SELECT * FROM `routes` WHERE deleted_at is null";
-                                                            $query = ejecutarConsulta($sql);
-                                                            while($valores = mysqli_fetch_array($query)){
-                                                                echo "<option value='".$valores['id']."'>".$valores['origin']." - ".$valores['destination']."</option>";
-                                                            }
-                                                        ?>
-
-                                                    </select>
-                                                    <div id="routeRules" class="rule-note mt-1"></div>
+                                                    <label class="form-label section-title">Desde</label>
+                                                    <input id="start_date" name="start_date" type="date" class="form-control" value="<?php echo date('Y-m-d'); ?>" onchange="index()"/>
                                                 </div>
                                                 <div class="col-md-4">
-                                                    <label class="form-label section-title">Fecha</label>
-                                                    <input id="search_date" name="search_date" type="date" class="form-control" value="<?php echo date('Y-m-d'); ?>"/>
-                                                </div>
-                                                <div class="col-md-4">
-                                                    <label class="form-label section-title">Fecha</label>
-                                                    <input id="search_date" name="search_date" type="date" class="form-control" value="<?php echo date('Y-m-d'); ?>"/>
+                                                    <label class="form-label section-title">Hasta</label>
+                                                    <input id="end_date" name="end_date" type="date" class="form-control" value="<?php echo date('Y-m-d'); ?>" onchange="index()"/>
                                                 </div>
                                             </div>
                                         </div>
@@ -86,29 +72,9 @@ $title = "Inicio"; ?>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-sm-6 col-lg-6">
-                                    <div class="card mt-2">
-                                        <div class="card-header bg-white">
-                                            <h5 class="mb-0"><i class="bi bi-graph-up-arrow me-1 text-primary"></i> Ventas por Fecha</h5>
-                                        </div>
-                                        <div class="card-body">
-                                            <canvas id="salesByDateChart" height="100%"></canvas>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="col-sm-6 col-lg-6">
-                                    <div class="card mt-2">
-                                        <div class="card-header bg-white">
-                                            <h5 class="mb-0"><i class="bi bi-graph-up-arrow me-1 text-primary"></i> Ventas por Sucursal</h5>
-                                        </div>
-                                        <div class="card-body">
-                                            <canvas id="salesByBranchBar" height="100%"></canvas>
-                                        </div>
-                                    </div>
-                                </div>
                             </div>
                             <div class="row mt-2" id="salesByRoute"></div>
+                            <div class="row" id="salesByBranchOffice"></div>
                         </div>
                         <!-- FIN CONTENIDO -->
 
@@ -136,8 +102,8 @@ $title = "Inicio"; ?>
     });
 
     const index = () => {
-        // let route_id = $("#search_route").val();
-        // let date     = $("#search_date").val();
+        let start_date = $("#start_date").val();
+        let end_date   = $("#end_date").val();
 
         $.ajax({
             url: '../Controllers/dashboardGeneralController.php?op=index',
@@ -146,7 +112,7 @@ $title = "Inicio"; ?>
                 "Authorization": "Bearer " + token
             },
             dataType: 'json',
-            // data: { route_id: route_id, date: date },
+            data: { start_date: start_date, end_date: end_date },
             success: function(data) {
 
                 console.log(data)
@@ -157,30 +123,159 @@ $title = "Inicio"; ?>
                     $("#kpi_total_sales").text(`${parseInt(kpi.total_sales).toLocaleString()}`);
                 }
 
-                $("#salesByRoute").empty();
-                if (data.sales_by_route && data.sales_by_route.length > 0) {
-                    data.sales_by_route.forEach(item => {
-                        let card = `
-                            <div class="col-md-4 mb-3">
-                                <div class="card shadow-sm p-3 h-100">
-                                    <h6 class="text-muted">${item.route}</h6>
-                                    <h4 class="fw-bold text-success">$${parseInt(item.total_sales).toLocaleString()}</h4>
-                                </div>
+                $("#salesByBranchOffice").empty();
+
+                if (data.sales_by_branch_office && data.sales_by_branch_office.length > 0) {
+
+                    let listItems = "";
+
+                    data.sales_by_branch_office.forEach(item => {
+                        listItems += `
+                        <li class="d-flex mb-3 align-items-center">
+                            <div class="avatar flex-shrink-0 me-2">
+                                <span class="rounded-circle bg-success text-white p-2 d-flex align-items-center justify-content-center">
+                                    <i class="ti ti-ticket"></i>
+                                </span>
                             </div>
-                        `;
-                        $("#salesByRoute").append(card);
+                            <div class="w-100 d-flex justify-content-between align-items-center">
+                                <p class="mb-0 fw-medium">${item.branch_office}</p>
+                                <span class="badge bg-label-success text-success">$${parseInt(item.total_sales).toLocaleString()}.00</span>
+                            </div>
+                        </li>`;
                     });
+
+                    $("#salesByBranchOffice").append(`
+                        <div class="col-md-4 col-xl-4 mb-4">
+                            <div class="card card-ticket shadow-sm border-0 h-100">
+                                <div class="card-header text-center">
+                                    <h5 class="card-title m-0">Ventas por sucursal</h5>
+                                </div>
+                                <div class="card-body">
+                                    <ul class="list-unstyled mb-0">
+                                        ${listItems}
+                                    </ul>
+                                </div>
+
+                            </div>
+                        </div>
+                    `);
+                } else {
+                    $("#salesByBranchOffice").append(`
+                        <div class="col-12 text-center mt-3">
+                            <p class="text-muted fw-bold">Sin ventas registradas</p>
+                        </div>
+                    `);
                 }
 
-                if (data.sales_by_date) {
-                    renderSalesByDateChart(data.sales_by_date);
-                }
+                if (data.sales_by_date && data.sales_by_date.length > 0) {
+                    let listItems = "";
+                    data.sales_by_date.forEach(item => {
+                        listItems += `
+                        <li class="d-flex mb-3 align-items-center">
+                            <div class="avatar flex-shrink-0 me-2">
+                                <span class="rounded-circle bg-info text-white p-2 d-flex align-items-center justify-content-center">
+                                    <i class="ti ti-calendar-due"></i>
+                                </span>
+                            </div>
+                            <div class="w-100 d-flex justify-content-between align-items-center">
+                                <p class="mb-0 fw-medium">${item.date}</p>
+                                <span class="badge bg-label-info text-info">$${parseInt(item.total_sales).toLocaleString()}.00</span>
+                            </div>
+                        </li>`;
+                    });
 
-                if (data.sales_by_date) {
-                    renderSalesByBranchCharts(data.sales_by_branch_office);
-                }
+                    $("#salesByBranchOffice").append(`
+                        <div class="col-md-4 col-xl-4 mb-4">
+                            <div class="card card-ticket shadow-sm border-0 h-100">
+                                <div class="card-header text-center">
+                                    <h5 class="card-title m-0">Ventas por dia</h5>
+                                </div>
 
-                
+                                <div class="card-body">
+                                    <ul class="list-unstyled mb-0">
+                                        ${listItems}
+                                    </ul>
+                                </div>
+
+                            </div>
+                        </div>
+                    `);
+                } 
+
+                if (data.sales_by_route && data.sales_by_route.length > 0) {
+
+                    let listItems = "";
+
+                    data.sales_by_route.forEach(item => {
+                        listItems += `
+                        <li class="d-flex mb-3 align-items-center">
+                            <div class="avatar flex-shrink-0 me-2">
+                                <span class="rounded-circle bg-warning text-white p-2 d-flex align-items-center justify-content-center">
+                                    <i class="ti ti-road"></i>
+                                </span>
+                            </div>
+                            <div class="w-100 d-flex justify-content-between align-items-center">
+                                <p class="mb-0 fw-medium">${item.route}</p>
+                                <span class="badge bg-label-warning text-warning">$${parseInt(item.total_sales).toLocaleString()}.00</span>
+                            </div>
+                        </li>`;
+                    });
+
+                    $("#salesByBranchOffice").append(`
+                        <div class="col-md-4 col-xl-4 mb-4">
+                            <div class="card card-ticket shadow-sm border-0 h-100">
+                                <div class="card-header text-center">
+                                    <h5 class="card-title m-0">Ventas por ruta</h5>
+                                </div>
+
+                                <div class="card-body">
+                                    <ul class="list-unstyled mb-0">
+                                        ${listItems}
+                                    </ul>
+                                </div>
+
+                            </div>
+                        </div>
+                    `);
+                } 
+
+                if (data.sales_by_users && data.sales_by_users.length > 0) {
+
+                    let listItems = "";
+
+                    data.sales_by_users.forEach(item => {
+                        listItems += `
+                        <li class="d-flex mb-3 align-items-center">
+                            <div class="avatar flex-shrink-0 me-2">
+                                <span class="rounded-circle bg-danger text-white p-2 d-flex align-items-center justify-content-center">
+                                    <i class="ti ti-user"></i>
+                                </span>
+                            </div>
+                            <div class="w-100 d-flex justify-content-between align-items-center">
+                                <p class="mb-0 fw-medium">${item.user}</p>
+                                <span class="badge bg-label-danger text-danger">$${parseInt(item.total_sales).toLocaleString()}.00</span>
+                            </div>
+                        </li>`;
+                    });
+
+                    $("#salesByBranchOffice").append(`
+                        <div class="col-md-4 col-xl-4 mb-4">
+                            <div class="card card-ticket shadow-sm border-0 h-100">
+                                <div class="card-header text-center">
+                                    <h5 class="card-title m-0">Ventas por usuarios</h5>
+                                </div>
+
+                                <div class="card-body">
+                                    <ul class="list-unstyled mb-0">
+                                        ${listItems}
+                                    </ul>
+                                </div>
+
+                            </div>
+                        </div>
+                    `);
+                } 
+
             },
             error: function(e) {
                 console.error("Error cargando horarios:", e.responseText);
@@ -188,96 +283,4 @@ $title = "Inicio"; ?>
         });
     };
 
-    
-    function renderSalesByDateChart(salesByDate) {
-        const labels = salesByDate.map(item => item.date);
-        const values = salesByDate.map(item => parseInt(item.total_sales));
-
-        const ctx = document.getElementById('salesByDateChart').getContext('2d');
-
-        new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: 'Ventas ($)',
-                    data: values,
-                    borderColor: '#007bff',
-                    backgroundColor: 'rgba(0, 123, 255, 0.2)',
-                    borderWidth: 3,
-                    tension: 0.3,
-                    fill: true,
-                    pointBackgroundColor: '#007bff',
-                    pointRadius: 5,
-                    pointHoverRadius: 7
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: { display: true },
-                    tooltip: {
-                        callbacks: {
-                            label: function(context) {
-                                return '$' + context.raw.toLocaleString();
-                            }
-                        }
-                    }
-                },
-                scales: {
-                    x: {
-                        ticks: { color: '#6c757d' }
-                    },
-                    y: {
-                        beginAtZero: true,
-                        ticks: {
-                            callback: value => '$' + value.toLocaleString(),
-                            color: '#6c757d'
-                        }
-                    }
-                }
-            }
-        });
-    }
-
-    function renderSalesByBranchCharts(data) {
-        const labels = data.map(item => item.branch_office);
-        const values = data.map(item => parseFloat(item.total_sales));
-
-        // Colores dinámicos
-        const colors = ['#007bff','#28a745','#ffc107','#dc3545','#6610f2'];
-
-        // Gráfico de barras
-        new Chart(document.getElementById('salesByBranchBar'), {
-            type: 'bar',
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: 'Ventas ($)',
-                    data: values,
-                    backgroundColor: colors,
-                    borderRadius: 8
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: { display: false },
-                    tooltip: {
-                        callbacks: {
-                            label: (context) => "$" + context.raw.toLocaleString()
-                        }
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: {
-                            callback: value => "$" + value.toLocaleString()
-                        }
-                    }
-                }
-            }
-        });
-    }
 </script>
