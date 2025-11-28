@@ -89,7 +89,10 @@
                                         <h5 class="mb-0">Historial de boletos</h5>
                                         <div class="d-flex justify-content-end">
                                             <button class="crear btn btn-primary me-2" onclick="filters()">
-                                                <i class="ti ti-cloud-up"></i> Filtros
+                                                <i class="ti ti-filter"></i> Filtros
+                                            </button>
+                                            <button class="crear btn btn-success me-2" onclick="showXLS()">
+                                                <i class="ti ti-file-spreadsheet"></i> Exportar
                                             </button>
                                         </div>
                                     </div>
@@ -124,7 +127,7 @@
                     
                     <!--Inicio Modal Filtros-->
                     <div class="modal animate__animated animate__flipInX" id="modal_filters" aria-labelledby="flipInXAnimationModalLabel" aria-hidden="true">
-                        <div class="modal-dialog" role="document">
+                        <div class="modal-dialog modal-dialog-centered" role="document">
                             <div class="modal-content">
                                 <div class="modal-header">
                                     <h5 class="modal-title" id="exampleModalLabel">Filtrar</h5>
@@ -144,7 +147,7 @@
                                 </div>
                                 <div class="modal-footer">
                                     <button class="crear btn btn-primary me-2" onclick="filter()">
-                                        <i class="ti ti-device-floppy"></i> Filtrar
+                                        <i class="ti ti-filter"></i> Filtrar
                                     </button>
                                     <button type="button" class="btn btn-danger" data-bs-dismiss="modal" onclick="clean()">Cerrar</button>
                                 </div>
@@ -152,7 +155,37 @@
                         </div>
                     </div>
                     <!--Fin Modal Filtros-->
-                    
+
+                    <!-- Modal XLS -->
+                    <div class="modal animate__animated animate__flipInX" id="modalXLS" aria-labelledby="flipInXAnimationModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel">Generar Reporte</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <label for="nameWithTitle" class="form-label">Desde</label>
+                                            <input type="date" id="fecha_inicial" name="fecha_inicial" class="form-control" placeholder="Ingresa..." required/>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="nameWithTitle" class="form-label">Hasta</label>
+                                            <input type="date" id="fecha_final" name="fecha_final" class="form-control" placeholder="Ingresa..." />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                                    <button type="button" class="btn btn-primary" onclick="exportCSV()">Generar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Modal XLS -->
+
+
                     <!-- FOOTER -->
                     <?php require_once('footer.php'); ?>
                     <!-- FOOTER -->
@@ -181,6 +214,7 @@
     });
    
     const index = () => {
+        let branch_office_id = document.getElementById('branch_office_id_selected').value;
         if ($.fn.DataTable.isDataTable('#tbllistado')) {
             $('#tbllistado').DataTable().ajax.reload(null, false);
             return;
@@ -198,6 +232,7 @@
                 dataType: "json",
                 data: function (d) {
                     d.date = $("#date").val();
+                    d.branch_office  = branch_office_id;
                 },
                 error: (e) => {
                     console.log(e.responseText);
@@ -245,52 +280,85 @@
         });
     }
 
-    const deleteItem = ( ticket_id ) => {
-        
+    const deleteItem = (ticket_id) => {
+
         Swal.fire({
-            title: "Alerta",
-            html: `¿ Estas seguro(a) de realizar la cancelación del boleto con folio: <b>${ticket_id}</b> ?`,
+            title: "Cancelar boleto",
+            html: `¿Estás seguro(a) de cancelar el boleto con folio: <b>${ticket_id}</b>?`,
             icon: "warning",
             showCancelButton: true,
             confirmButtonColor: "#3085d6",
             cancelButtonColor: "#d33",
-            confirmButtonText: "Si"
+            confirmButtonText: "Sí"
         }).then((result) => {
+
             if (result.isConfirmed) {
-                $.ajax({
-                    url: "../Controllers/ticketsController.php?op=deleteItem",
-                    type: "POST",
-                    headers: {
-                        "Authorization": "Bearer " + token
+                Swal.fire({
+                    title: "Autorización requerida",
+                    html: `
+                    <form id="deleteAuthForm">
+                        <input 
+                            type="password"
+                            name="auth_code"
+                            class="swal2-input"
+                            placeholder="Contraseña..."
+                            autocomplete="off"
+                            autocapitalize="off"
+                            autoccorrect="off"
+                        >
+                        <p class="text-muted mt-2" style="font-size:13px;">Contraseña requerida para autorizar la cancelación</p>
+                    </form>
+                    `,
+                    focusConfirm: false,
+                    showCancelButton: true,
+                    confirmButtonText: "Validar",
+                    didOpen: () => {
+                        const input = document.querySelector("input[name='auth_code']");
+                        if (input) {
+                            input.setAttribute("autocomplete", "off");
+                            setTimeout(() => input.value = input.value, 50);
+                            input.addEventListener("paste", e => e.preventDefault());
+                        }
                     },
-                    data: { ticket_id: ticket_id },
-                    success: function(data, status) {
-                        Swal.fire({
-                            toast: true,
-                            position: 'top-end',
-                            showConfirmButton: false,
-                            timer: 3000,
-                            timerProgressBar: true,
-                            icon: 'success',
-                            title: 'Éxito',
-                            text: 'Acción realizada exitosamente.',
-                        });
-                        index();
-                        tickets();
-                    },
-                    error: function(xhr, status, error) {
-                        console.error("Error:", error);
-                        Swal.fire({
-                            title: "Error",
-                            text: "No se pudo obtener la información del registro.",
-                            icon: "error"
-                        });
+                    preConfirm: () => {
+                        const input = document.querySelector("input[name='auth_code']");
+                        return input ? input.value : "";
                     }
+                }).then((passResult) => {
+
+                    const PASSWORD_CORRECTA = "Admin2025";
+                    if (passResult.value !== PASSWORD_CORRECTA) {
+                        Swal.fire("Acceso denegado", "Contraseña incorrecta.", "error");
+                        return;
+                    }
+
+                    $.ajax({
+                        url: "../Controllers/ticketsController.php?op=deleteItem",
+                        type: "POST",
+                        data: { ticket_id },
+                        headers: { "Authorization": "Bearer " + token },
+                        success: () => {
+                            Swal.fire({
+                                toast: true,
+                                icon: "success",
+                                title: "Boleto cancelado",
+                                position: "top-end",
+                                showConfirmButton: false,
+                                timer: 2500
+                            });
+                            index();
+                            tickets();
+                        },
+                        error: () => {
+                            Swal.fire("Error", "No se pudo cancelar el boleto.", "error");
+                        }
+                    });
+
                 });
             }
         });
-        
     };
+
 
     const filters = () => {
         $('#modal_filters').modal('show');
@@ -303,6 +371,7 @@
     }
 
     const tickets = () => {
+        let branch_office_id = document.getElementById('branch_office_id_selected').value;
         let date = $("#date").val();
         $.ajax({
             url: "../Controllers/ticketsController.php?op=tickets",
@@ -312,18 +381,102 @@
             },
             dataType: "json",
             data: { 
-                date: date,
+                date: date, branch_office_id: branch_office_id,
             },
             success: function (data) {
-                $("#totalVendidos").text(`${parseFloat(data.vendidos).toLocaleString()}` ?? 0);
-                $("#totalCancelados").text(`${parseFloat(data.cancelados).toLocaleString()}` ?? 0);
-                $("#totalBoletos").text(`${parseFloat(data.total).toLocaleString()}` ?? 0);
-                $("#importeTotal").text(`${parseFloat(data.importe_total).toLocaleString()}` ?? 0);
+                $("#totalVendidos").text(
+                    isNaN(parseFloat(data.vendidos)) 
+                        ? 0 
+                        : parseFloat(data.vendidos).toLocaleString()
+                );
+
+                $("#totalCancelados").text(
+                    isNaN(parseFloat(data.cancelados)) 
+                        ? 0 
+                        : parseFloat(data.cancelados).toLocaleString()
+                );
+
+                $("#totalBoletos").text(
+                    isNaN(parseFloat(data.total)) 
+                        ? 0 
+                        : parseFloat(data.total).toLocaleString()
+                );
+
+                $("#importeTotal").text(
+                    isNaN(parseFloat(data.importe_total)) 
+                        ? 0 
+                        : parseFloat(data.importe_total).toLocaleString()
+                );
+
             },
             error: function (xhr, status, error) {
                 console.error("Error cargando resumen:", error);
             }
         });
     };
+
+    const showXLS = () => {
+        $('#modalXLS').modal('show');
+    };
+
+    const  exportCSV = () => {
+        const date_start = document.getElementById("fecha_inicial").value;
+        const date_end = document.getElementById("fecha_final").value;
+        let branch_office_id = document.getElementById('branch_office_id_selected').value;
+        $('#modalXLS').modal('hide');
+        Swal.fire({
+            title: 'Exportando...',
+            text: 'Por favor, espera mientras se genera el archivo Excel.',
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+    
+        $.ajax({
+            url: "../Controllers/ticketsController.php?op=xls",
+            type: "POST",
+            dataType: "json",
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+            data: { date_start: date_start, date_end:date_end, branch_office_id:branch_office_id },
+            success: function (response) {
+                console.log(response)
+                const formattedData = response.map(item => ({
+                    "Fecha" : item.date,
+                    "Horario" : item.leaving_time,
+                    "Origen": item.origin,
+                    "Destino": item.destination,
+                    "Chofer": item.employee,
+                    "Unidad": item.unidad_number,
+                    "Precio": item.price,   
+                    "Estatus" : item.status,
+                }));
+                const worksheet = XLSX.utils.json_to_sheet(formattedData);
+                const workbook  = XLSX.utils.book_new();
+
+                XLSX.utils.book_append_sheet(workbook, worksheet, "Boletos por sucursal");
+                XLSX.writeFile(workbook, `reporte_boletos_${branch_office_id}.xlsx`);
+
+                Swal.fire({
+                    icon: "success",
+                    title: "Exportación completada",
+                    text: "El archivo Excel ha sido generado con éxito.",
+                    confirmButtonColor: "#28c76f"
+                });
+            },
+            error: function (xhr, status, error) {
+                console.error("Error en la solicitud:", error);
+                Swal.fire({
+                    icon: "error",
+                    title: "Error",
+                    text: "Hubo un problema al procesar los datos.",
+                    confirmButtonColor: "#f07d42"
+                });
+            }
+        });
+    }
 
 </script>

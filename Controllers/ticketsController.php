@@ -109,6 +109,11 @@ switch ($_GET["op"]) {
         echo json_encode($data);
     break;
 
+    case 'xls':
+        $data = $Ticket->xls($_POST);
+        echo json_encode($data);
+    break;
+
     case 'show':
         $data = $Ticket->show($_GET);
         echo json_encode($data);
