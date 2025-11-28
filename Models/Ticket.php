@@ -11,6 +11,7 @@ class Ticket
 
     public function index ( $data ){
         $date = $data['date'] ?? null;
+        $date_filter_end = $data['date_filter_end'] ?? null;
         $branch_office_id =$data['branch_office'];
         $user_id = $_SESSION['user_id'];
         $user_type_id = $_SESSION['user_type_id'];
@@ -43,7 +44,7 @@ class Ticket
         }
 
         if (!empty($date)) {
-            $sql .= " AND tickets.date = '$date'";
+            $sql .= " AND tickets.date >= '$date' AND tickets.date <='$date_filter_end'";
         }
 
         $sql .= " ORDER BY tickets.date DESC";
@@ -213,6 +214,7 @@ class Ticket
 
     public function tickets ( $data ){
         $date = $data['date'];
+        $date_filter_end = $data['date_filter_end'] ?? null;
         $user_id = $_SESSION['user_id'];
         $user_type_id = $_SESSION['user_type_id'];
         $branch_office_id = $data['branch_office_id'];
@@ -227,7 +229,7 @@ class Ticket
         ";
 
         if (!empty($date)) {
-            $sql .= " AND tickets.date = '$date'";
+            $sql .= " AND tickets.date >= '$date' AND tickets.date <='$date_filter_end'";
         }
 
         if ( $user_type_id != 1 ) {

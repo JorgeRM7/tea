@@ -139,9 +139,12 @@
                                             $date = date("Y-m-d");
                                         ?>
                                         <div class="col-md-6">
-                                            <label for="week_number" class="form-label">Fecha</label>
-                                            <input type="date" id="date" name="date" class="form-control"
-                                                value="<?php echo $date; ?>">
+                                            <label for="week_number" class="form-label">Desde</label>
+                                            <input type="date" id="date" name="date" class="form-control" value="<?php echo $date; ?>">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="week_number" class="form-label">Hasta</label>
+                                            <input type="date" id="date_filter_end" name="date_filter_end" class="form-control" value="<?php echo $date; ?>">
                                         </div>
                                     </div>
                                 </div>
@@ -232,6 +235,7 @@
                 dataType: "json",
                 data: function (d) {
                     d.date = $("#date").val();
+                    d.date_filter_end = $("#date_filter_end").val();
                     d.branch_office  = branch_office_id;
                 },
                 error: (e) => {
@@ -373,6 +377,8 @@
     const tickets = () => {
         let branch_office_id = document.getElementById('branch_office_id_selected').value;
         let date = $("#date").val();
+        let date_filter_end = $("#date_filter_end").val();
+        
         $.ajax({
             url: "../Controllers/ticketsController.php?op=tickets",
             type: "GET",
@@ -381,7 +387,7 @@
             },
             dataType: "json",
             data: { 
-                date: date, branch_office_id: branch_office_id,
+                date: date, branch_office_id: branch_office_id, date_filter_end:date_filter_end,
             },
             success: function (data) {
                 $("#totalVendidos").text(

@@ -276,6 +276,42 @@ $title = "Inicio"; ?>
                     `);
                 } 
 
+                if (data.sales_by_vehicle && data.sales_by_vehicle.length > 0) {
+
+                    let listItems = "";
+
+                    data.sales_by_vehicle.forEach(item => {
+                        listItems += `
+                        <li class="d-flex mb-3 align-items-center">
+                            <div class="avatar flex-shrink-0 me-2">
+                                <span class="rounded-circle bg-secondary text-white p-2 d-flex align-items-center justify-content-center">
+                                    <i class="ti ti-car"></i>
+                                </span>
+                            </div>
+                            <div class="w-100 d-flex justify-content-between align-items-center">
+                                <p class="mb-0 fw-medium">${item.unidad_number}</p>
+                                <span class="badge bg-label-secondary text-secondary">$${parseInt(item.total_sales).toLocaleString()}.00</span>
+                            </div>
+                        </li>`;
+                    });
+
+                    $("#salesByBranchOffice").append(`
+                        <div class="col-md-4 col-xl-4 mb-4">
+                            <div class="card card-ticket shadow-sm border-0 h-100">
+                                <div class="card-header text-center">
+                                    <h5 class="card-title m-0">Ventas por unidad</h5>
+                                </div>
+
+                                <div class="card-body">
+                                    <ul class="list-unstyled mb-0">
+                                        ${listItems}
+                                    </ul>
+                                </div>
+
+                            </div>
+                        </div>
+                    `);
+                } 
             },
             error: function(e) {
                 console.error("Error cargando horarios:", e.responseText);

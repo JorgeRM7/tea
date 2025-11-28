@@ -284,13 +284,51 @@ class Dashboard {
                 'total_sales' => $item['total_sales']
             ];
         }
+
+
+
+
+        // ---Ventas por unicad ---
+        $sales_by_vehicle = [];
+        $sql_total_sales_by_vehicle  = "
+            SELECT 
+                SUM(
+                    tickets.price - COALESCE(
+                        CAST(
+                            REPLACE(
+                                REPLACE(
+                                    TRIM(tickets.discount), ',', ''
+                                ), ' ', ''
+                            ) AS DECIMAL(10,2)
+                        ), 0
+                    )
+                ) AS total_sales,
+                vehicles.unidad_number,
+                COUNT(tickets.id) AS total_tickets
+            FROM tickets 
+            INNER JOIN vehicles ON vehicles.id = tickets.vehicle_id
+            WHERE tickets.status='VENDIDO'
+            AND tickets.date BETWEEN '$start_date' AND '$end_date'
+            GROUP BY tickets.vehicle_id;
+        ";
+
+        $response_sales_by_vehicle  = ejecutarConsulta($sql_total_sales_by_vehicle );
+
+        while ($item = $response_sales_by_vehicle ->fetch_assoc()) {
+            $sales_by_vehicle [] = [
+                'unidad_number' => $item['unidad_number'],
+                'total_sales' => $item['total_sales'],
+                'total_tickets' => $item['total_tickets'],
+            ];
+        }
         
         return [
             "kpis"                     => $kpis,
             "sales_by_route"           => $sales_by_route,
             "sales_by_date"            => $sales_by_date,
             "sales_by_branch_office"   => $sales_by_branch_offices,
-            "sales_by_users"           => $sales_by_user
+            "sales_by_users"           => $sales_by_user,
+            "sales_by_vehicle"         => $sales_by_vehicle,
         ];
     }
 
