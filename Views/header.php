@@ -66,6 +66,7 @@ require_once dirname(__DIR__) . "/Database/conexion.php";
     <!--<link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.css" rel="stylesheet">-->
     <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.3.6/css/buttons.dataTables.min.css">
     <!--<link rel="stylesheet" href="css/stiles.css">-->
+    <!-- <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.3.6/css/buttons.bootstrap5.min.css"> -->
 
     
 

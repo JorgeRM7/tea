@@ -501,16 +501,16 @@
 
     
     function togglePlant(id) {
-        // if(id){
-            let checkbox = document.getElementById(`plant_check_${id}`);
-            let card = document.getElementById(`plant_${id}`);
+        let checkbox = document.getElementById(`plant_check_${id}`);
+        let card = document.getElementById(`plant_${id}`);
+
+        if( checkbox ){
             checkbox.checked = !checkbox.checked;
             if (checkbox.checked) {
                 card.classList.add("border-success");
             } else {
                 card.classList.remove("border-success");
             }
-        // }
-        
+        }
     }
 </script>

@@ -8,7 +8,7 @@ $Dashboard = new Dashboard();
 switch ($_GET["op"]) {
 
     case 'index':
-        $rspta = $Dashboard->index();
+        $rspta = $Dashboard->index($_GET );
         echo json_encode($rspta);
     break;
 }

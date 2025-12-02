@@ -11,6 +11,11 @@ class Ticket
 
     public function index ( $data ){
         $date = $data['date'] ?? null;
+        $date_filter_end = $data['date_filter_end'] ?? null;
+        $branch_office_id =$data['branch_office'];
+        $user_id = $_SESSION['user_id'];
+        $user_type_id = $_SESSION['user_type_id'];
+
         $sql ="
             SELECT
                 tickets.id,
@@ -31,9 +36,15 @@ class Ticket
             LEFT JOIN routes_schedule ON tickets.route_schedule_id=routes_schedule.id
             LEFT JOIN employees ON employees.id = tickets.employee_id
             LEFT JOIN vehicles ON vehicles.id = tickets.vehicle_id
+            WHERE branch_office_id = '$branch_office_id'
         ";
+
+        if ( $user_type_id != 1 ) {
+            $sql .= " AND tickets.user_id = '".$user_id. "'";
+        }
+
         if (!empty($date)) {
-            $sql .= " WHERE tickets.date = '$date'";
+            $sql .= " AND tickets.date >= '$date' AND tickets.date <='$date_filter_end'";
         }
 
         $sql .= " ORDER BY tickets.date DESC";
@@ -203,15 +214,26 @@ class Ticket
 
     public function tickets ( $data ){
         $date = $data['date'];
+        $date_filter_end = $data['date_filter_end'] ?? null;
+        $user_id = $_SESSION['user_id'];
+        $user_type_id = $_SESSION['user_type_id'];
+        $branch_office_id = $data['branch_office_id'];
         $sql = "
             SELECT 
                 SUM(CASE WHEN status = 'VENDIDO' THEN 1 ELSE 0 END) AS vendidos,
                 SUM(CASE WHEN status = 'CANCELADO' THEN 1 ELSE 0 END) AS cancelados,
+                SUM(CASE WHEN status = 'VENDIDO' THEN price - discount ELSE 0 END) AS importe_total,
                 COUNT(*) AS total
             FROM tickets
+            WHERE branch_office_id = $branch_office_id
         ";
+
         if (!empty($date)) {
-            $sql .= " WHERE tickets.date = '$date'";
+            $sql .= " AND tickets.date >= '$date' AND tickets.date <='$date_filter_end'";
+        }
+
+        if ( $user_type_id != 1 ) {
+            $sql .= " AND tickets.user_id = '".$user_id. "'";
         }
 
         $sql .= " ORDER BY tickets.date DESC";
@@ -267,6 +289,43 @@ class Ticket
         $today = date("Y-m-d H:i:s");
         $sql = "UPDATE `tickets` SET `status_check`='VALIDADO', `date_check`='$today', `updated_at`= NOW() WHERE `id`='$ticket_id'";
         return ejecutarConsulta($sql);
+    }
+
+    public function xls ( $data ){
+        $date_start = $data['date_start'] ?? null;
+        $date_end = $data['date_end'] ?? null;
+        $branch_office_id =$data['branch_office_id'];
+
+        $sql ="
+            SELECT
+                tickets.id,
+                tickets.payment_method,
+                tickets.price,
+                tickets.status,
+                tickets.hour,
+                tickets.date,
+                tickets.discount,
+                routes_stop.origin,
+                routes_stop.destination,
+                CONCAT(employees.name,' ', employees.paternal_surname, ' ', employees.maternal_surname) AS employee,
+                vehicles.unidad_number,
+                routes_schedule.leaving_time
+                
+            FROM `tickets`
+            INNER JOIN routes_stop ON routes_stop.id = tickets.route_stop_id
+            LEFT JOIN routes_schedule ON tickets.route_schedule_id=routes_schedule.id
+            LEFT JOIN employees ON employees.id = tickets.employee_id
+            LEFT JOIN vehicles ON vehicles.id = tickets.vehicle_id
+            WHERE branch_office_id = '$branch_office_id' AND tickets.date >='$date_start' AND tickets.date <='$date_end'
+        ";
+    
+        $sql .= " ORDER BY tickets.date DESC";
+        $resultado = ejecutarConsulta($sql);
+        $data = array();
+        while ( $item = $resultado->fetch_object()) {
+            $data[] = $item;
+        }
+        return $data;
     }
 }
 ?>

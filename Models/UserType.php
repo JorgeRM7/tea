@@ -56,8 +56,7 @@ class UserType {
 
     public function deleteItem ( $data ){
         $user_type_id = $data['user_type_id'];
-        $sql="UPDATE users_types` SET `deleted_at`= NOW() WHERE `id`='$user_type_id'";
-        echo $sql;
+        $sql="UPDATE users_types SET `deleted_at`= NOW() WHERE `id`='$user_type_id'";
         return ejecutarConsulta($sql);
     }
     
