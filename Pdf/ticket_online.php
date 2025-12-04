@@ -16,7 +16,7 @@ $sql = "
         tickets.discount,
         tickets.quantity,
         tickets.status,
-        tickets.created_at,
+         CONCAT(tickets.date, tickets.hour) as created_at,
         routes_schedule.date,
         routes_schedule.leaving_time,
         routes_stop.origin,
