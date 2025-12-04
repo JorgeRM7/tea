@@ -88,7 +88,7 @@ $ticket = mysqli_fetch_assoc($query);
         <?php endif; ?>
 
         <div class="mt-4 d-flex gap-2 flex-column flex-md-row justify-content-center">
-            <a href="../Pdf/ticket.php?tickets_id=<?php echo $ticket_id; ?>" class="btn btn-warning fw-bold">
+            <a href="../Pdf/ticket_online.php?ticket_id=<?php echo $ticket_id; ?>" class="btn btn-warning fw-bold">
                 <i class="bi bi-file-earmark-pdf-fill"></i> Descargar Boleto
             </a>
             <a href="sales-online-stripe.php" class="btn btn-light">Volver a comprar</a>
