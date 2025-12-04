@@ -1,39 +1,39 @@
 <?php 
 // // ip de la pc servidor base de datos   
-// define("DB_HOST", "193.203.166.109");
+define("DB_HOST", "193.203.166.109");
 
 // // nombre de la base de datos
-// define("DB_NAME", "u710971143_tea_test");
+define("DB_NAME", "u710971143_tea_test");
 
 // //nombre de usuario de base de datos
-// define("DB_USERNAME", "u710971143_tea_test");
+define("DB_USERNAME", "u710971143_tea_test");
 
 // //conraseña del usuario de base de datos
-// define("DB_PASSWORD", "");
+define("DB_PASSWORD", "Digitalenigma2025#");
 
 // //codificacion de caracteres
-// define("DB_ENCODE", "utf8");
+define("DB_ENCODE", "utf8");
 
-// define('DB_PORT', 3307);
+define('DB_PORT', 3307);
 
 
 
 // //ip de la pc servidor base de datos
-define("DB_HOST", "193.203.166.109");
+//define("DB_HOST", "193.203.166.109");
 
 // nombre de la base de datos
-define("DB_NAME", "u710971143_tea");
+//define("DB_NAME", "u710971143_tea");
 
 //nombre de usuario de base de datos
-define("DB_USERNAME", "u710971143_tea");
+//define("DB_USERNAME", "u710971143_tea");
 
 //conraseña del usuario de base de datos
-define("DB_PASSWORD", "Digitalenigma2025#");
+//define("DB_PASSWORD", "Digitalenigma2025#");
 
 //codificacion de caracteres
-define("DB_ENCODE", "utf8");
+//define("DB_ENCODE", "utf8");
 
-define('DB_PORT', 3306); // El puerto local redirigido
+//define('DB_PORT', 3306); // El puerto local redirigido
 
 ?>
 

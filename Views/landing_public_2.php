@@ -31,7 +31,7 @@ footer { background: #0d1a1e; }
 <h1 class="display-4 fw-bold mb-3">Compra tus boletos o renta unidades para viajes especiales</h1>
 <p class="lead text-white-50 mb-4">Conectamos México con rutas confiables.</p>
 <div class="d-flex flex-column flex-md-row gap-3 justify-content-center">
-<a href="sales-online_2.php" class="btn btn-success btn-lg px-4"><i class="bi bi-ticket-perforated me-2"></i>Comprar boleto en línea</a>
+<a href="sales-online-stripe.php" class="btn btn-success btn-lg px-4"><i class="bi bi-ticket-perforated me-2"></i>Comprar boleto en línea</a>
 <a href="#renta" class="btn btn-outline-light btn-lg px-4"><i class="bi bi-bus-front me-2"></i>Planes de renta</a>
 </div>
 </div>
@@ -104,7 +104,7 @@ footer { background: #0d1a1e; }
 <p class="text-uppercase text-success fw-semibold mb-1">Consulta horarios y rutas</p>
 <h2 class="fw-bold mb-3">¿Listo para viajar?</h2>
 <p class="mb-4 text-secondary">Explora la disponibilidad y compra tu boleto ahora mismo.</p>
-<a href="sales-online_2.php" class="btn btn-dark btn-lg px-5">Ver horarios y comprar</a>
+<a href="sales-online-stripe.php" class="btn btn-dark btn-lg px-5">Ver horarios y comprar</a>
 </div>
 </section>
 </main>
@@ -114,6 +114,7 @@ footer { background: #0d1a1e; }
 <div class="d-flex gap-4">
 <a href="mailto:ventas@tea.com" class="text-white text-decoration-none"><i class="bi bi-envelope me-1"></i>ventas@tea.com</a>
 <a href="tel:+524431234567" class="text-white text-decoration-none"><i class="bi bi-telephone me-1"></i>4444444444</a>
+<a href="login.php" class="text-white text-decoration-none"><i class="bi bi-person-lock me-1"></i>Iniciar sesión</a>
 </div>
 </div>
 </footer>
