@@ -10,6 +10,10 @@ return [
     "mp_public_key"   => "APP_USR-988ef00e-921c-43a2-ae34-4005fb6257bb",
 
     // TOKEN VENTA EN LINEA
-    "token" => "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vdHUtc2lzdGVtYS5jb20iLCJhdWQiOiJodHRwOi8vdHUtc2lzdGVtYS5jb20iLCJpYXQiOjE3NjE1OTcyODMsImRhdGEiOnsiaWQiOiIxIiwibmFtZSI6IkpvcmdlIFJpbmNvbiBNdXJpbGxvIiwiZW1haWwiOiJqb3JnZS5yaW5jb25AZ21haWwuY29tIiwiYnJhbmNoX29mZmljZV9pZCI6IjAiLCJ1c2VyX3R5cGVfaWQiOiIzIn19.udmTzDgf6oXKuebw1Uj0cCpWGQfx582F98cxSnKOq-s"
+    "token" => "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vdHUtc2lzdGVtYS5jb20iLCJhdWQiOiJodHRwOi8vdHUtc2lzdGVtYS5jb20iLCJpYXQiOjE3NjE1OTcyODMsImRhdGEiOnsiaWQiOiIxIiwibmFtZSI6IkpvcmdlIFJpbmNvbiBNdXJpbGxvIiwiZW1haWwiOiJqb3JnZS5yaW5jb25AZ21haWwuY29tIiwiYnJhbmNoX29mZmljZV9pZCI6IjAiLCJ1c2VyX3R5cGVfaWQiOiIzIn19.udmTzDgf6oXKuebw1Uj0cCpWGQfx582F98cxSnKOq-s",
+
+    // CORREO
+    "mail" => 'tea.contacto@digitalenigma.mx',
+    "mail_password" => '$b3MzRLsA]E'
 
 ];

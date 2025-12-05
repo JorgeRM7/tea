@@ -4,6 +4,7 @@
         "endroid/qr-code": "^6.0",
         "firebase/php-jwt": "^6.11",
         "mercadopago/dx-php": "^3.7",
-        "stripe/stripe-php": "^13.0"
+        "stripe/stripe-php": "^13.0",
+        "phpmailer/phpmailer": "^7.0"
     }
 }

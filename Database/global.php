@@ -3,10 +3,10 @@
 define("DB_HOST", "193.203.166.109");
 
 // // nombre de la base de datos
-define("DB_NAME", "u710971143_tea_test");
+define("DB_NAME", "u710971143_tea");
 
 // //nombre de usuario de base de datos
-define("DB_USERNAME", "u710971143_tea_test");
+define("DB_USERNAME", "u710971143_tea");
 
 // //conraseña del usuario de base de datos
 define("DB_PASSWORD", "Digitalenigma2025#");
