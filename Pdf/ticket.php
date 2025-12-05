@@ -6,12 +6,20 @@ use Mpdf\Mpdf;
 $tickets_ids = isset($_GET['tickets_id']) ? explode(",", $_GET['tickets_id']) : []; 
 
 $mpdf = new Mpdf([
-    'format' => [80, 70], // 80mm x 70mm
+    'format' => [70, 80], // 80mm x 70mm
     'margin_left'   => 3,
     'margin_right'  => 3,
     'margin_top'    => 3,
-    'margin_bottom' => 3
+    'margin_bottom' => 3,
+    'orientation' => 'L',
 ]);
+
+// $mpdf->SetWatermarkImage('../assets/img/logo.png', 0.12, [40, 40]);
+// $mpdf->showWatermarkImage = true;
+
+$mpdf->SetWatermarkImage('../assets/img/logo.png', 0.45, [30,30], 'F', false, 203);
+$mpdf->showWatermarkImage = true;
+
 
 foreach ($tickets_ids as $ticket_id) {
 
@@ -25,7 +33,8 @@ foreach ($tickets_ids as $ticket_id) {
             routes_stop.origin,
             routes_stop.destination,
             CONCAT(employees.name,' ', employees.paternal_surname, ' ', employees.maternal_surname) AS employee,
-            tickets.vehicle_id
+            tickets.vehicle_id,
+            tickets.created_at
         FROM tickets
         LEFT JOIN routes_schedule ON tickets.route_schedule_id = routes_schedule.id
         LEFT JOIN routes ON routes.id = tickets.route_id
@@ -54,36 +63,31 @@ foreach ($tickets_ids as $ticket_id) {
         .ticket {
             font-family: 'Helvetica', sans-serif;
             font-size: 9px;
-            border: 1px dashed #000;
-            border-radius: 6px;
-            padding: 6px;
         }
         .ticket h3 {
             margin: 0;
-            font-size: 11px;
+            font-size: 9px;
             font-weight: bold;
             text-align: center;
             letter-spacing: 0.5px;
         }
         .ticket .folio {
-            font-size: 14px;
+            font-size: 11px;
             font-weight: bold;
             text-align: right;
-            margin: 3px 0;
             color: #2c3e50;
         }
         .ticket hr {
             border: none;
-            border-top: 1px dashed #000;
-            margin: 4px 0;
+            margin: 2px 0;
         }
         table.ticket-table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 9px;
+            font-size: 11px;
         }
         table.ticket-table td {
-            padding: 2px 4px;
+            padding: 2px 2px;
             vertical-align: top;
         }
         .label {
@@ -91,6 +95,7 @@ foreach ($tickets_ids as $ticket_id) {
             color: #000;
         }
         .value {
+            font-weight: bold;
             font-size: 9px;
         }
         .qr {
@@ -135,6 +140,57 @@ foreach ($tickets_ids as $ticket_id) {
                 <td class='label'>Operador:</td>
                 <td class='value'>{$item['employee']}</td>
             </tr>
+            <tr>
+                <td class='label'>Hora venta:</td>
+                <td class='value'>{$item['created_at']}</td>
+            </tr>
+        </table>
+
+        <hr>
+        <p style='font-size:8px; text-align:center;'>¡Es un placer poder servirle!</p>
+    </div>
+    <div class='ticket'>
+        <h3>OPERADOR</h3>
+        <h3>TRANSPORTES EJECUTIVOS ARIO S.A. DE C.V.</h3>
+        <p style='margin:0; text-align:center;'>RFC: TEA190814LY6</p>
+        
+        <div class='folio'>Folio: {$item['id']}</div>
+        <hr>
+
+        <table class='ticket-table'>
+            <tr>
+                <td class='label'>Fecha:</td>
+                <td class='value'>{$item['date']}</td>
+                <td rowspan='6' class='qr'><img src='{$url}' width='70'></td>
+            </tr>
+            <tr>
+                <td class='label'>Salida:</td>
+                <td class='value'>{$item['leaving_time']}</td>
+            </tr>
+            <tr>
+                <td class='label'>Origen:</td>
+                <td class='value'>{$item['origin']}</td>
+            </tr>
+            <tr>
+                <td class='label'>Destino:</td>
+                <td class='value'>{$item['destination']}</td>
+            </tr>
+            <tr>
+                <td class='label'>Precio:</td>
+                <td class='value'>$ {$total}</td>
+            </tr>
+            <tr>
+                <td class='label'>Unidad:</td>
+                <td class='value'>{$item['vehicle_id']}</td>
+            </tr>
+            <tr>
+                <td class='label'>Operador:</td>
+                <td class='value'>{$item['employee']}</td>
+            </tr>
+            <tr>
+                <td class='label'>Hora venta:</td>
+                <td class='value'>{$item['created_at']}</td>
+            </tr>
         </table>
 
         <hr>
@@ -143,7 +199,6 @@ foreach ($tickets_ids as $ticket_id) {
     ";
 
     $mpdf->WriteHTML($html);
-    // $mpdf->AddPage();
 }
 
 $mpdf->Output("item.pdf", "I");
