@@ -88,7 +88,7 @@ $token = $config['token'];
     <div class="ticket-box">
         <div class="text-center mb-4">
             <img src="../assets/img/logo.png" alt="TEA" width="80" class="mb-3">
-            <h3 class="fw-bold text-uppercase">Venta de Boletos (Stripe)</h3>
+            <h3 class="fw-bold text-uppercase">Venta de Boletos</h3>
             <p class="text-white">Genera tu compra y seras enviado a Stripe Checkout</p>
         </div>
 
@@ -145,7 +145,7 @@ $token = $config['token'];
 
         <div class="d-grid gap-2 mt-3">
             <button type="button" class="btn btn-outline-light" onclick="window.location.href='landing_public_2.php'">
-                <i class="bi bi-arrow-left"></i> Volver a la landing
+                <i class="bi bi-arrow-left"></i> Volver al inicio
             </button>
             <button type="button" class="btn btn-buy" onclick="buyTicket()">
                 <i class="bi bi-credit-card"></i> Pagar con Stripe

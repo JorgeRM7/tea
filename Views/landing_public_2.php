@@ -27,7 +27,7 @@ footer { background: #0d1a1e; }
 <header class="hero d-flex flex-column justify-content-center">
 <div class="container text-center">
 <img src="../assets/img/logo.png" alt="TEA" width="90" class="mb-4">
-<span class="badge badge-soft px-3 py-2 mb-3">Servicio integral de transporte</span>
+<span class="badge badge-soft px-3 py-2 mb-3">Servicio integral de transportes</span>
 <h1 class="display-4 fw-bold mb-3">Compra tus boletos o renta unidades para viajes especiales</h1>
 <p class="lead text-white-50 mb-4">Conectamos México con rutas confiables.</p>
 <div class="d-flex flex-column flex-md-row gap-3 justify-content-center">
@@ -41,7 +41,7 @@ footer { background: #0d1a1e; }
 <div class="container">
 <div class="row g-4">
 <div class="col-md-4"><div class="card feature-card h-100 p-4"><div class="icon mb-3 text-success fs-1"><i class="bi bi-shield-check"></i></div><h5 class="fw-bold">Seguro y puntual</h5><p class="text-secondary">Operadores certificados y monitoreo continuo.</p></div></div>
-<div class="col-md-4"><div class="card feature-card h-100 p-4"><div class="icon mb-3 text-warning fs-1"><i class="bi bi-credit-card-2-front"></i></div><h5 class="fw-bold">Compra en línea</h5><p class="text-secondary">Reserva desde cualquier dispositivo y paga con Mercado Pago.</p></div></div>
+<div class="col-md-4"><div class="card feature-card h-100 p-4"><div class="icon mb-3 text-warning fs-1"><i class="bi bi-credit-card-2-front"></i></div><h5 class="fw-bold">Compra en línea</h5><p class="text-secondary">Reserva desde cualquier dispositivo y paga con Seguridad.</p></div></div>
 <div class="col-md-4"><div class="card feature-card h-100 p-4"><div class="icon mb-3 text-primary fs-1"><i class="bi bi-people"></i></div><h5 class="fw-bold">Viajes privados</h5><p class="text-secondary">Planes corporativos y turísticos bajo demanda.</p></div></div>
 </div>
 </div>
@@ -54,7 +54,7 @@ footer { background: #0d1a1e; }
 <h2 class="fw-bold mb-4">Compra tu boleto en 3 pasos</h2>
 <div class="steps-line ps-4">
 <div class="mb-4"><h5 class="fw-bold">1. Elige ruta</h5><p class="text-secondary mb-0">Origen, destino y fecha.</p></div>
-<div class="mb-4"><h5 class="fw-bold">2. Paga en línea</h5><p class="text-secondary mb-0">Mercado Pago Checkout Pro.</p></div>
+<div class="mb-4"><h5 class="fw-bold">2. Paga en línea</h5><p class="text-secondary mb-0">Stripe Checkout Pro.</p></div>
 <div><h5 class="fw-bold">3. Viaja con tu QR</h5><p class="text-secondary mb-0">Recibe confirmación inmediata.</p></div>
 </div>
 </div>
@@ -79,7 +79,7 @@ footer { background: #0d1a1e; }
 <li class="mb-2"><i class="bi bi-check2-circle me-2"></i>Tours personalizados</li>
 <li><i class="bi bi-check2-circle me-2"></i>Soporte 24/7</li>
 </ul>
-<a href="https://wa.me/5215555555555" target="_blank" class="btn btn-light btn-lg text-success fw-bold"><i class="bi bi-whatsapp me-2"></i>Solicitar cotización</a>
+<a href="https://wa.me/4432019707" target="_blank" class="btn btn-light btn-lg text-success fw-bold"><i class="bi bi-whatsapp me-2"></i>Solicitar cotización</a>
 </div>
 </div>
 <div class="col-lg-6">
@@ -112,8 +112,8 @@ footer { background: #0d1a1e; }
 <div class="container d-flex flex-column flex-md-row justify-content-between align-items-center">
 <p class="mb-2 mb-md-0">&copy; <?php echo date('Y'); ?> Transportes Ejecutivos Tea</p>
 <div class="d-flex gap-4">
-<a href="mailto:ventas@tea.com" class="text-white text-decoration-none"><i class="bi bi-envelope me-1"></i>ventas@tea.com</a>
-<a href="tel:+524431234567" class="text-white text-decoration-none"><i class="bi bi-telephone me-1"></i>4444444444</a>
+<a href="mailto:ventas@tea.com" class="text-white text-decoration-none"><i class="bi bi-envelope me-1"></i>tea.contacto@digitalenigma.mx</a>
+<a href="tel:+524431234567" class="text-white text-decoration-none"><i class="bi bi-telephone me-1"></i>4432019707</a>
 <a href="login.php" class="text-white text-decoration-none"><i class="bi bi-person-lock me-1"></i>Iniciar sesión</a>
 </div>
 </div>
