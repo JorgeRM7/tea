@@ -615,28 +615,72 @@
        
     }
 
+    // const totales = () => {
+    //     let price = parseFloat($("#price").val()) || 0;
+    //     let quantity = parseFloat($("#quantity").val()) || 0;
+    //     let amount_received = parseFloat($("#amount_received").val()) || 0;
+
+    //     let percentage = parseFloat($("input.discount-radio:checked").val()) || 0;
+    //     let selectedId = $("input.discount-radio:checked").attr("id");
+    //     let route_discount_id = selectedId.replace("discount_", ""); 
+    //      $("#route_discount_id").val(route_discount_id)
+        
+
+    //     if( percentage > 1 &&  quantity > 1 ){
+    //         Swal.fire({
+    //             icon: "warning",
+    //             title: "Ups...",
+    //             text: "Los boletos con descuentos deben ser individuales.",
+    //             confirmButtonColor: "#f07d42"
+    //         });
+    //         $("#quantity").val(1)
+    //     }
+    //     let total = price * quantity;
+
+    //     let discountAmount = (total * percentage) / 100;
+    //     let totalWithDiscount = total - discountAmount;
+
+    //     let change = amount_received - totalWithDiscount;
+    //     if (change < 0) change = 0;
+
+    //     $("#pvQty").text(quantity);
+    //     $("#total").val(totalWithDiscount.toFixed(2));
+    //     $("#discount").val(discountAmount.toFixed(2));
+    //     $("#change_amount").val(change.toFixed(2));
+    //     $("#pvTotal").text(totalWithDiscount.toFixed(2));
+    //     $("#pvDiscount").text(discountAmount.toFixed(2));  
+         
+    // };
+
     const totales = () => {
         let price = parseFloat($("#price").val()) || 0;
         let quantity = parseFloat($("#quantity").val()) || 0;
         let amount_received = parseFloat($("#amount_received").val()) || 0;
 
         let percentage = parseFloat($("input.discount-radio:checked").val()) || 0;
-        let selectedId = $("input.discount-radio:checked").attr("id");
-        let route_discount_id = selectedId.replace("discount_", ""); 
-         $("#route_discount_id").val(route_discount_id)
-        
 
-        if( percentage > 1 &&  quantity > 1 ){
+        let selectedInput = $("input.discount-radio:checked");
+        let route_discount_id = null;
+
+        if (selectedInput.length > 0) {
+            let selectedId = selectedInput.attr("id");
+            route_discount_id = selectedId.replace("discount_", "");
+        }
+
+        $("#route_discount_id").val(route_discount_id ?? '');
+
+        if (percentage > 1 && quantity > 1) {
             Swal.fire({
                 icon: "warning",
                 title: "Ups...",
                 text: "Los boletos con descuentos deben ser individuales.",
                 confirmButtonColor: "#f07d42"
             });
-            $("#quantity").val(1)
+            $("#quantity").val(1);
+            quantity = 1;
         }
-        let total = price * quantity;
 
+        let total = price * quantity;
         let discountAmount = (total * percentage) / 100;
         let totalWithDiscount = total - discountAmount;
 
@@ -648,9 +692,9 @@
         $("#discount").val(discountAmount.toFixed(2));
         $("#change_amount").val(change.toFixed(2));
         $("#pvTotal").text(totalWithDiscount.toFixed(2));
-        $("#pvDiscount").text(discountAmount.toFixed(2));  
-         
+        $("#pvDiscount").text(discountAmount.toFixed(2));
     };
+
 
     const clean = () => {  
         routes(); 
