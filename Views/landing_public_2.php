@@ -79,7 +79,7 @@ footer { background: #0d1a1e; }
 <li class="mb-2"><i class="bi bi-check2-circle me-2"></i>Tours personalizados</li>
 <li><i class="bi bi-check2-circle me-2"></i>Soporte 24/7</li>
 </ul>
-<a href="https://wa.me/4432019707" target="_blank" class="btn btn-light btn-lg text-success fw-bold"><i class="bi bi-whatsapp me-2"></i>Solicitar cotización</a>
+<a href="https://wa.me/4433975677" target="_blank" class="btn btn-light btn-lg text-success fw-bold"><i class="bi bi-whatsapp me-2"></i>Solicitar cotización</a>
 </div>
 </div>
 <div class="col-lg-6">
@@ -112,8 +112,8 @@ footer { background: #0d1a1e; }
 <div class="container d-flex flex-column flex-md-row justify-content-between align-items-center">
 <p class="mb-2 mb-md-0">&copy; <?php echo date('Y'); ?> Transportes Ejecutivos Tea</p>
 <div class="d-flex gap-4">
-<a href="mailto:ventas@tea.com" class="text-white text-decoration-none"><i class="bi bi-envelope me-1"></i>tea.contacto@digitalenigma.mx</a>
-<a href="tel:+524431234567" class="text-white text-decoration-none"><i class="bi bi-telephone me-1"></i>4432019707</a>
+<a href="mailto:tea.contacto@digitalenigma.mx" class="text-white text-decoration-none"><i class="bi bi-envelope me-1"></i>tea.contacto@digitalenigma.mx</a>
+<a href="tel:+524433975677" class="text-white text-decoration-none"><i class="bi bi-telephone me-1"></i>4433975677</a>
 <a href="login.php" class="text-white text-decoration-none"><i class="bi bi-person-lock me-1"></i>Iniciar sesión</a>
 </div>
 </div>

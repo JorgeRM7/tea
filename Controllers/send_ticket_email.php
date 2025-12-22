@@ -37,7 +37,7 @@ try {
     $mail->Password = $config['mail_password'];
     $mail->Port = 465;
     $mail->SMTPSecure = "ssl";
-    $mail->setFrom("tea.contacto@digitalenigma.mx", "TEA Transportes");
+    $mail->setFrom("tea.contacto@digitalenigma.mx", "TEA Transportes Ejecutvios Ario");
     $mail->addAddress($email);
     $mail->Subject = "Tu boleto de viaje - TEA";
 
@@ -47,7 +47,7 @@ try {
         <div style='max-width:600px; margin:0 auto; background:#ffffff; border-radius:15px; overflow:hidden; box-shadow:0 6px 20px rgba(0,0,0,0.15);'>
             <div style='background:linear-gradient(135deg, #0a4d0e, #0d1a1e); padding:30px; text-align:center; color:white;'>
                 <h2 style='margin:0; font-weight:700;'>¡Tu Boleto Está Listo! 🎉</h2>
-                <p style='margin-top:5px; font-size:14px; opacity:.9;'>Gracias por viajar con Transportes Ejidales de Ario</p>
+                <p style='margin-top:5px; font-size:14px; opacity:.9;'>Gracias por viajar con Transportes Ejecutivos Ario</p>
             </div>
 
             <div style='padding:30px; line-height:1.6; color:#333;'>
@@ -56,7 +56,7 @@ try {
 
                 <div style='margin:25px 0; padding:20px; background:#f7f7f7; border-left:5px solid #0a4d0e; border-radius:8px;'>
                     <p style='margin:0; font-size:15px;'>
-                        <strong>🚌 Transporte:</strong> TEA – Transportes Ejidales de Ario<br>
+                        <strong>🚌 Transporte:</strong> TEA – Transportes Ejecutivos Ario <br>
                         <strong>🎟 Número de boleto:</strong> #$tick_id<br>
                         <strong>📄 Archivo adjunto:</strong> boleto_$tick_id.pdf
                     </p>
@@ -69,7 +69,7 @@ try {
             </div>
 
             <div style='background:#0d1a1e; padding:20px; text-align:center; color:white; font-size:13px;'>
-                <p style='margin:0;'>Transportes Ejidales de Ario © " . date('Y') . "</p>
+                <p style='margin:0;'> Transportes Ejecutivos Ario " . date('Y') . "</p>
             </div>
         </div>
     </div>

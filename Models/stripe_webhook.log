@@ -1228,3 +1228,430 @@
   },
   "type": "application_fee.created"
 }
+[2025-12-05 15:21:02] Payload:
+
+[2025-12-05 15:21:02] Error de firma: Unable to extract timestamp and signatures from header
+[2025-12-06 13:05:19] Payload:
+{
+  "id": "evt_3SbQnAISQ1mJxeLn2bys4wzs",
+  "object": "event",
+  "api_version": "2025-09-30.clover",
+  "created": 1765047919,
+  "data": {
+    "object": {
+      "id": "pi_3SbQnAISQ1mJxeLn2u4zWf3t",
+      "object": "payment_intent",
+      "amount": 2000,
+      "amount_capturable": 0,
+      "amount_details": {
+        "shipping": {
+          "amount": 0,
+          "from_postal_code": null,
+          "to_postal_code": null
+        },
+        "tax": {
+          "total_tax_amount": 0
+        },
+        "tip": {}
+      },
+      "amount_received": 2000,
+      "application": null,
+      "application_fee_amount": 100,
+      "automatic_payment_methods": null,
+      "canceled_at": null,
+      "cancellation_reason": null,
+      "capture_method": "automatic_async",
+      "client_secret": "pi_3SbQnAISQ1mJxeLn2u4zWf3t_secret_vvNdWiBkqrjDzH1VAF88oZnoU",
+      "confirmation_method": "automatic",
+      "created": 1765047916,
+      "currency": "mxn",
+      "customer": null,
+      "customer_account": null,
+      "description": null,
+      "excluded_payment_method_types": null,
+      "last_payment_error": null,
+      "latest_charge": "ch_3SbQnAISQ1mJxeLn2gk55MYI",
+      "livemode": true,
+      "metadata": {
+        "ticket_id": "688"
+      },
+      "next_action": null,
+      "on_behalf_of": null,
+      "payment_details": {
+        "customer_reference": null,
+        "order_reference": "prod_TYXrG9VdWfItSI"
+      },
+      "payment_method": "pm_1SbQn9ISQ1mJxeLn5CLz7g3a",
+      "payment_method_configuration_details": null,
+      "payment_method_options": {
+        "card": {
+          "installments": {
+            "available_plans": [],
+            "enabled": false,
+            "plan": null
+          },
+          "mandate_options": null,
+          "network": null,
+          "request_three_d_secure": "automatic"
+        }
+      },
+      "payment_method_types": [
+        "card"
+      ],
+      "processing": null,
+      "receipt_email": null,
+      "review": null,
+      "setup_future_usage": null,
+      "shipping": null,
+      "source": null,
+      "statement_descriptor": null,
+      "statement_descriptor_suffix": null,
+      "status": "succeeded",
+      "transfer_data": {
+        "destination": "acct_1Sb56CIw9l9GGuxb"
+      },
+      "transfer_group": "group_pi_3SbQnAISQ1mJxeLn2u4zWf3t"
+    }
+  },
+  "livemode": true,
+  "pending_webhooks": 1,
+  "request": {
+    "id": null,
+    "idempotency_key": "7908f676-6774-4676-99b6-f53cabe93213"
+  },
+  "type": "payment_intent.succeeded"
+}
+[2025-12-06 13:05:19] Payload:
+{
+  "id": "evt_1SbQnDISQ1mJxeLnBbRje0XZ",
+  "object": "event",
+  "api_version": "2025-09-30.clover",
+  "created": 1765047919,
+  "data": {
+    "object": {
+      "id": "cs_live_a1QA1kHCEQzTgVSWmKIfAbvZDgY7AYto4I3qk5jjd7NROoUkqkH1eyTIue",
+      "object": "checkout.session",
+      "adaptive_pricing": {
+        "enabled": true
+      },
+      "after_expiration": null,
+      "allow_promotion_codes": null,
+      "amount_subtotal": 2000,
+      "amount_total": 2000,
+      "automatic_tax": {
+        "enabled": false,
+        "liability": null,
+        "provider": null,
+        "status": null
+      },
+      "billing_address_collection": null,
+      "branding_settings": {
+        "background_color": "#ffffff",
+        "border_style": "rounded",
+        "button_color": "#0074d4",
+        "display_name": "Digital Enigma",
+        "font_family": "default",
+        "icon": null,
+        "logo": null
+      },
+      "cancel_url": "https://transportestea.com/Views/stripe-sales-cancel.php?ticket_id=688",
+      "client_reference_id": "688",
+      "client_secret": null,
+      "collected_information": null,
+      "consent": null,
+      "consent_collection": null,
+      "created": 1765047841,
+      "currency": "mxn",
+      "currency_conversion": null,
+      "custom_fields": [],
+      "custom_text": {
+        "after_submit": null,
+        "shipping_address": null,
+        "submit": null,
+        "terms_of_service_acceptance": null
+      },
+      "customer": null,
+      "customer_account": null,
+      "customer_creation": "if_required",
+      "customer_details": {
+        "address": {
+          "city": null,
+          "country": "MX",
+          "line1": null,
+          "line2": null,
+          "postal_code": null,
+          "state": null
+        },
+        "business_name": null,
+        "email": "g.a.j13@hotmail.com",
+        "individual_name": null,
+        "name": "Jonathan Gutierrez",
+        "phone": null,
+        "tax_exempt": "none",
+        "tax_ids": []
+      },
+      "customer_email": null,
+      "discounts": [],
+      "expires_at": 1765134241,
+      "invoice": null,
+      "invoice_creation": {
+        "enabled": false,
+        "invoice_data": {
+          "account_tax_ids": null,
+          "custom_fields": null,
+          "description": null,
+          "footer": null,
+          "issuer": null,
+          "metadata": {},
+          "rendering_options": null
+        }
+      },
+      "livemode": true,
+      "locale": null,
+      "metadata": {
+        "ticket_id": "688"
+      },
+      "mode": "payment",
+      "origin_context": null,
+      "payment_intent": "pi_3SbQnAISQ1mJxeLn2u4zWf3t",
+      "payment_link": null,
+      "payment_method_collection": "if_required",
+      "payment_method_configuration_details": {
+        "id": "pmc_1SG36yISQ1mJxeLnoGPKGOEn",
+        "parent": null
+      },
+      "payment_method_options": {
+        "card": {
+          "installments": {
+            "enabled": false
+          },
+          "request_three_d_secure": "automatic"
+        }
+      },
+      "payment_method_types": [
+        "card",
+        "link"
+      ],
+      "payment_status": "paid",
+      "permissions": null,
+      "phone_number_collection": {
+        "enabled": false
+      },
+      "recovered_from": null,
+      "saved_payment_method_options": null,
+      "setup_intent": null,
+      "shipping_address_collection": null,
+      "shipping_cost": null,
+      "shipping_options": [],
+      "status": "complete",
+      "submit_type": null,
+      "subscription": null,
+      "success_url": "https://transportestea.com/Views/stripe-sales-success.php?session_id={CHECKOUT_SESSION_ID}\u0026ticket_id=688",
+      "total_details": {
+        "amount_discount": 0,
+        "amount_shipping": 0,
+        "amount_tax": 0
+      },
+      "ui_mode": "hosted",
+      "url": null,
+      "wallet_options": null
+    }
+  },
+  "livemode": true,
+  "pending_webhooks": 1,
+  "request": {
+    "id": null,
+    "idempotency_key": null
+  },
+  "type": "checkout.session.completed"
+}
+[2025-12-06 13:05:24] Payload:
+{
+  "id": "evt_3SbQnAISQ1mJxeLn27cUqyyV",
+  "object": "event",
+  "api_version": "2025-09-30.clover",
+  "created": 1765047918,
+  "data": {
+    "object": {
+      "id": "ch_3SbQnAISQ1mJxeLn2gk55MYI",
+      "object": "charge",
+      "amount": 2000,
+      "amount_captured": 2000,
+      "amount_refunded": 0,
+      "application": null,
+      "application_fee": null,
+      "application_fee_amount": 100,
+      "balance_transaction": null,
+      "billing_details": {
+        "address": {
+          "city": null,
+          "country": "MX",
+          "line1": null,
+          "line2": null,
+          "postal_code": null,
+          "state": null
+        },
+        "email": "g.a.j13@hotmail.com",
+        "name": "Jonathan Gutierrez",
+        "phone": null,
+        "tax_id": null
+      },
+      "calculated_statement_descriptor": "DIGITAL ENIGMA",
+      "captured": true,
+      "created": 1765047917,
+      "currency": "mxn",
+      "customer": null,
+      "description": null,
+      "destination": "acct_1Sb56CIw9l9GGuxb",
+      "dispute": null,
+      "disputed": false,
+      "failure_balance_transaction": null,
+      "failure_code": null,
+      "failure_message": null,
+      "fraud_details": {},
+      "livemode": true,
+      "metadata": {
+        "ticket_id": "688"
+      },
+      "on_behalf_of": null,
+      "order": null,
+      "outcome": {
+        "advice_code": null,
+        "network_advice_code": null,
+        "network_decline_code": null,
+        "network_status": "approved_by_network",
+        "reason": null,
+        "risk_level": "normal",
+        "seller_message": "Payment complete.",
+        "type": "authorized"
+      },
+      "paid": true,
+      "payment_intent": "pi_3SbQnAISQ1mJxeLn2u4zWf3t",
+      "payment_method": "pm_1SbQn9ISQ1mJxeLn5CLz7g3a",
+      "payment_method_details": {
+        "card": {
+          "amount_authorized": 2000,
+          "authorization_code": "451473",
+          "brand": "mastercard",
+          "checks": {
+            "address_line1_check": null,
+            "address_postal_code_check": null,
+            "cvc_check": "pass"
+          },
+          "country": "MX",
+          "exp_month": 2,
+          "exp_year": 2026,
+          "extended_authorization": {
+            "status": "disabled"
+          },
+          "fingerprint": "Fk5ZKK4YclQf3EWw",
+          "funding": "debit",
+          "incremental_authorization": {
+            "status": "unavailable"
+          },
+          "installments": null,
+          "last4": "4015",
+          "mandate": null,
+          "multicapture": {
+            "status": "unavailable"
+          },
+          "network": "mastercard",
+          "network_token": {
+            "used": false
+          },
+          "network_transaction_id": null,
+          "overcapture": {
+            "maximum_amount_capturable": 2000,
+            "status": "unavailable"
+          },
+          "regulated_status": "unregulated",
+          "three_d_secure": null,
+          "wallet": null
+        },
+        "type": "card"
+      },
+      "radar_options": {},
+      "receipt_email": null,
+      "receipt_number": null,
+      "receipt_url": "https://pay.stripe.com/receipts/payment/CAcQARoXChVhY2N0XzFTRzM2UklTUTFtSnhlTG4o7_zRyQYyBrzOs4oEGTosFqaaQQeS2gB_qDnAAWV0J_cH6ItBNhZIJrvkM54HjuugCuTvOdUFg2OwFlQ",
+      "refunded": false,
+      "review": null,
+      "shipping": null,
+      "source": null,
+      "source_transfer": null,
+      "statement_descriptor": null,
+      "statement_descriptor_suffix": null,
+      "status": "succeeded",
+      "transfer_data": {
+        "amount": null,
+        "destination": "acct_1Sb56CIw9l9GGuxb"
+      },
+      "transfer_group": "group_pi_3SbQnAISQ1mJxeLn2u4zWf3t"
+    }
+  },
+  "livemode": true,
+  "pending_webhooks": 1,
+  "request": {
+    "id": null,
+    "idempotency_key": "7908f676-6774-4676-99b6-f53cabe93213"
+  },
+  "type": "charge.succeeded"
+}
+[2025-12-12 18:03:40] Payload:
+{
+  "id": "evt_1SdgJEISQ1mJxeLnHz8LVxBg",
+  "object": "event",
+  "api_version": "2025-09-30.clover",
+  "created": 1765584220,
+  "data": {
+    "object": {
+      "object": "balance",
+      "available": [
+        {
+          "amount": -332,
+          "currency": "mxn",
+          "source_types": {
+            "card": -332
+          }
+        }
+      ],
+      "connect_reserved": [
+        {
+          "amount": 0,
+          "currency": "mxn"
+        }
+      ],
+      "livemode": true,
+      "pending": [
+        {
+          "amount": 0,
+          "currency": "mxn",
+          "source_types": {
+            "card": 0
+          }
+        }
+      ],
+      "refund_and_dispute_prefunding": {
+        "available": [
+          {
+            "amount": 0,
+            "currency": "mxn"
+          }
+        ],
+        "pending": [
+          {
+            "amount": 0,
+            "currency": "mxn"
+          }
+        ]
+      }
+    }
+  },
+  "livemode": true,
+  "pending_webhooks": 1,
+  "request": {
+    "id": null,
+    "idempotency_key": null
+  },
+  "type": "balance.available"
+}
