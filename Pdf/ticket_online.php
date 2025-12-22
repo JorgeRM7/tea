@@ -155,7 +155,7 @@ $html = "
         " . (file_exists($logoPath) ? "<img src='{$logoPath}' width='110' style='margin-bottom:6px;'>" : "") . "
         <h1>TRANSPORTES EJECUTIVOS ARIO S.A. DE C.V.</h1>
         <p>RFC: TEA190814LY6 &middot; Servicio de Autotransporte Federal</p>
-        <p>www.transportestea.com &middot; 443 201 9707 &middot; tea.contacto@digitalenigma.mx</p>
+        <p>www.transportestea.com &middot; 4433975677 &middot; tea.contacto@digitalenigma.mx</p>
     </div>
     <div class='folio'>Folio digital: {$ticket['id']}</div>
     <div class='details-card'>

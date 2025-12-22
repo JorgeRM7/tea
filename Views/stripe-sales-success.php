@@ -93,6 +93,18 @@ $ticket = mysqli_fetch_assoc($query);
             </a>
             <a href="sales-online-stripe.php" class="btn btn-light">Volver a comprar</a>
         </div>
+        <div class="mt-4">
+            <h5 class="mb-2">¿Quieres recibir tu boleto por correo?</h5>
+
+            <div class="input-group mb-3">
+                <input type="email" id="email_send" class="form-control" placeholder="Ingresa tu correo">
+                <button class="btn btn-warning" onclick="sendEmailTicket()">
+                    <i class="bi bi-envelope-fill"></i> Enviar
+                </button>
+            </div>
+
+            <small id="email_msg" class="text-info"></small>
+        </div>
     </div>
 
     <script>
@@ -114,6 +126,45 @@ $ticket = mysqli_fetch_assoc($query);
         } else {
             document.getElementById("session-status").textContent = "Sesion no disponible, revisa tu correo.";
         }
+
+
+
+    function sendEmailTicket() {
+        const email = document.getElementById('email_send').value;
+        const ticket_id = "<?php echo $ticket_id; ?>";
+        const msg = document.getElementById('email_msg');
+
+        if (!email) {
+            msg.innerHTML = "⚠️ Ingresa un correo válido.";
+            msg.style.color = "yellow";
+            return;
+        }
+
+        msg.innerHTML = "Enviando boleto... ⏳";
+        msg.style.color = "white";
+
+        fetch("../Controllers/send_ticket_email.php", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ email, ticket_id })
+        })
+        .then(res => res.json())
+        .then(response => {
+            if (response.success) {
+                msg.innerHTML = "✔️ Boleto enviado correctamente.";
+                msg.style.color = "#4cff4c";
+            } else {
+                msg.innerHTML = "❌ Error al enviar: " + response.message;
+                msg.style.color = "red";
+            }
+        })
+        .catch(err => {
+            msg.innerHTML = "❌ Error en la solicitud.";
+            msg.style.color = "red";
+        });
+    }
     </script>
 </body>
 

@@ -84,7 +84,7 @@ foreach ($tickets_ids as $ticket_id) {
         table.ticket-table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 11px;
+            font-size: 10px;
         }
         table.ticket-table td {
             padding: 2px 2px;

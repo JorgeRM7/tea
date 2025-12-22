@@ -170,7 +170,7 @@
                                                     <button id="btnClear" class="btn btn-outline-secondary" type="button" onclick="clean()">
                                                         <i class="bi bi-x-circle"></i> Limpiar
                                                     </button>
-                                                    <button id="btnGenerate" class="btn btn-success btn-lg" type="button" onclick="store()"> 
+                                                    <button id="btnGenerate" class="btn btn-success btn-lg" type="button"> 
                                                         <i class="bi bi-receipt"></i> Generar boleto
                                                     </button>
                                                 </div>
@@ -303,6 +303,24 @@
         show_subpaths();
         discounts();
     });
+    
+    document.getElementById("btnGenerate").addEventListener("click", () => {
+        const btn = document.getElementById("btnGenerate");
+    
+        // 🔒 Bloquear botón
+        btn.disabled = true;
+        btn.innerHTML = '<i class="bi bi-hourglass-split"></i> Generando...';
+    
+        // Ejecutar tu función normal
+        store();
+    
+        // 🔓 Reactivar después de 4 segundos
+        setTimeout(() => {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="bi bi-receipt"></i> Generar boleto';
+        }, 4000);
+    });
+
    
     const store = () => {
         let route_schedule_id = $("#route_schedule_id").val();
