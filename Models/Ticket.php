@@ -68,6 +68,12 @@ class Ticket
         $expiration_date = date('Y-m-d', strtotime($date . ' +1 day'));
         $route_discount_id = $data['route_discount_id'];
 
+        $sql_sale = "SELECT IFNULL(MAX(sale_id), 0) + 1 AS next_sale_id FROM tickets";
+        $rs = ejecutarConsulta($sql_sale);
+        $row = mysqli_fetch_assoc($rs);
+
+        $sale_id = (int)$row['next_sale_id'] ?? 1;
+
         for ($i = 1; $i <= $quantity; $i++) {
             $sql = "
                 INSERT INTO `tickets`(
@@ -87,6 +93,7 @@ class Ticket
                     `hour`,
                     `discount`,
                     `expires_at`,
+                    `sale_id`,
                     `created_at`, 
                     `updated_at`
                 ) VALUES (
@@ -106,11 +113,12 @@ class Ticket
                     '$hour',
                     '$discount',
                     '$expiration_date',
+                    '$sale_id',
                     NOW(),
                     NOW()
                 )
             ";
-            $result = ejecutarConsulta($sql);
+            $result = ejecutarConsulta(sql: $sql);
 
             if ( $result ) {
                 global $conexion;
