@@ -52,6 +52,8 @@ class Ticket
     }
 
     public function store($data){
+        date_default_timezone_set('America/Mexico_City');
+        $today = date("Y-m-d H:i:s");
         $route_schedule_id = $data["route_schedule_id"] ?? null;
         $employee_id = $data["employee_id"] ?? null;
         $route_id = $data["route_id"] ?? null;
