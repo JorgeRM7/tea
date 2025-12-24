@@ -116,8 +116,8 @@ class Ticket
                     '$discount',
                     '$expiration_date',
                     '$sale_id',
-                    NOW(),
-                    NOW()
+                    '$today',
+                    '$today'
                 )
             ";
             $result = ejecutarConsulta(sql: $sql);
