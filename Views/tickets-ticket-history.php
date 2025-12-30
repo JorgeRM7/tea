@@ -296,72 +296,87 @@
             confirmButtonText: "Sí"
         }).then((result) => {
 
-            if (result.isConfirmed) {
-                Swal.fire({
-                    title: "Autorización requerida",
-                    html: `
-                    <form id="deleteAuthForm">
-                        <input 
-                            type="password"
-                            name="auth_code"
-                            class="swal2-input"
-                            placeholder="Contraseña..."
-                            autocomplete="off"
-                            autocapitalize="off"
-                            autoccorrect="off"
-                        >
-                        <p class="text-muted mt-2" style="font-size:13px;">Contraseña requerida para autorizar la cancelación</p>
-                    </form>
-                    `,
-                    focusConfirm: false,
-                    showCancelButton: true,
-                    confirmButtonText: "Validar",
-                    didOpen: () => {
-                        const input = document.querySelector("input[name='auth_code']");
-                        if (input) {
-                            input.setAttribute("autocomplete", "off");
-                            setTimeout(() => input.value = input.value, 50);
-                            input.addEventListener("paste", e => e.preventDefault());
-                        }
+            if (!result.isConfirmed) return;
+
+            Swal.fire({
+                title: "Autorización requerida",
+                html: `
+                    <input 
+                        type="password"
+                        name="auth_code"
+                        class="swal2-input"
+                        placeholder="Contraseña..."
+                        autocomplete="off"
+                    >
+                    <textarea
+                        name="cancel_comment"
+                        class="swal2-textarea"
+                        placeholder="Motivo de cancelación..."
+                        style="resize:none"
+                    ></textarea>
+                    <p class="text-muted mt-2" style="font-size:13px;">
+                        Contraseña requerida para autorizar la cancelación
+                    </p>
+                `,
+                focusConfirm: false,
+                showCancelButton: true,
+                confirmButtonText: "Validar",
+                preConfirm: () => {
+                    const password = document.querySelector("input[name='auth_code']").value;
+                    const comment  = document.querySelector("textarea[name='cancel_comment']").value;
+
+                    if (!password) {
+                        Swal.showValidationMessage("Ingresa la contraseña");
+                        return false;
+                    }
+
+                    if (!comment.trim()) {
+                        Swal.showValidationMessage("Ingresa el motivo de cancelación");
+                        return false;
+                    }
+
+                    return { password, comment };
+                }
+            }).then((passResult) => {
+
+                if (!passResult.isConfirmed) return;
+
+                const PASSWORD_CORRECTA = "TEA2025";
+
+                if (passResult.value.password !== PASSWORD_CORRECTA) {
+                    Swal.fire("Acceso denegado", "Contraseña incorrecta.", "error");
+                    return;
+                }
+
+                $.ajax({
+                    url: "../Controllers/ticketsController.php?op=deleteItem",
+                    type: "POST",
+                    headers: { "Authorization": "Bearer " + token },
+                    data: {
+                        ticket_id,
+                        comment: passResult.value.comment
                     },
-                    preConfirm: () => {
-                        const input = document.querySelector("input[name='auth_code']");
-                        return input ? input.value : "";
+                    success: () => {
+                        Swal.fire({
+                            toast: true,
+                            icon: "success",
+                            title: "Boleto cancelado",
+                            position: "top-end",
+                            showConfirmButton: false,
+                            timer: 2500
+                        });
+                        index();
+                        tickets();
+                    },
+                    error: () => {
+                        Swal.fire("Error", "No se pudo cancelar el boleto.", "error");
                     }
-                }).then((passResult) => {
-
-                    const PASSWORD_CORRECTA = "Admin2025";
-                    if (passResult.value !== PASSWORD_CORRECTA) {
-                        Swal.fire("Acceso denegado", "Contraseña incorrecta.", "error");
-                        return;
-                    }
-
-                    $.ajax({
-                        url: "../Controllers/ticketsController.php?op=deleteItem",
-                        type: "POST",
-                        data: { ticket_id },
-                        headers: { "Authorization": "Bearer " + token },
-                        success: () => {
-                            Swal.fire({
-                                toast: true,
-                                icon: "success",
-                                title: "Boleto cancelado",
-                                position: "top-end",
-                                showConfirmButton: false,
-                                timer: 2500
-                            });
-                            index();
-                            tickets();
-                        },
-                        error: () => {
-                            Swal.fire("Error", "No se pudo cancelar el boleto.", "error");
-                        }
-                    });
-
                 });
-            }
+
+            });
         });
     };
+
 
 
     const filters = () => {

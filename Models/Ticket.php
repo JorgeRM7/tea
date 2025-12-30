@@ -277,8 +277,12 @@ class Ticket
     }
 
     public function deleteItem ( $data ){
+        date_default_timezone_set('America/Mexico_City');
         $ticket_id = $data['ticket_id'];
-        $sql = "UPDATE `tickets` SET `status`='CANCELADO',`updated_at`= NOW() WHERE `id`='$ticket_id'";
+        $user_id = $_SESSION['user_id'];
+        $comment = $data['comment'];
+        $today = date("Y-m-d H:i:s");
+        $sql = "UPDATE `tickets` SET `status`='CANCELADO',`cancel_by`= '$user_id', `cancel_comment`= '$comment', `cancel_at`='$today',`updated_at`= NOW() WHERE `id`='$ticket_id'";
         return ejecutarConsulta($sql);
     }
 
