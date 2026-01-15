@@ -30,26 +30,7 @@
                                             </button>
                                         </div>
                                     </div>
-                                    <div class="card-datatable table-responsive">
-                                        <div class="row">
-                                            <div class="col-xl-12 col-lg-12 col-md-12 order-0 order-md-1">
-                                                <table class="dt-responsive table table-striped" id="tbllistado">
-                                                    <thead>
-                                                        <tr>
-                                                            <th>Acciones</th>
-                                                            <th>#</th>
-                                                            <th>Origen</th>
-                                                            <th>Destino</th>
-                                                            <th>Costo</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-        
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </div>
-                                    </div>
+                                    
                                 </div>
                             </div>
 

@@ -22,6 +22,7 @@ function verificarToken() {
     } catch (Exception $e) {
         http_response_code(401);
         echo json_encode(["error" => "Token inválido o expirado"]);
+        header("Location: ../Views/login.php");
         exit;
     }
 }

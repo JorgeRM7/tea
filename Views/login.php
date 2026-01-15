@@ -131,7 +131,7 @@
         }
 
         .form-label {
-            color: var(--text-light);
+            /* color: var(--text-light); */
             font-weight: 600;
             margin-bottom: 0.6rem; /* Más espacio entre label y input */
             display: flex;
@@ -148,7 +148,7 @@
             border: 1px solid var(--border-color);
             border-radius: 10px; /* Bordes de input un poco más rectos */
             padding: 0.95rem 1.4rem; /* Más padding en los inputs */
-            color: var(--text-light);
+            /* color: var(--text-light); */
             font-size: 1rem;
             transition: all 0.3s ease;
         }
