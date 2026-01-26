@@ -128,6 +128,48 @@
                         </div>
                     </div>
                     <!--Fin Modal Crear-->
+
+                    <!--Inicio Modal Crear-->
+                    <div class="modal animate__animated animate__flipInX" id="modal_add_unit" aria-labelledby="flipInXAnimationModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel">Asignar unidad</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    
+                                    <div class="row">
+
+                                        <div class="col-md-8">
+                                            <label class="form-label section-title">Vehiculo</label>
+                                            <input type="hidden" id="record_id" name="record_id">
+                                            <select id="vehicle_id" name="vehicle_id" class="form-select">
+                                                <?php 
+                                                    $sql = "SELECT * FROM `vehicles` WHERE deleted_at is null";
+                                                    $query = ejecutarConsulta($sql);
+                                                    while($valores = mysqli_fetch_array($query)){
+                                                        echo "<option value='".$valores['id']."'>".$valores['unidad_number']."</option>";
+                                                    }
+                                                ?>
+
+                                            </select>
+                                            
+                                        </div>
+                                        
+                                    </div>
+                                    
+                                </div>
+                                <div class="modal-footer">
+                                    <button class="crear btn btn-primary me-2" onclick="storeUnit()">
+                                        <i class="ti ti-device-floppy"></i> Guardar
+                                    </button>
+                                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal" onclick="clean()">Cerrar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!--Fin Modal Crear-->
                     
                     <!-- FOOTER -->
                     <?php require_once('footer.php'); ?>
@@ -504,6 +546,9 @@
                     url: "../Controllers/adminCalendarRoutesSchedulesController.php?op=deleteItem",
                     type: "POST",
                     dataType: "json",
+                    headers: {
+                        "Authorization": "Bearer " + token
+                    },
                     data: { id: scheduleId },
                     success: (data) => {
                         card.remove();
@@ -522,7 +567,54 @@
         }
     }
 
+    const addUnit = ( schedule_id ) => {
+        $('#modal_add_unit').modal('show');
+        $("#record_id").val(schedule_id);
+    };
 
+    function storeUnit() {
+        let record_id = $("#record_id").val(); 
+        let vehicle_id = $("#vehicle_id").val();
+
+        Swal.fire({
+            title: '¿Seguro (a) de realizar esta acción?',
+            text: 'Se asignara la unidad seleccionada',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, asignar'
+        }).then(result => {
+
+            if (!result.isConfirmed) return;
+            $.ajax({
+                url: "../Controllers/adminCalendarRoutesSchedulesController.php?op=store-unit",
+                type: "POST",
+                dataType: "json",
+                headers: {
+                    "Authorization": "Bearer " + token
+                },
+                data: { record_id: record_id, vehicle_id: vehicle_id },
+                success: (data) => {
+                    
+                    Swal.fire({
+                        toast: true,
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 3000,
+                        timerProgressBar: true,
+                        icon: 'success',
+                        title: 'Éxito',
+                        text: 'Unidad asignada correctamente.',
+                    });
+                    $('#modal_add_unit').modal('hide');
+                },
+                error: (xhr) => {
+                    console.error("Error delete:", xhr.responseText);
+                    Swal.fire("Error", "No se pudo asignar", "error");
+                }
+            });
+        });
+
+    }
 
     
 </script>

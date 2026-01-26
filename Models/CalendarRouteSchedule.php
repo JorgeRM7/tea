@@ -140,6 +140,16 @@ class Calendar {
         $sql=" UPDATE `routes_schedule` SET `deleted_at`= NOW() WHERE `id`='$routes_schedule_id'";
         return ejecutarConsulta($sql);
     }
+
+    public function storeUnit ( $data ){
+        $record_id = $data['record_id'];
+        $vehicle_id = $data['vehicle_id'];
+        $sql=" UPDATE `routes_schedule` SET `vehicle_id`= '$vehicle_id' WHERE `id`='$record_id'";
+        return ejecutarConsulta($sql);
+    }
+
+
+    
  
 }   
 ?>

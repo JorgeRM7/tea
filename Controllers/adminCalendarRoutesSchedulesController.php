@@ -35,6 +35,11 @@ switch ($_GET["op"]) {
         $rspta=$Calendar->deleteItem($_POST);
         echo $rspta;
     break;
+
+    case 'store-unit':
+        $rspta=$Calendar->storeUnit($_POST);
+        echo $rspta;
+    break;
     
 
 }
