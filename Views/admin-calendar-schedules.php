@@ -116,8 +116,11 @@
                                     <button class="crear btn btn-primary me-2" onclick="store()">
                                         <i class="ti ti-device-floppy"></i> Guardar
                                     </button>
-                                     <button class="crear btn btn-success me-2" onclick="addNewSchedule()">
+                                    <button class="crear btn btn-success me-2" onclick="addNewSchedule()">
                                         <i class="ti ti-device-floppy"></i> Agregar
+                                    </button>
+                                    <button class="crear btn btn-warning me-2" onclick="loadSchedules()">
+                                        <i class="ti ti-reload"></i> Cargar horarios
                                     </button>
                                     <button type="button" class="btn btn-danger" data-bs-dismiss="modal" onclick="clean()">Cerrar</button>
                                 </div>
@@ -151,7 +154,7 @@
         // index();
 
 
-        // $("#search_route").select2({ width:"100%"});
+  
 
         $("#route_id").on("change", function() {
             routes();
@@ -186,27 +189,17 @@
             dateClick: function (info) {
                 $('#modal_create').modal('show');
                 $('#date').val(info.dateStr)
+                routes();
+                // loadSchedules();
 
-                console.log('Fecha seleccionada:', info.dateStr);
+                // console.log('Fecha seleccionada:', info.dateStr);
             },
 
             eventClick: function (info) {
                 console.log('Evento:', info.event);
             },
 
-            events: [
-                {
-                    title: 'Ruta Morelia → CDMX',
-                    start: '2026-01-08',
-                    color: '#0d6efd'
-                },
-                {
-                    title: 'Ruta Uruapan → Pátzcuaro',
-                    start: '2026-01-10',
-                    end: '2026-01-12',
-                    color: '#198754'
-                }
-            ]
+            events: []
         });
 
         calendar.render();
@@ -214,12 +207,12 @@
    
     const create = () => {
         $('#modal_create').modal('show');
-        clean();
+        
+        // loadSchedules();
+        // clean();
     };
 
     const store = () => {
-        
-
         const formData = new FormData(document.getElementById("formulario"));
         $.ajax({
             url: "../Controllers/adminCalendarRoutesSchedulesController.php?op=store",
@@ -232,21 +225,19 @@
             processData: false,
             success: function(response) {
 
-                console.log(response)
+                // console.log(response)
                 
-                // Swal.fire({
-                //     toast: true,
-                //     position: 'top-end',
-                //     showConfirmButton: false,
-                //     timer: 3000,
-                //     timerProgressBar: true,
-                //     icon: 'success',
-                //     title: 'Éxito',
-                //     text: 'Registro creado exitosamente.',
-                // });
-                // $('#modal_create').modal('hide');
-                // clean();
-                // index();
+                Swal.fire({
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    icon: 'success',
+                    title: 'Éxito',
+                    text: 'Registro creado exitosamente.',
+                });
+
             },
             error: function(error) {
                 Swal.fire({
@@ -255,41 +246,6 @@
                     icon: "error"
                 });
             }
-        });
-    };
-
-    const index = () => {
-        if ($.fn.DataTable.isDataTable('#tbllistado')) {
-            $('#tbllistado').DataTable().ajax.reload();
-            return;
-        }
-    
-        tabla = $('#tbllistado').dataTable({
-            "aProcessing": true,
-            "aServerSide": true,
-            // "dom": 'Bfrtip',
-            "ajax": {
-                url: '../Controllers/adminCalendarRoutesSchedulesController.php?op=index',
-                type: "get",
-                headers: {
-                    "Authorization": "Bearer " + token
-                },
-                dataType: "json",
-                error: (e) => {
-                    console.log(e.responseText);
-                }
-            },
-            "bDestroy": true,
-            "iDisplayLength": 10,
-            "lengthMenu": [5, 10, 25, 50, 100],
-            // "order": [7, "asc"],
-            "language": {
-                "url": "//cdn.datatables.net/plug-ins/1.10.24/i18n/Spanish.json"
-            },
-            "responsive": false,
-        }).DataTable();
-        $('#tbllistado').on('draw.dt', function() {
-            permisos();
         });
     };
 
@@ -369,10 +325,10 @@
     };
 
     const clean = () => {   
-        $("#route_id").val('');
-        $("#origin").val('');
-        $("#destination").val('');
-        $("#cost").val('');
+        // $("#route_id").val('');
+        // $("#origin").val('');
+        // $("#destination").val('');
+        // $("#cost").val('');
     }
     
     const routes = () => {    
@@ -387,6 +343,7 @@
             dataType: "json",
             data: { search_route, search_date },
             success: function (data) {
+
                 let content = ``;
 
                 if (!data.length) {
@@ -399,10 +356,8 @@
                 } else {
 
                     data.forEach(item => {
-
                         content += `
-                            <div class="col-12 col-sm-6 col-md-4 mb-3 schedule-item"
-                                data-schedule-id="${item.route_schedule_id}">
+                            <div class="col-12 col-sm-6 col-md-4 mb-3 schedule-item" data-schedule-id="${item.route_schedule_id}">
 
                                 <div class="input-group input-group-sm schedule-group">
 
@@ -441,6 +396,50 @@
             }
         });
     };
+
+    const loadSchedules = () => {    
+        let search_route = $("#route_id").val(); 
+        let search_date  = $("#date").val(); 
+
+        Swal.fire({
+            icon: "info",
+            title: "Cargando horarios...",
+            text: `Ruta: ${search_route} | Fecha: ${search_date}`,
+            showConfirmButton: false,
+            timer: 1000
+        });
+
+        $.ajax({
+            url: "../Controllers/adminCalendarRoutesSchedulesController.php?op=load-schedules",
+            type: "POST",
+            headers: {
+                "Authorization": "Bearer " + token
+            },
+            dataType: "json",
+            data: { search_route, search_date },
+            success: function (data) {
+
+                Swal.fire({
+                    icon: data.success ? "success" : "warning",
+                    title: "Aviso",
+                    text: data.message || "Proceso finalizado",
+                    confirmButtonText: "OK"
+                });
+
+                routes();
+            },
+            error: function (xhr) {
+                console.error(xhr.responseText);
+
+                Swal.fire({
+                    icon: "error",
+                    title: "Error",
+                    text: "Ocurrió un error al cargar los horarios",
+                    confirmButtonText: "OK"
+                });
+            }
+        });
+    };  
 
     let tempScheduleCounter = 0;
 
@@ -501,16 +500,21 @@
             }).then(result => {
 
                 if (!result.isConfirmed) return;
-
                 $.ajax({
                     url: "../Controllers/adminCalendarRoutesSchedulesController.php?op=deleteItem",
                     type: "POST",
+                    dataType: "json",
                     data: { id: scheduleId },
-                    success: () => {
+                    success: (data) => {
                         card.remove();
-                        Swal.fire('Eliminado', '', 'success');
+                        Swal.fire('Eliminado', data.message || '', 'success');
+                    },
+                    error: (xhr) => {
+                        console.error("Error delete:", xhr.responseText);
+                        Swal.fire("Error", "No se pudo eliminar", "error");
                     }
                 });
+
             });
 
         } else {
