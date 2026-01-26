@@ -90,7 +90,6 @@
                                             <div class="col-md-8">
                                                 <label class="form-label section-title">Ruta</label>
                                                 <select id="route_id" name="route_id" class="form-select">
-                                                    <option value='90'>555555555</option>
                                                     <?php 
                                                         $sql = "SELECT * FROM `routes` WHERE deleted_at is null";
                                                         $query = ejecutarConsulta($sql);
@@ -129,7 +128,7 @@
                     </div>
                     <!--Fin Modal Crear-->
 
-                    <!--Inicio Modal Crear-->
+                    <!--Inicio Modal Unidad-->
                     <div class="modal animate__animated animate__flipInX" id="modal_add_unit" aria-labelledby="flipInXAnimationModalLabel" aria-hidden="true">
                         <div class="modal-dialog" role="document">
                             <div class="modal-content">
@@ -169,7 +168,7 @@
                             </div>
                         </div>
                     </div>
-                    <!--Fin Modal Crear-->
+                    <!--Fin Modal Unidad-->
                     
                     <!-- FOOTER -->
                     <?php require_once('footer.php'); ?>
