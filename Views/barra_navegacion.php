@@ -136,9 +136,14 @@ if($archivo_actual == 'inicio.php'){
 </nav>
 
 <div id="loader-overlay">
+    <div class="loader-backdrop"></div>
+
     <div class="loader-content">
         <img src="../assets/img/logo.png" alt="Logo de TEA" class="loader-logo" />
         <div class="loader-text">Cargando sistema...</div>
+        <div class="loader-dots">
+            <span></span><span></span><span></span>
+        </div>
     </div>
 </div>
 
@@ -268,13 +273,13 @@ if($archivo_actual == 'inicio.php'){
         /*text-align: center;*/
     }
     
-    #loader-overlay {
+    /* #loader-overlay {
         position: fixed;
         top: 0;
         left: 0;
         width: 100%;
         height: 100%;
-        background-color: rgba(255, 255, 255, 0.9); /* Fondo semitransparente para que se vea el logo */
+        background-color: rgba(255, 255, 255, 0.9);
         display: flex;
         justify-content: center;
         align-items: center;
@@ -289,20 +294,20 @@ if($archivo_actual == 'inicio.php'){
     }
 
     .loader-logo {
-        width: 150px; /* Ajusta el tamaño del logo */
+        width: 150px;
         height: auto;
-        animation: pulse-logo 1.5s infinite ease-in-out; /* Animación de pulsación */
+        animation: pulse-logo 1.5s infinite ease-in-out;
     }
 
     .loader-text {
         font-family: sans-serif;
         font-size: 1.2rem;
         font-weight: bold;
-        color: #38b449; /* El color verde de tu logo */
+        color: #38b449;
         margin-top: 20px;
     }
 
-    /* Definición de la animación para el logo */
+
     @keyframes pulse-logo {
         0% {
             transform: scale(0.9);
@@ -316,5 +321,137 @@ if($archivo_actual == 'inicio.php'){
             transform: scale(0.9);
             opacity: 0.7;
         }
+    } */
+
+     /* =========================
+   LOADER OVERLAY PREMIUM
+========================= */
+
+#loader-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+/* Fondo con blur + gradiente */
+.loader-backdrop {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+        circle at top,
+        rgba(56, 180, 73, 0.15),
+        rgba(13, 26, 30, 0.95)
+    );
+    backdrop-filter: blur(10px);
+}
+
+/* Contenido central */
+.loader-content {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 50px 60px;
+    border-radius: 28px;
+    background: rgba(255, 255, 255, 0.08);
+    box-shadow: 
+        0 30px 80px rgba(0, 0, 0, 0.35),
+        inset 0 0 0 1px rgba(255,255,255,0.08);
+    animation: fadeScaleIn 0.6s ease-out;
+}
+
+/* Logo */
+.loader-logo {
+    width: 140px;
+    margin-bottom: 20px;
+    animation: pulseGlow 1.8s infinite ease-in-out;
+    filter: drop-shadow(0 0 25px rgba(56, 180, 73, 0.5));
+}
+
+/* Texto */
+.loader-text {
+    font-size: 1.1rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    color: #e9f9ee;
+    margin-bottom: 14px;
+    animation: fadeText 1.6s infinite ease-in-out;
+}
+
+/* Dots animados */
+.loader-dots {
+    display: flex;
+    gap: 6px;
+}
+
+.loader-dots span {
+    width: 8px;
+    height: 8px;
+    background: #38b449;
+    border-radius: 50%;
+    animation: bounceDots 1.4s infinite ease-in-out;
+}
+
+.loader-dots span:nth-child(2) {
+    animation-delay: 0.2s;
+}
+.loader-dots span:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+/* =========================
+   ANIMACIONES
+========================= */
+
+@keyframes pulseGlow {
+    0% {
+        transform: scale(0.92);
+        opacity: 0.75;
     }
+    50% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(0.92);
+        opacity: 0.75;
+    }
+}
+
+@keyframes bounceDots {
+    0%, 80%, 100% {
+        transform: translateY(0);
+        opacity: 0.4;
+    }
+    40% {
+        transform: translateY(-8px);
+        opacity: 1;
+    }
+}
+
+@keyframes fadeText {
+    0%, 100% {
+        opacity: 0.6;
+    }
+    50% {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeScaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.92);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
 </style>

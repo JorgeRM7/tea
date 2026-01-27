@@ -130,7 +130,14 @@ class Calendar {
         
         $search_route    = $data['search_route'] ?? NULL;
         $search_date     = $data["search_date"] ?? null;
-        $sql = "SELECT * FROM `routes_schedule` WHERE route_id ='$search_route' AND date='$search_date' AND deleted_at IS NULL ORDER BY leaving_time ASC";
+        $sql = "
+            SELECT 
+                routes_schedule.*,
+                vehicles.unidad_number
+            FROM `routes_schedule` 
+            LEFT JOIN vehicles ON vehicles.id = routes_schedule.vehicle_id
+            WHERE routes_schedule.route_id ='$search_route' AND routes_schedule.date='$search_date' AND routes_schedule.deleted_at IS NULL ORDER BY routes_schedule.leaving_time ASC
+        ";
 
         return ejecutarConsulta($sql);
     }

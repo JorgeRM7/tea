@@ -24,7 +24,7 @@ switch ($_GET["op"]) {
             $data[] = [
                 "route_schedule_id" => $reg['id'],
                 "leaving_time" => $reg['leaving_time'],
-                // "vehicle_id" => $reg['vehicle_id'],  
+                "unidad_number" => $reg['unidad_number'],  
             ];
         }
 

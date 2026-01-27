@@ -23,6 +23,23 @@
         text-align: center;
         border-radius: 10px 0 0 10px;
     }
+    #calendar {
+        cursor: pointer;
+    }
+
+    .fc-daygrid-day,
+    .fc-timegrid-slot,
+    .fc-timegrid-col {
+        cursor: pointer;
+    }
+
+    .fc-event {
+        cursor: pointer;
+    }
+
+    .fc-toolbar button {
+        cursor: pointer;
+    }
 
     .btn-mini {
         width: 38px;
@@ -58,9 +75,7 @@
                                     <div class="card-header d-flex justify-content-between align-items-center">
                                         <h5 class="mb-0">Calendario de horarios</h5>
                                         <div class="d-flex justify-content-end">      
-                                            <button class="crear btn btn-primary me-2" onclick="create()">
-                                                <i class="ti ti-cloud-up"></i> Crear
-                                            </button>
+                                           
                                         </div>
                                     </div>
                                     <div class="card-body">
@@ -397,11 +412,12 @@
                 } else {
 
                     data.forEach(item => {
+                        console.log(item)
                         content += `
                             <div class="col-12 col-sm-6 col-md-4 mb-3 schedule-item" data-schedule-id="${item.route_schedule_id}">
 
                                 <div class="input-group input-group-sm schedule-group">
-
+                        
                                     <input 
                                         type="time"
                                         name="time[]"
@@ -410,6 +426,16 @@
                                         data-id="${item.route_schedule_id}"
                                         onchange="updateTime(${item.route_schedule_id}, this.value)"
                                     >
+                                    ${item.unidad_number ? `
+                                        <button 
+                                            type="button"
+                                            class="btn btn-success btn-mini"
+                                            title="Unidad asignada: ${item.unidad_number}"
+                                            disabled
+                                        >
+                                        ${item.unidad_number}
+                                        </button>
+                                    ` : ''}
 
                                     <button 
                                         type ="button"
