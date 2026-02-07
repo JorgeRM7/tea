@@ -12,6 +12,7 @@ class RouteSubpath {
         $origin = $data["origin"];
         $destination = $data["destination"];
         $price = $data["price"];
+        $price_online = $data["price_online"];
         $route_subpaths_id = $data["route_subpaths_id"];
         
     
@@ -23,7 +24,8 @@ class RouteSubpath {
                     `origin`        = '$origin',
                     `destination`   = '$destination',
                     `price`         = '$price',
-                    `updated_at`     = NOW()
+                    `price_online`  = '$price_online',
+                    `updated_at`    = NOW()
                 WHERE `id` = '$route_subpaths_id'
             ";
         }else{
@@ -34,6 +36,7 @@ class RouteSubpath {
                     `origin`,
                     `destination`,
                     `price`,
+                    `price_online`,
                     `created_at`,
                     `updated_at`
                 ) VALUES (
@@ -41,12 +44,12 @@ class RouteSubpath {
                     '$origin',
                     '$destination',
                     '$price',
+                    '$price_online',
                     NOW(),
                     NOW()
                 )
             ";
         }
-        // echo $sql;
         return ejecutarConsulta($sql);
     }
     

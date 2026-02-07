@@ -43,6 +43,7 @@ switch ($_GET["op"]) {
                 '<i class="ti ti-map-pin"></i>'.$reg->origin,
                 '<i class="ti ti-map-pin"></i>'.$reg->destination,
                 '$ '.$reg->price,
+                '$ '.$reg->price_online ?? 0,
             );
          }
         $results=array(

@@ -1,5 +1,5 @@
 <!doctype html>
-<?php ;$title = "Vehiculos"; ?>
+<?php ;$title = "Paradas"; ?>
 <html lang="es" class="light-style layout-navbar-fixed layout-menu-fixed layout-compact" dir="ltr"
     data-theme="theme-default" data-assets-path="../assets/" data-template="vertical-menu-template">
 <!--HEADER-->
@@ -41,7 +41,8 @@
                                                             <th>Ruta</th>
                                                             <th>Origen</th>
                                                             <th>Destino</th>
-                                                            <th>Precio</th>
+                                                            <th>Precio Taquilla</th>
+                                                            <th>Precio Online</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
@@ -92,6 +93,10 @@
                                             <div class="col-md-6">
                                                 <label for="nameWithTitle" class="form-label">Precio</label>
                                                 <input type="number" id="price" name="price" class="form-control" placeholder="Ingresa..." required/>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label for="nameWithTitle" class="form-label">Precio en linea</label>
+                                                <input type="number" id="price_online" name="price_online" class="form-control" placeholder="Ingresa..." required/>
                                             </div>
                                            
                                         </div>
@@ -268,7 +273,8 @@
                 $("#route_id").val(data?.route_id);
                 $("#destination").val(data?.destination);
                 $("#origin").val(data?.origin);
-                $("#price").val(data?.price);             
+                $("#price").val(data?.price); 
+                $("#price_online").val(data?.price_online);             
             },
             error: function (xhr, status, error) {
                 console.error("Error en la solicitud:", error);
@@ -359,6 +365,7 @@
         $("#origin").val('');
         $("#destination").val('');
         $("#price").val('');
+        $("#price_online").val('');
     }
     
 </script>
