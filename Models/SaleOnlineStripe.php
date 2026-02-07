@@ -249,7 +249,7 @@ class SaleOnlineStripe
         $sql = "SELECT 
                     routes_schedule.id AS schedule_id,
                     routes_schedule.leaving_time,
-                    routes_stop.price,
+                    routes_stop.price_online AS price,
                     (SELECT COUNT(id) FROM tickets WHERE tickets.route_schedule_id = routes_schedule.id AND tickets.status IN ('VENDIDO')) AS tickets_sale,
                     (SELECT capacity FROM vehicles WHERE vehicles.id = routes_schedule.vehicle_id) AS capacity
                 FROM routes_schedule
