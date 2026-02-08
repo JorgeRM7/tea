@@ -13,6 +13,7 @@ class RouteSubpath {
         $destination = $data["destination"];
         $price = $data["price"];
         $price_online = $data["price_online"];
+        $active_online = $data["active_online"];
         $route_subpaths_id = $data["route_subpaths_id"];
         
     
@@ -25,6 +26,7 @@ class RouteSubpath {
                     `destination`   = '$destination',
                     `price`         = '$price',
                     `price_online`  = '$price_online',
+                    `active_online` = '$active_online',
                     `updated_at`    = NOW()
                 WHERE `id` = '$route_subpaths_id'
             ";
@@ -37,6 +39,7 @@ class RouteSubpath {
                     `destination`,
                     `price`,
                     `price_online`,
+                    `active_online`
                     `created_at`,
                     `updated_at`
                 ) VALUES (
@@ -45,6 +48,7 @@ class RouteSubpath {
                     '$destination',
                     '$price',
                     '$price_online',
+                    '$active_online',
                     NOW(),
                     NOW()
                 )

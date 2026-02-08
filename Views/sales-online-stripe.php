@@ -97,9 +97,9 @@ $token = $config['token'];
             <select class="form-select" id="origin" name="origin">
                 <option selected disabled>Selecciona origen</option>
                 <?php
-                $sql = "SELECT origin FROM `routes_stop` WHERE deleted_at is null GROUP BY origin;";
+                $sql = "SELECT origin FROM `routes_stop` WHERE deleted_at is null AND active_online = 1 GROUP BY origin;";
                 $query = ejecutarConsulta($sql);
-                while ($valores = mysqli_fetch_array($query)) {
+                while ($valores = mysqli_fetch_array($query)) { 
                     echo "<option value='" . $valores['origin'] . "'>" . $valores['origin'] . "</option>";
                 }
                 ?>

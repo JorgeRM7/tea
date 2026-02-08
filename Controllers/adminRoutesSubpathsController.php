@@ -36,6 +36,12 @@ switch ($_GET["op"]) {
             $bonton_editar = '<button type="button" class="editar btn btn-sm btn-warning" onclick="show('.$reg->id.')"><i class="ti ti-edit"></i></button>';
             $bonton_borrar = '<button type="button" class="eliminar btn btn-sm btn-danger" onclick="deleteItem(' . $reg->id . ')"><i class="ti ti-trash"></i></button>';
             
+            if( $reg->active_online == 1 ){
+                $status = '<span class="badge bg-success">Activo</span>';
+            }else{
+                $status = '<span class="badge bg-danger">Inactivo</span>';
+            }   
+
             $data[]=array(
                 $bonton_editar.' '.$bonton_borrar,
                 $reg->id,
@@ -44,6 +50,7 @@ switch ($_GET["op"]) {
                 '<i class="ti ti-map-pin"></i>'.$reg->destination,
                 '$ '.$reg->price,
                 '$ '.$reg->price_online ?? 0,
+                $status
             );
          }
         $results=array(

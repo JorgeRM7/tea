@@ -255,7 +255,8 @@ class SaleOnlineStripe
                 FROM routes_schedule
                 INNER JOIN routes_stop ON routes_stop.route_id = routes_schedule.route_id
                 WHERE routes_stop.origin = '$origin'
-                AND routes_stop.destination = '$destination'";
+                AND routes_stop.destination = '$destination'
+                AND routes_stop.active_online = 1 ";
 
         if ($date == $today) {
             $sql .= " AND routes_schedule.date = '$date' AND routes_schedule.leaving_time >= '$hour'";

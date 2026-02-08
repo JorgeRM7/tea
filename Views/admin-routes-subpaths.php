@@ -42,7 +42,8 @@
                                                             <th>Origen</th>
                                                             <th>Destino</th>
                                                             <th>Precio Taquilla</th>
-                                                            <th>Precio Online</th>
+                                                            <th>Precio En linea</th>
+                                                            <th>Activo En linea</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
@@ -97,6 +98,10 @@
                                             <div class="col-md-6">
                                                 <label for="nameWithTitle" class="form-label">Precio en linea</label>
                                                 <input type="number" id="price_online" name="price_online" class="form-control" placeholder="Ingresa..." required/>
+                                            </div>
+                                            <div class="col-md-4 mt-3">
+                                                <input class="form-check-input" type="checkbox" id="active_online" name="active_online" />
+                                                <label class="form-check-label" for="userManagementRead"> Activo en venta en linea </label>
                                             </div>
                                            
                                         </div>
@@ -186,7 +191,10 @@
             return;
         }
 
+        const activoOnline = $("#active_online").is(":checked") ? 1 : 0;
+
         const formData = new FormData(document.getElementById("formulario"));
+        formData.append("active_online", activoOnline);
         $.ajax({
             url: "../Controllers/adminRoutesSubpathsController.php?op=store",
             type: "POST",
@@ -274,7 +282,8 @@
                 $("#destination").val(data?.destination);
                 $("#origin").val(data?.origin);
                 $("#price").val(data?.price); 
-                $("#price_online").val(data?.price_online);             
+                $("#price_online").val(data?.price_online);  
+                $("#active_online").prop("checked", data.active_online == 1);           
             },
             error: function (xhr, status, error) {
                 console.error("Error en la solicitud:", error);
@@ -366,6 +375,8 @@
         $("#destination").val('');
         $("#price").val('');
         $("#price_online").val('');
+        $("#active_online").prop("checked", false);
+
     }
     
 </script>
