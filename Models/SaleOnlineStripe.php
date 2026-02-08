@@ -274,7 +274,7 @@ class SaleOnlineStripe
     public function show_subpaths($data)
     {
         $origin = $data['origin'] ?? null;
-        $sql = "SELECT * FROM routes_stop WHERE origin='$origin' AND deleted_at IS NULL";
+        $sql = "SELECT * FROM routes_stop WHERE origin='$origin' AND deleted_at IS NULL AND routes_stop.active_online = 1";
         return ejecutarConsulta($sql);
     }
 
