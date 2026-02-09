@@ -39,7 +39,7 @@ class RouteSubpath {
                     `destination`,
                     `price`,
                     `price_online`,
-                    `active_online`
+                    `active_online`,
                     `created_at`,
                     `updated_at`
                 ) VALUES (
