@@ -30,7 +30,26 @@
                                             </button>
                                         </div>
                                     </div>
-                                    
+                                    <div class="card-datatable table-responsive">
+                                        <div class="row">
+                                            <div class="col-xl-12 col-lg-12 col-md-12 order-0 order-md-1">
+                                                <table class="dt-responsive table table-striped" id="tbllistado">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Acciones</th>
+                                                            <th>#</th>
+                                                            <th>Origen</th>
+                                                            <th>Destino</th>  
+                                                            <th>Precio</th>  
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+        
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 
@@ -57,7 +76,7 @@
                                                 <input type="text" id="destination" name="destination" class="form-control" placeholder="Ingresa..." required/>
                                             </div>
                                             <div class="col-md-6">
-                                                <label for="nameWithTitle" class="form-label">Costo</label>
+                                                <label for="nameWithTitle" class="form-label">Precio</label>
                                                 <input type="number" id="cost" name="cost" class="form-control" placeholder="Ingresa..." required/>
                                             </div>
                                            
