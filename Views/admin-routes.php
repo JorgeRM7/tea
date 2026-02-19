@@ -79,6 +79,20 @@
                                                 <label for="nameWithTitle" class="form-label">Precio</label>
                                                 <input type="number" id="cost" name="cost" class="form-control" placeholder="Ingresa..." required/>
                                             </div>
+
+                                            <div class="col-md-6">
+                                                <label for="nameWithTitle" class="form-label">Taquilla</label>
+                                                <select class="form-select select2-container" id="branch_office_id" name="branch_office_id" aria-label="Default select example">
+                                                    <option value="">Selecciona...</option>
+                                                    <?php 
+                                                        $sql = "SELECT * FROM `branch_offices` WHERE deleted_at is null";
+                                                        $query = ejecutarConsulta($sql);
+                                                        while($valores = mysqli_fetch_array($query)){
+                                                            echo "<option value='".$valores['id']."'>".$valores['name']."</option>";
+                                                        }
+                                                    ?>
+                                                </select>
+                                            </div>
                                            
                                         </div>
                                     </form>
@@ -242,7 +256,9 @@
                 $("#route_id").val(data?.id);
                 $("#destination").val(data?.destination);
                 $("#origin").val(data?.origin);
-                $("#cost").val(data?.cost);             
+                $("#cost").val(data?.cost);
+                $("#branch_office_id").val(data?.branch_office_id);
+                
             },
             error: function (xhr, status, error) {
                 console.error("Error en la solicitud:", error);
@@ -307,6 +323,7 @@
         $("#origin").val('');
         $("#destination").val('');
         $("#cost").val('');
+        $("#branch_office_id").val('');
     }
     
 </script>

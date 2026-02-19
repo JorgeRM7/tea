@@ -13,7 +13,7 @@ class Route {
         $origin = $data["origin"];
         $destination = $data["destination"];
         $cost = $data["cost"];
-    
+        $branch_office_id =$data['branch_office_id'];
 
         if( $route_id ){
             $sql="
@@ -21,6 +21,7 @@ class Route {
                     `origin`         = '$origin',
                     `destination`    = '$destination',
                     `cost`           = '$cost',
+                    `branch_office_id` = '$branch_office_id',
                     `updated_at`     = NOW()
                 WHERE `id` = '$route_id'
             ";
@@ -31,12 +32,14 @@ class Route {
                     `origin`,
                     `destination`,
                     `cost`,
+                    `branch_office_id`,
                     `created_at`,
                     `updated_at`
                 ) VALUES (
                     '$origin',
                     '$destination',
                     '$cost',
+                    '$branch_office_id',
                     NOW(),
                     NOW()
                 )

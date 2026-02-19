@@ -139,7 +139,7 @@
                                             <hr class="my-4">
                                             <div class="row g-3 mb-2">
                                                 <div class="col-md-4">
-                                                    <label class="form-label section-title">Precio base</label>
+                                                    <label class="form-label section-title">Precio</label>
                                                     <input id="price" name="price" type="number" class="form-control">
                                                 </div>
                                                 
@@ -216,7 +216,7 @@
             show_subpaths();
         });
 
-        $("#quantity, #amount_received").on("change keyup", function() {
+        $("#quantity, #amount_received, #price").on("change keyup", function() {
             totales();
         });
         let branch_office_id = document.getElementById('branch_office_id_selected').value;
@@ -246,11 +246,31 @@
     const store = () => {
         
         let quantity = $("#quantity").val();
+        let price = $("#price").val();
+        let description = $("#description").val();
 
         if( quantity == '' ){
             Swal.fire({
                 title: "Ups...",
                 text: "La cantidad de paquetes no puede ser vacio o 0.",
+                icon: "warning"
+            });
+            return;
+        }
+
+        if( price == '' ){
+            Swal.fire({
+                title: "Ups...",
+                text: "El precio del paquete no puede ser vacio o 0.",
+                icon: "warning"
+            });
+            return;
+        }
+
+        if( description == '' ){
+            Swal.fire({
+                title: "Ups...",
+                text: "El campo de descripción no debe estar vacia",
                 icon: "warning"
             });
             return;
@@ -265,7 +285,7 @@
             data: formData,
             contentType: false,
             processData: false,
-            // dataType: "json",
+            dataType: "json",
             success: function(response) {
                 console.log(response)
                 if (response.success) {
@@ -280,7 +300,7 @@
                         text: 'Registro creado exitosamente.',
                     });
                     let tickets_id = response.ids;
-                    let url = `../Pdf/ticket.php?tickets_id=${tickets_id.join(",")}`;
+                    let url = `../Pdf/ticket_delivery.php?tickets_id=${tickets_id.join(",")}`;
                     var iframe = document.createElement('iframe');
                     iframe.className = 'pdfIframe';
                     document.body.appendChild(iframe);
@@ -347,21 +367,12 @@
 
 
     const clean = () => {  
-        $("#pvDate").text('-');
-        $("#pvDriver").text('-');
-        $("#pvRoute").text('-');
-        $("#pvTime").text('-');
-        $("#pvUnit").text('-');
         $("#price").val('');
-        $("#route_id").val('');
-        $("#route_schedule_id").val('');
-        $("#vehicle_id").val('');
-        $("#employee_id").val('');
-        $("#quantity").val(1    );  
-        $("#pvQty").text('-');
+        $("#quantity").val(1);  
         $("#total").val(0);
-        $("#change_amount").val(0);
-        $("#pvTotal").text(0);     
+        $("#change_amount").val(0); 
+        $("#description").val(''); 
+        $("#amount_received").val(0); 
     }
 
      const totales = () => {
@@ -370,11 +381,9 @@
         let amount_received = parseFloat($("#amount_received").val()) || 0;
 
         let total = price * quantity;
-        let change = total - amount_received;
+        let change = amount_received - total ;
 
-        $("#pvQty").text(quantity);
         $("#total").val(total.toFixed(2));
-        $("#discount").val(discountAmount.toFixed(2));
         $("#change_amount").val(change.toFixed(2));
     
     };

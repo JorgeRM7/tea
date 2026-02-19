@@ -52,7 +52,7 @@ $employee = strtoupper($ticket['employee'] ?? 'POR ASIGNAR');
 //$qrUrl = "https://api.qrserver.com/v1/create-qr-code/?size=130x130&data={$qrData}";
 $text = $ticket['id'];
 $qrUrl  = "https://api.qrserver.com/v1/create-qr-code/?size=130x130&data=" . urlencode($text);
-$logoPath = dirname(__DIR__) . "/assets/img/logo.png";
+$logoPath = dirname(__DIR__) . "/assets/img/set_water.png";
 
   // Generar QR
 

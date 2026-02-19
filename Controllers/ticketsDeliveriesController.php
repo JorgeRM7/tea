@@ -8,7 +8,10 @@ $Ticket = new TicketDelivery();
 switch ($_GET["op"]) {
     case 'store':
         $rspta = $Ticket->store ( $_POST );
-        echo $rspta;
+        echo json_encode([
+            "success" => true,
+            "ids" => $rspta
+        ]);
     break;
     
     

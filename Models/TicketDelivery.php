@@ -15,10 +15,11 @@ class TicketDelivery {
         $route_stop_id      = $data["routes_stop_id"];
         $price              = $data["price"];
         $quantity           = $data["quantity"];
-        $description           = $data["description"];
+        $description        = $data["description"];
+        $description        = $data["description"];
 
         $sql ="
-            INSERT INTO `tickets-delivery`(
+            INSERT INTO `tickets_delivery`(
                 `route_id`,
                 `route_stop_id`,
                 `price`,
@@ -38,8 +39,14 @@ class TicketDelivery {
                 '$today'
             )
         ";
+        $result = ejecutarConsulta($sql);
+        
+        if ( $result ) {
+            global $conexion;
+            $tickets_ids[] = mysqli_insert_id($conexion);
+        }
 
-        return ejecutarConsulta($sql);
+        return $tickets_ids;
     }
     
     public function index() {

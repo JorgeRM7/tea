@@ -102,13 +102,39 @@
                                                     <label class="form-label section-title">Ruta</label>
                                                     <select id="search_route" name="search_route" class="form-select form-select-lg">
                                                         <?php 
-                                                            $sql = "SELECT * FROM `routes` WHERE deleted_at is null";
-                                                            $query = ejecutarConsulta($sql);
-                                                            while($valores = mysqli_fetch_array($query)){
-                                                                echo "<option value='".$valores['id']."'>".$valores['origin']." - ".$valores['destination']."</option>";
-                                                            }
-                                                        ?>
+                                                            $branch_ids = [];
 
+                                                            $sql_branch_offices_user = "
+                                                                SELECT branch_office_id 
+                                                                FROM branch_offices_user 
+                                                                WHERE user_id = 1 
+                                                                AND deleted_at IS NULL
+                                                            ";
+
+                                                            $resultado = ejecutarConsulta($sql_branch_offices_user);
+                                                            while ($item = mysqli_fetch_array($resultado)) {
+                                                                $branch_ids[] = $item['branch_office_id'];
+                                                            }
+
+                                                            if (!empty($branch_ids)) {
+
+                                                                $branch_ids_str = implode(',', $branch_ids);
+
+                                                                $sql = "
+                                                                    SELECT * 
+                                                                    FROM routes 
+                                                                    WHERE deleted_at IS NULL 
+                                                                    AND branch_office_id IN ($branch_ids_str)
+                                                                ";
+
+                                                                $query = ejecutarConsulta($sql);
+
+                                                                while ($valores = mysqli_fetch_array($query)) {
+                                                                    echo "<option value='".$valores['id']."'>".$valores['origin']." - ".$valores['destination']."</option>";
+                                                                }
+                                                            }
+
+                                                        ?>
                                                     </select>
                                                     <div id="routeRules" class="rule-note mt-1"></div>
                                                 </div>
@@ -302,6 +328,17 @@
         tickets_today();
         show_subpaths();
         discounts();
+
+        $('#branch_office_id_selected').change(function(){
+
+            let branch = $(this).val();
+
+            $.post('tickets-ticket..php', {branch_office_id: branch}, function(data){
+                $('#routes_select').html(data);
+            });
+
+        });
+
     });
     
     document.getElementById("btnGenerate").addEventListener("click", () => {
