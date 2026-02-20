@@ -209,9 +209,6 @@
         $("#search_schedule").select2({ width:"100%"});
         $("#routes_stop_id").select2({ width:"100%"});
 
-        
-
-        
         $("#search_route").on("change", function() {
             show_subpaths();
         });
@@ -382,6 +379,10 @@
 
         let total = price * quantity;
         let change = amount_received - total ;
+
+        if( change <= 0 ){
+            change = 0;
+        }
 
         $("#total").val(total.toFixed(2));
         $("#change_amount").val(change.toFixed(2));

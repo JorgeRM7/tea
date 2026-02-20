@@ -20,6 +20,7 @@ class BranchOffice {
         $phone       = $data["phone"] ?? null;
         $email       = $data["email"] ?? null;
         $status      = $data["status"] ?? 'active';
+        $social_reason_id = $data['social_reason_id'];
 
         if ($branch_office_id) {
             $sql = "
@@ -35,6 +36,7 @@ class BranchOffice {
                     `phone`       = '$phone',
                     `email`       = '$email',
                     `status`      = '$status',
+                    `social_reason_id` = '$social_reason_id',
                     `updated_at`  = NOW()
                 WHERE `id` = '$branch_office_id'
             ";
@@ -52,6 +54,7 @@ class BranchOffice {
                     `phone`,
                     `email`,
                     `status`,
+                    `social_reason_id`,
                     `created_at`,
                     `updated_at`
                 ) VALUES (
@@ -66,6 +69,7 @@ class BranchOffice {
                     '$phone',
                     '$email',
                     '$status',
+                    '$social_reason_id',
                     NOW(),
                     NOW()
                 )
@@ -77,7 +81,12 @@ class BranchOffice {
 
     
     public function index() {
-        $sql = "SELECT * FROM branch_offices WHERE deleted_at IS NULL";
+        $sql = "SELECT 
+            branch_offices.*,
+            social_reasons.name AS social_reason
+        FROM branch_offices 
+        LEFT JOIN social_reasons ON social_reasons.id = social_reason_id
+        WHERE branch_offices.deleted_at IS NULL";
         return ejecutarConsulta($sql);
     }
     

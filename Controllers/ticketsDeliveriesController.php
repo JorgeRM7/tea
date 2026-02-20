@@ -26,29 +26,67 @@ switch ($_GET["op"]) {
     break;
 
     case 'index':
+        $rspta = $Ticket->index( $_GET );
         
-        $rspta = $Ticket->index();
+        $data = Array();
+        while ($reg = $rspta->fetch_object()) {
+
         
-        $data=Array();
-        while ($reg=$rspta->fetch_object()) {
+            // $bonton_editar = '<button type="button" class="editar btn btn-sm btn-warning me-1" onclick="show('.$reg->id.')" title="Editar boleto">
+            //                     <i class="ti ti-edit"></i>
+            //                 </button>';
+            $bonton_borrar = '<button type="button" class="eliminar btn btn-sm btn-danger" onclick="deleteItem(' . $reg->id . ')" title="Eliminar boleto">
+                                <i class="ti ti-trash"></i>
+                            </button>';
+
             
-            $bonton_editar = '<button type="button" class="editar btn btn-sm btn-warning" onclick="show('.$reg->id.')"><i class="ti ti-edit"></i></button>';
-            $bonton_borrar = '<button type="button" class="eliminar btn btn-sm btn-danger" onclick="deleteItem(' . $reg->id . ')"><i class="ti ti-trash"></i></button>';
-            
-            $data[]=array(
-                $bonton_editar.' '.$bonton_borrar,
-                $reg->id,
-                '<i class="ti ti-map-pin"></i>'.$reg->origin,
-                '<i class="ti ti-map-pin"></i>'.$reg->destination,
-                '$ '.$reg->cost,
+            $ruta = '<span class="fw-bold text-primary">
+                        <i class="ti ti-map-pin"></i> ' . $reg->origin . 
+                    '</span> 
+                    <span class="text-dark fw-bold"> → </span> 
+                    <span class="fw-bold text-success">
+                        <i class="ti ti-flag"></i> ' . $reg->destination . 
+                    '</span>';
+
+           
+            $price ='💲 ' . number_format($reg->price, 2);
+
+
+           
+
+            $data[] = array(
+                $bonton_borrar,
+                '<span class="fw-bold text-dark">'.$reg->id.'</span>',
+                $ruta,
+                $price,
+               
+                $reg->quantity,
+                $reg->description,
             );
-         }
-        $results=array(
-                 "sEcho"=>1,
-                 "iTotalRecords"=>count($data),
-                 "iTotalDisplayRecords"=>count($data),
-                 "aaData"=>$data); 
+        }
+
+        $results = array(
+            "sEcho" => 1,
+            "iTotalRecords" => count($data),
+            "iTotalDisplayRecords" => count($data),
+            "aaData" => $data
+        );
         echo json_encode($results);
+    break;
+
+    case 'xls':
+        $data = $Ticket->xls( $_POST );
+        echo json_encode($data);
+    break;
+
+    case 'tickets-today':
+        $rspta = $Ticket->tickets_today();
+        echo json_encode($rspta);
+    break;
+
+    case 'tickets':
+        $rspta = $Ticket->tickets($_GET);
+        echo json_encode($rspta);
     break;
 }
 ?>

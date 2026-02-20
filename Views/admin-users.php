@@ -109,7 +109,7 @@
                                             </div>
                                             <div class="col-md-6" id="div_password">
                                                 <label for="nameWithTitle" class="form-label">Contraseña</label>
-                                                <input type="text" id="password" name="password" class="form-control" placeholder="Ingresa..." required/>
+                                                <input type="text" id="password" name="password" class="form-control" placeholder="Ingresa..."/>
                                             </div>
                                         </div>
                                         <div class="row mt-3" id="branch_offices"></div>

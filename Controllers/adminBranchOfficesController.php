@@ -48,6 +48,7 @@ switch ($_GET["op"]) {
                 $boton_editar . ' ' . $boton_borrar,
                 $reg->id,
                 $reg->code,
+                $reg->social_reason,
                 $reg->name,
                 $reg->description,
                 $reg->address,

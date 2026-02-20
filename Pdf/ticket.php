@@ -34,12 +34,16 @@ foreach ($tickets_ids as $ticket_id) {
             routes_stop.destination,
             CONCAT(employees.name,' ', employees.paternal_surname, ' ', employees.maternal_surname) AS employee,
             tickets.vehicle_id,
-            tickets.created_at
+            tickets.created_at,
+            social_reasons.name AS social_reason,
+            social_reasons.tax_data AS RFC
         FROM tickets
         LEFT JOIN routes_schedule ON tickets.route_schedule_id = routes_schedule.id
         LEFT JOIN routes ON routes.id = tickets.route_id
         INNER JOIN routes_stop ON routes_stop.id = tickets.route_stop_id
         LEFT JOIN employees ON employees.id = tickets.employee_id
+        LEFT JOIN branch_offices ON branch_offices.id = tickets.branch_office_id
+        LEFT JOIN social_reasons ON social_reasons.id = branch_offices.social_reason_id
         WHERE tickets.id = '$ticket_id'
     ";
     $result = ejecutarConsulta($sql);
@@ -104,8 +108,9 @@ foreach ($tickets_ids as $ticket_id) {
     </style>
 
     <div class='ticket'>
-        <h3>TRANSPORTES EJECUTIVOS ARIO S.A. DE C.V.</h3>
-        <p style='margin:0; text-align:center;'>RFC: TEA190814LY6</p>
+    
+        <h3>{$item['social_reason']}</h3>
+        <p style='margin:0; text-align:center;'>RFC: {$item['RFC']}</p>
         
         <div class='folio'>Folio: {$item['id']}</div>
         <hr>
@@ -151,8 +156,8 @@ foreach ($tickets_ids as $ticket_id) {
     </div>
     <div class='ticket'>
         <h3>OPERADOR</h3>
-        <h3>TRANSPORTES EJECUTIVOS ARIO S.A. DE C.V.</h3>
-        <p style='margin:0; text-align:center;'>RFC: TEA190814LY6</p>
+        <h3>{$item['social_reason']}</h3>
+        <p style='margin:0; text-align:center;'>RFC: {$item['RFC']}</p>
         
         <div class='folio'>Folio: {$item['id']}</div>
         <hr>
