@@ -12,6 +12,11 @@ switch ($operation) {
         echo json_encode($response);
     break;
 
+    case 'update':
+        $response = $Package->updateNames($_POST );
+        echo json_encode($response);
+    break;
+
     case 'details':
         $data = $Package->details($_POST);
         echo json_encode($data);
@@ -58,8 +63,13 @@ switch ($operation) {
             $driver = !empty($row->driver_name) ? $row->driver_name : 'Sin asignar';
             $unit = !empty($row->unidad_number) ? $row->unidad_number : 'N/A';
 
+            $boton_show='<button class="btn btn-sm btn-primary" onclick="showPackage(' . $row->id . ')"><i class="ti ti-eye"></i></button>';
+            $boton_editar = '<button type="button" class="editar btn btn-sm btn-warning" onclick="show('.$row->id.')"><i class="ti ti-edit"></i></button>';
+            $bonton_borrar = '<button type="button" class="eliminar btn btn-sm btn-danger" onclick="deleteItem(' . $row->id . ')" title="Eliminar boleto">
+                                <i class="ti ti-trash"></i>
+                            </button>';
             $data[] = [
-                '<button class="btn btn-sm btn-primary" onclick="showPackage(' . $row->id . ')"><i class="ti ti-eye"></i></button>',
+                $boton_show.' '.$boton_editar.' '.$bonton_borrar,
                 '<strong>' . $row->id . '</strong>',
                 $route,
                 '$ ' . number_format($row->price, 2),
@@ -138,6 +148,16 @@ switch ($operation) {
         $response = $Package->branches();
         echo json_encode($response);
         break;
+
+    case 'deleteItem':
+        $rspta=$Package->deleteItem($_POST);
+        echo $rspta;
+    break;
+
+    case 'xls':
+        $data = $Package->xls($_POST);
+        echo json_encode($data);
+    break;
 
     default:
         http_response_code(404);

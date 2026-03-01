@@ -130,11 +130,20 @@
                 <p class="lead text-white-50 mb-4">Conectamos México con rutas confiables.</p>
                 <div class="d-flex flex-column flex-md-row gap-3 justify-content-center">
                     <a href="sales-online-stripe.php" class="btn btn-success btn-lg px-4">
-                        <i class="bi bi-ticket-perforated me-2"></i>Comprar boleto en línea
+                        <i class="bi bi-ticket-perforated me-2"></i>
+                        Comprar boleto en línea
                     </a>
+
                     <a href="#renta" class="btn btn-outline-light btn-lg px-4">
-                        <i class="bi bi-bus-front me-2"></i>Planes de renta
+                        <i class="bi bi-bus-front me-2"></i>
+                        Planes de renta
                     </a>
+
+                    <a href="packages-tracking.php" class="btn btn-warning btn-lg px-4">
+                        <i class="bi bi-box-seam me-2"></i>
+                        Consultar estatus de paquete
+                    </a>
+
                 </div>
             </div>
         </header>
@@ -186,7 +195,7 @@
             <section class="py-5 bg-light">
                 <div class="container">
                     <div class="row g-4">
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <div class="card feature-card h-100 p-4">
                                 <div class="icon mb-3 text-success fs-1"><i class="bi bi-shield-check"></i></div>
                                 <h5 class="fw-bold">Seguro y puntual</h5>
@@ -194,7 +203,7 @@
                             </div>
                         </div>
 
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <div class="card feature-card h-100 p-4">
                                 <div class="icon mb-3 text-warning fs-1"><i class="bi bi-credit-card-2-front"></i></div>
                                 <h5 class="fw-bold">Compra en línea</h5>
@@ -202,12 +211,25 @@
                             </div>
                         </div>
 
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <div class="card feature-card h-100 p-4">
                                 <div class="icon mb-3 text-primary fs-1"><i class="bi bi-people"></i></div>
                                 <h5 class="fw-bold">Viajes privados</h5>
                                 <p class="text-secondary">Planes corporativos y turísticos bajo demanda.</p>
                             </div>
+                        </div>
+                        <div class="col-md-3">
+                            <a href="packages-tracking.php" class="text-decoration-none">
+                                <div class="card feature-card h-100 p-4 shadow-sm hover-card">
+                                    <div class="icon mb-3 text-success fs-1">
+                                        <i class="bi bi-box-seam"></i>
+                                    </div>
+                                    <h5 class="fw-bold text-dark">Consulta tu paquete</h5>
+                                    <p class="text-secondary">
+                                        Revisa el estatus, ubicación y detalles del envío que te enviaron.
+                                    </p>
+                                </div>
+                            </a>
                         </div>
                     </div>
                 </div>

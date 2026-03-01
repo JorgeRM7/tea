@@ -211,8 +211,8 @@ class PackageDelivery
         $branch_id = $filters['branch_office_id'] ?? null;
         $view = $filters['view'] ?? 'origin';
         $status = $filters['status'] ?? null;
-        $date_start = $filters['date_start'] ?? null;
-        $date_end = $filters['date_end'] ?? null;
+        $date_start = $filters['date'] ?? null;
+        $date_end = $filters['date_filter_end'] ?? null;
 
         $sql = "
             SELECT 
@@ -677,6 +677,78 @@ class PackageDelivery
         ejecutarConsulta($sql);
 
         return $relative;
+    }
+
+    public function updateNames( $data ){
+        $sender_name    = $data['sender_name'];
+        $sender_phone   = $data['sender_phone'];
+        $receiver_name  = $data['receiver_name'];
+        $receiver_phone = $data['receiver_phone'];
+        $package_id = $data['package_id'];
+    
+        $sql="
+        UPDATE `tickets_delivery` 
+        SET 
+            `sender_name`   ='$sender_name',
+            `sender_phone`  ='$sender_phone',
+            `receiver_name` ='$receiver_name',
+            `receiver_phone`='$receiver_phone',
+            `updated_at`    = NOW() 
+        WHERE `id`='$package_id'";
+        return ejecutarConsulta($sql);
+    }
+
+    public function deleteItem ( $data ){
+        $package_id = $data['package_id'];
+        $comment    = $data['comment'];
+
+        $sql="
+        UPDATE `tickets_delivery` 
+        SET 
+            `status`                = 'CANCELADO',
+            `comment_cancellation`  = '$comment',
+            `date_cancellation`     = NOW(),
+            `updated_at`            = NOW()
+        WHERE `id`='$package_id'";
+        return ejecutarConsulta($sql);
+    }
+
+    public function xls ( $data ){
+        $date_start = $data['date_start'] ?? null;
+        $date_end = $data['date_end'] ?? null;
+        $branch_office_id =$data['branch_office_id'];
+
+        $sql ="
+            SELECT 
+                tickets_delivery.tracking_code,
+                tickets_delivery.status,
+                tickets_delivery.price,
+                tickets_delivery.quantity,
+                tickets_delivery.description,
+                tickets_delivery.sender_name,
+                tickets_delivery.receiver_name,
+                tickets_delivery.package_weight,
+                tickets_delivery.declared_value,
+                tickets_delivery.date,
+                routes_stop.origin,
+                routes_stop.destination,
+                vehicles.unidad_number,
+                CONCAT(employees.name,' ', employees.paternal_surname, ' ', employees.maternal_surname) AS employee
+            FROM `tickets_delivery`
+            INNER JOIN routes_stop ON routes_stop.id = tickets_delivery.route_stop_id
+            INNER JOIN routes_schedule ON routes_schedule.id = tickets_delivery.route_schedule_id
+            INNER JOIN vehicles ON vehicles.id = tickets_delivery.vehicle_id
+            INNER JOIN employees ON employees.id = tickets_delivery.employee_id
+            WHERE tickets_delivery.branch_office_id = '$branch_office_id' AND tickets_delivery.date >='$date_start' AND tickets_delivery.date <='$date_end'
+        ";
+    
+        $sql .= " ORDER BY tickets_delivery.date DESC";
+        $resultado = ejecutarConsulta($sql);
+        $data = array();
+        while ( $item = $resultado->fetch_object()) {
+            $data[] = $item;
+        }
+        return $data;
     }
 }
 

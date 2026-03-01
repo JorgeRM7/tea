@@ -218,6 +218,7 @@ $buildTicket = function ($title) use (
 $html = $styles;
 $html .= $buildTicket('CLIENTE');
 //$html .= "<div class='divider'>-----------------------------------</div>";
+$html .= "<pagebreak />";
 $html .= $buildTicket('OPERADOR');
 
 $mpdf->WriteHTML($html);

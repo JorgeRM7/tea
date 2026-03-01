@@ -1,0 +1,267 @@
+<?php
+require_once dirname(__DIR__) . "/Database/conexion.php";
+require_once __DIR__ . '/../vendor/autoload.php';
+use Mpdf\Mpdf;
+
+$mpdf = new Mpdf([
+    'format' => 'Letter',
+    'margin_left' => 15,
+    'margin_right' => 15,
+    'margin_top' => 15,
+    'margin_bottom' => 15,
+    'orientation' => 'P',
+    'default_font' => 'times'
+]);
+
+$sql = '
+    SELECT 
+        special_trips.id,
+        special_trips.origin,
+        special_trips.days,
+        special_trips.price,
+        special_trips.start_date,
+        special_trips.end_date,
+        clients.name,
+        vehicles.unidad_number,
+        vehicles.capacity
+    FROM `special_trips`
+    INNER JOIN clients ON clients.id = special_trips.client_id
+    INNER JOIN vehicles ON vehicles.id = special_trips.vehicle_id;
+';
+$result = ejecutarConsulta($sql);
+$item = mysqli_fetch_assoc($result);
+
+
+$html = "
+
+<style>
+body{
+    font-family: times;
+    font-size: 11px;
+    line-height: 1.45;
+}
+
+.header{
+    text-align:center;
+}
+
+.header-title{
+    font-size:20px;
+    font-weight:bold;
+    letter-spacing:0.5px;
+}
+
+.header-sub{
+    font-size:11px;
+}
+
+.contract-title{
+    text-align:center;
+    font-weight:bold;
+    font-size:15px;
+    margin-top:8px;
+    margin-bottom:10px;
+    border-top:1px solid #000;
+    border-bottom:1px solid #000;
+    padding:3px 0;
+}
+
+.label{
+    font-weight:bold;
+}
+
+.long-line{
+    display:inline-block;
+    border-bottom:1px solid #000;
+    width:300px;
+}
+
+.medium-line{
+    display:inline-block;
+    border-bottom:1px solid #000;
+    width:170px;
+}
+
+.short-line{
+    display:inline-block;
+    border-bottom:1px solid #000;
+    width:90px;
+}
+
+.mini-line{
+    display:inline-block;
+    border-bottom:1px solid #000;
+    width:60px;
+}
+
+.section-title{
+    text-align:center;
+    font-weight:bold;
+    margin:8px 0 5px 0;
+}
+
+.justify{
+    text-align:justify;
+}
+
+.observaciones{
+    font-size:10px;
+    text-align:justify;
+    line-height:1.4;
+    margin-top:8px;
+}
+
+.firmas{
+    margin-top:25px;
+}
+
+.firma{
+    width:45%;
+    display:inline-block;
+    text-align:center;
+}
+
+.line-sign{
+    border-top:1px solid #000;
+    width:220px;
+    margin:30px auto 5px auto;
+}
+</style>
+
+<div class='header'>
+    <div class='header-title'>
+        COOPERATIVA DE TRANSPORTES EJIDALES S.C.L.
+    </div>
+    <div class='header-sub'>
+        Domicilio Calle Guerrero No 65 Col. Centro, Ario de Rosales Mich.
+    </div>
+    <div class='header-sub'>
+        RFC: TEA970121-L21 &nbsp;&nbsp; TEL. 01 (422) 52 1-16-08
+    </div>
+    <div class='header-sub'>
+        CORREO ELECTRONICO t_lgar_ade@live.com.mx
+    </div>
+    <div class='header-sub' style='margin-top:4px;'>
+        Ario de Rosales Michoacán A: <span class='short-line'></span>
+    </div>
+</div>
+
+<div class='contract-title'>
+    CONTRATO DE VIAJE ESPECIAL
+</div>
+
+<div class='justify'>
+
+    <span class='label'>NOMBRE DEL CONTRATANTE:</span> 
+    <span class='long-line'>{$item['name']}</span>
+
+    <br><br>
+
+    <span class='label'>UNIDAD CONTRATADA:</span> 
+    <span class='medium-line'>{$item['unidad_number']}</span>
+
+    &nbsp;&nbsp;
+    <span class='label'>CAPACIDAD:</span> 
+    <span class='short-line'>{$item['capacity']}</span>
+
+    &nbsp;&nbsp;
+    <span class='label'>PASAJEROS:</span> 
+    <span class='short-line'></span>
+
+    &nbsp; Contratada para prestar el Servicio de Transportación a 
+    <span class='medium-line'>{$item['origin']}</span>
+
+    <br><br>
+
+    con un costo total del Servicio por $ 
+    <span class='short-line'></span>
+
+    ( <span class='medium-line'>{$item['price']}</span> )
+
+    depositando un anticipo Garantía por la cantidad de $ 
+    <span class='short-line'>{$item['price']}</span>
+
+    <br><br>
+
+    Quedando pendiente de pago la cantidad de $ 
+    <span class='short-line'></span>
+    para el día que se efectúe el servicio.
+
+</div>
+
+<div class='section-title'>
+    DATOS DE LA SALIDA
+</div>
+
+<div class='justify'>
+    Fecha de Salida: <span class='short-line'>{$item['start_date']}</span>
+    &nbsp; a las <span class='short-line'></span>
+    &nbsp; Presentando la unidad en:
+    <span class='medium-line'>{$item['origin']}</span>
+
+    <br><br>
+
+    Ciudad de: <span class='medium-line'></span>
+    &nbsp; a la Orden del Sr.(a):
+    <span class='medium-line'></span>
+
+    <br><br>
+
+    Cel: <span class='short-line'></span>
+    &nbsp; Casa u oficina:
+    <span class='medium-line'></span>
+    </div>
+
+    <div class='section-title'>
+        DATOS DEL REGRESO
+    </div>
+
+    <div class='justify'>
+        El regreso será el día <span class='short-line'></span> a las <span class='short-line'></span> en domicilio destino
+        <span class='medium-line'></span> de la ciudad de <span class='medium-line'></span>
+    </div>
+
+    <br>
+
+    <div class='justify'>
+        <strong>RUTA Y PASEOS INCLUIDOS EN EL COSTO DEL SERVICIO:</strong>
+        <span class='medium-line'></span>
+    </div>
+
+    <br>
+
+    <div class='justify'>
+        <strong>CARACTERÍSTICAS DE LA UNIDAD:</strong>
+        ASIENTOS: <span class='mini-line'></span>
+        &nbsp; C/CALF.: <span class='mini-line'></span>
+        &nbsp; STEREO: <span class='mini-line'></span>
+        &nbsp; MONITORES: <span class='mini-line'></span>
+        &nbsp; DVD: <span class='mini-line'></span>
+    </div>
+
+    <div class='observaciones'>
+        <strong>OBSERVACIONES:</strong>
+        Todo servicio solicitado por el Contratante o Encargado(a) de grupo no especificado en este contrato
+        se considera como Paseo, Traslado o Servicio Extra, por lo tanto tendrá un costo adicional el cual se pagará
+        al momento de solicitarlo al operador. Las Unidades no circulan en terracerías o caminos en mal estado
+        que pongan en riesgo la seguridad de los pasajeros y de la unidad.
+        Ambas partes convienen someter cualquier controversia a los Tribunales competentes,
+        renunciando al fuero que pudiera corresponderles.
+    </div>
+
+    <div class='firmas'>
+        <div class='firma'>
+            <div class='line-sign'></div>
+            CONTRATANTE
+        </div>
+
+        <div class='firma' style='float:right;'>
+            <div class='line-sign'></div>
+            TRANSPORTES EJIDALES ARIO DE R. SCL
+        </div>
+    </div>
+
+";
+
+$mpdf->WriteHTML($html);
+$mpdf->Output('Contrato_Viaje_Especial.pdf', 'I');

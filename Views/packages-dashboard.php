@@ -44,6 +44,15 @@
                             <div class="card-header d-flex align-items-center justify-content-between">
                                 <h5 class="mb-0">Paquetes</h5>
                                 <div class="d-flex gap-2">
+
+                                    <?php
+                                        $date = date("Y-m-d");
+                                    ?>
+                                    
+                                    <input type="date" id="date" name="date" class="form-control" value="<?php echo $date; ?>">
+                                    <input type="date" id="date_filter_end" name="date_filter_end" class="form-control" value="<?php echo $date; ?>">
+
+
                                     <select id="statusFilter" class="form-select">
                                         <option value="">Todos</option>
                                         <option value="CREADO">Creado</option>
@@ -51,9 +60,13 @@
                                         <option value="EN_DESTINO">En destino</option>
                                         <option value="ENTREGADO">Entregado</option>
                                         <option value="INCIDENCIA">Incidencia</option>
+                                        <option value="CANCELADO">Cancelado</option>
                                     </select>
                                     <button class="btn btn-label-primary" onclick="indexPackages()">
                                         <i class="ti ti-refresh"></i>
+                                    </button>
+                                    <button class="crear btn btn-success me-2" onclick="showXLS()">
+                                        <i class="ti ti-file-spreadsheet"></i>
                                     </button>
                                 </div>
                             </div>
@@ -137,6 +150,76 @@
         </div>
     </div>
 
+    <!--Inicio Modal Crear-->
+    <div class="modal animate__animated animate__flipInX" id="modal_create" aria-labelledby="flipInXAnimationModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Actualizar</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form name="formulario" id="formulario" method="POST">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label for="nameWithTitle" class="form-label">Nombre remitente</label>
+                                <input type="text" id="sender_name" name="sender_name" class="form-control" placeholder="Ingresa..." required/>
+                                <input type="hidden" id="package_id" name="package_id" class="form-control"/>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="nameWithTitle" class="form-label">Telefono remitente</label>
+                                <input type="text" id="sender_phone" name="sender_phone" class="form-control" placeholder="Ingresa..." required/>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="nameWithTitle" class="form-label">Nombre receptor</label>
+                                <input type="text" id="receiver_name" name="receiver_name" class="form-control" placeholder="Ingresa..." required/>
+                            </div>
+                             <div class="col-md-6">
+                                <label for="nameWithTitle" class="form-label">Telefono receptor</label>
+                                <input type="text" id="receiver_phone" name="receiver_phone" class="form-control" placeholder="Ingresa..." required/>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button class="crear btn btn-primary me-2" onclick="store()">
+                        <i class="ti ti-device-floppy"></i> Guardar
+                    </button>
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal" onclick="clean()">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--Fin Modal Crear-->
+    <!-- Modal XLS -->
+    <div class="modal animate__animated animate__flipInX" id="modalXLS" aria-labelledby="flipInXAnimationModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Generar Reporte</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="nameWithTitle" class="form-label">Desde</label>
+                            <input type="date" id="fecha_inicial" name="fecha_inicial" class="form-control" placeholder="Ingresa..." required/>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="nameWithTitle" class="form-label">Hasta</label>
+                            <input type="date" id="fecha_final" name="fecha_final" class="form-control" placeholder="Ingresa..." />
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-primary" onclick="exportCSV()">Generar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal XLS -->
+
     <script>
         let currentView = 'origin';
         const endpoint = '../Controllers/packageDeliveriesController.php';
@@ -161,9 +244,11 @@
         };
 
         const indexPackages = () => {
-            const branch = document.getElementById('branch_office_id_selected').value;            
+            const branch = document.getElementById('branch_office_id_selected').value; 
+            const date_filter_end = document.getElementById('date_filter_end').value; 
+            const date = document.getElementById('date').value;            
             const status = $('#statusFilter').val();
-            $.getJSON(`${endpoint}?op=index&branch_office_id=${branch}&view=${currentView}&status=${status}`, function(data) {
+            $.getJSON(`${endpoint}?op=index&branch_office_id=${branch}&view=${currentView}&status=${status}&date=${date}&date_filter_end=${date_filter_end}`, function(data) {
                 const rows = data.aaData || [];
                   if (currentView === 'origin') {
                     tableOrigin.clear().rows.add(rows).draw();
@@ -205,6 +290,284 @@
                 });
             });
         };
+
+        const deleteItem = (package_id) => {
+
+            Swal.fire({
+                title: "Cancelar boleto",
+                html: `¿Estás seguro(a) de cancelar el boleto con folio: <b>${package_id}</b>?`,
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Sí"
+            }).then((result) => {
+
+                if (!result.isConfirmed) return;
+
+                Swal.fire({
+                    title: "Autorización requerida",
+                    html: `
+                        <input 
+                            type="password"
+                            name="auth_code"
+                            class="swal2-input"
+                            placeholder="Contraseña..."
+                            autocomplete="off"
+                        >
+                        <textarea
+                            name="cancel_comment"
+                            class="swal2-textarea"
+                            placeholder="Motivo de cancelación..."
+                            style="resize:none"
+                        ></textarea>
+                        <p class="text-muted mt-2" style="font-size:13px;">
+                            Contraseña requerida para autorizar la cancelación
+                        </p>
+                    `,
+                    focusConfirm: false,
+                    showCancelButton: true,
+                    confirmButtonText: "Validar",
+                    preConfirm: () => {
+                        const password = document.querySelector("input[name='auth_code']").value;
+                        const comment  = document.querySelector("textarea[name='cancel_comment']").value;
+
+                        if (!password) {
+                            Swal.showValidationMessage("Ingresa la contraseña");
+                            return false;
+                        }
+
+                        if (!comment.trim()) {
+                            Swal.showValidationMessage("Ingresa el motivo de cancelación");
+                            return false;
+                        }
+
+                        return { password, comment };
+                    }
+                }).then((passResult) => {
+
+                    if (!passResult.isConfirmed) return;
+
+                    const PASSWORD_CORRECTA = "TEA2025";
+
+                    if (passResult.value.password !== PASSWORD_CORRECTA) {
+                        Swal.fire("Acceso denegado", "Contraseña incorrecta.", "error");
+                        return;
+                    }
+
+                    $.ajax({
+                        url: `${endpoint}?op=deleteItem`,
+                        type: "POST",
+                        headers: { "Authorization": "Bearer " + token },
+                        data: {
+                            package_id,
+                            comment: passResult.value.comment
+                        },
+                        success: () => {
+                            Swal.fire({
+                                toast: true,
+                                icon: "success",
+                                title: "Boleto cancelado",
+                                position: "top-end",
+                                showConfirmButton: false,
+                                timer: 2500
+                            });
+                            indexPackages();
+                        },
+                        error: () => {
+                            Swal.fire("Error", "No se pudo cancelar el boleto.", "error");
+                        }
+                    });
+
+                });
+            });
+        };
+
+        const show = ( package_id ) => {
+            $('#modal_create').modal('show');
+            $.ajax({
+                url: `${endpoint}?op=show`,
+                type: "POST",
+                headers: {
+                    "Authorization": "Bearer " + token
+                },
+                dataType: "json",
+                data: { package_id: package_id },
+                success: function (response) {
+                    let data = response;
+                    $("#package_id").val(data?.id);
+                    $("#receiver_name").val(data?.receiver_name);
+                    $("#receiver_phone").val(data?.receiver_phone);
+                    $("#sender_name").val(data?.sender_name);
+                    $("#sender_phone").val(data?.sender_phone);
+                    
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error en la solicitud:", error);
+                    Swal.fire({
+                        icon: "error",
+                        title: "Error",
+                        text: "Hubo un problema al procesar los datos.",
+                        confirmButtonColor: "#f07d42"
+                    });
+                }
+            });
+        }
+
+        const store = () => {
+            let receiver_name = $("#receiver_name").val().trim();
+            let receiver_phone = $("#receiver_phone").val().trim();
+            let sender_name = $("#sender_name").val().trim();
+            let sender_phone = $("#sender_phone").val().trim();
+
+            if (!receiver_name) {
+                Swal.fire({
+                    icon: "warning",
+                    title: "Campo requerido",
+                    text: "El campo nombre receptor es obligatorio."
+                });
+                return;
+            }
+
+            if (!receiver_phone) {
+                Swal.fire({
+                    icon: "warning",
+                    title: "Campo requerido",
+                    text: "El campo telefono receptor es obligatorio."
+                });
+                return;
+            }
+
+             if (!sender_name) {
+                Swal.fire({
+                    icon: "warning",
+                    title: "Campo requerido",
+                    text: "El campo nombre remitente es obligatorio."
+                });
+                return;
+            }
+             if (!sender_phone) {
+                Swal.fire({
+                    icon: "warning",
+                    title: "Campo requerido",
+                    text: "El campo telefono remitente es obligatorio."
+                });
+                return;
+            }
+
+
+            const formData = new FormData(document.getElementById("formulario"));
+            $.ajax({
+                url: `${endpoint}?op=update`,
+                type: "POST",
+                headers: {
+                    "Authorization": "Bearer " + token
+                },
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function(response) {
+                    
+                    Swal.fire({
+                        toast: true,
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 3000,
+                        timerProgressBar: true,
+                        icon: 'success',
+                        title: 'Éxito',
+                        text: 'Registro actualizado exitosamente.',
+                    });
+                    $('#modal_create').modal('hide');
+                    // clean();
+                    indexPackages();
+                },
+                error: function(error) {
+                    Swal.fire({
+                        title: "Error",
+                        text: "No se pudo guardar el registro.",
+                        icon: "error"
+                    });
+                }
+            });
+        };
+
+        const clean = () => {
+            $("#package_id").val('');
+            $("#receiver_name").val('');
+            $("#receiver_phone").val('');
+            $("#sender_name").val('');
+            $("#sender_phone").val('');
+        }
+
+        const showXLS = () => {
+            $('#modalXLS').modal('show');
+        };
+
+
+        const  exportCSV = () => {
+            const date_start = document.getElementById("fecha_inicial").value;
+            const date_end = document.getElementById("fecha_final").value;
+            let branch_office_id = document.getElementById('branch_office_id_selected').value;
+            $('#modalXLS').modal('hide');
+            Swal.fire({
+                title: 'Exportando...',
+                text: 'Por favor, espera mientras se genera el archivo Excel.',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+        
+            $.ajax({
+                url:`${endpoint}?op=xls`,
+                type: "POST",
+                dataType: "json",
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+                data: { date_start: date_start, date_end:date_end, branch_office_id:branch_office_id },
+                success: function (response) {
+                    const formattedData = response.map(item => ({
+                        "Descripcion" : item.description,
+                        "Horario" : item.leaving_time,
+                        "Origen": item.origin,
+                        "Destino": item.destination,
+                        "Remitente" : item.sender_name,
+                        "Receptor" : item.receiver_name,
+                        "Chofer": item.employee,
+                        "Unidad": item.unidad_number,
+                        "Precio": item.price,   
+                        "Estatus" : item.status,
+                        "Valor declarado" : item.declared_value,
+                        "Fecha" : item.date
+                        
+                    }));
+                    const worksheet = XLSX.utils.json_to_sheet(formattedData);
+                    const workbook  = XLSX.utils.book_new();
+
+                    XLSX.utils.book_append_sheet(workbook, worksheet, "Boletos por sucursal");
+                    XLSX.writeFile(workbook, `reporte_paquetes_${branch_office_id}.xlsx`);
+
+                    Swal.fire({
+                        icon: "success",
+                        title: "Exportación completada",
+                        text: "El archivo Excel ha sido generado con éxito.",
+                        confirmButtonColor: "#28c76f"
+                    });
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error en la solicitud:", error);
+                    Swal.fire({
+                        icon: "error",
+                        title: "Error",
+                        text: "Hubo un problema al procesar los datos.",
+                        confirmButtonColor: "#f07d42"
+                    });
+                }
+            });
+        }
     </script>
 </body>
 </html>
