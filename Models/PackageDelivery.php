@@ -229,12 +229,8 @@ class PackageDelivery
             LEFT JOIN vehicles ON vehicles.id = td.vehicle_id
             LEFT JOIN employees ON employees.id = td.employee_id
             WHERE td.deleted_at IS NULL
-        ";
-
-        if ($branch_id) {
-                $sql .= " AND td.branch_office_id = '$branch_id'";
-        }
-
+            ";
+            
         if(!empty($view)){
             if ($view === 'origin') {
                 $sql .= " AND td.branch_office_id = '$branch_id'";
