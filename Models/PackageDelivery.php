@@ -406,13 +406,19 @@ class PackageDelivery
         $updateSql = "
             UPDATE `tickets_delivery`
             SET 
-                `status` = '$status',
-                `branch_office_destination_id` = '$branch_office_id',
+                `status` = '$status',               
                 `status_changed_at` = '$now',
                 `photo_path` = IFNULL('$photo_path', `photo_path`),
                 `updated_at` = '$now'
-            WHERE id = '$package_id'
-        ";
+                ";
+
+                if($status === 'EN_DESTINO')
+                    {
+                        $updateSql.= " , `branch_office_destination_id` = '$branch_office_id'";
+                    }
+
+                        $updateSql.= " WHERE id = '$package_id'";
+
         ejecutarConsulta($updateSql);
 
         return ['success' => true, 'message' => 'Estatus actualizado'];
