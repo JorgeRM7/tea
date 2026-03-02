@@ -189,6 +189,13 @@
     <script>
         const ROUTES_ENDPOINT = "../Controllers/packageDeliveriesController.php";
         $(document).ready(function() {
+
+            let module = $("#module").val();
+            const menuItem = document.querySelector('a[href="packages-create.php"]').parentElement;
+            menuItem.classList.add('active');
+            const menuToggle = document.querySelector(`a[href="${module}"]`).parentElement;
+            menuToggle.classList.add('open');
+
             $("#search_route, #routes_stop_id").select2({ width: "100%" });
 
             $("#search_route").on("change", function() {

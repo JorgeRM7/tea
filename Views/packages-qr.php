@@ -154,6 +154,12 @@
             $('#btnRestart').on('click', function () {
                 startScanner();
             });
+
+            let module = $("#module").val();
+            const menuItem = document.querySelector('a[href="packages-qr.php"]').parentElement;
+            menuItem.classList.add('active');
+            const menuToggle = document.querySelector(`a[href="${module}"]`).parentElement;
+            menuToggle.classList.add('open');
         });
 
         function startScanner() {

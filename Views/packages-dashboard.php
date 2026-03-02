@@ -225,6 +225,12 @@
         const endpoint = '../Controllers/packageDeliveriesController.php';
 
         $(document).ready(function() {
+            let module = $("#module").val();
+            const menuItem = document.querySelector('a[href="packages-dashboard.php"]').parentElement;
+            menuItem.classList.add('active');
+            const menuToggle = document.querySelector(`a[href="${module}"]`).parentElement;
+            menuToggle.classList.add('open');
+
             initTables();
             indexPackages();
         });

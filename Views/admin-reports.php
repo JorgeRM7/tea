@@ -20,10 +20,10 @@
                         <div class="row">
 
                             <!--Tabla de asistencias-->
-                            <div class="col-xl-4 col-lg-4 col-md-4 order-0 order-md-1 mt-3">
+                            <div class="col-xl-6 col-lg-6 col-md-4 order-0 order-md-1 mt-3">
                                 <div class="card">
                                     <div class="card-header d-flex justify-content-between align-items-center">
-                                        <h5 class="mb-0">Reportes</h5>
+                                        <h5 class="mb-0">Corte de caja</h5>
                                     </div>
                                     <div class="card-body">
                                         <div class="row">
@@ -37,15 +37,16 @@
                                             </div>
                                             <div class="col-md-12">
                                                 <label class="form-label section-title">Reporte</label>
-                                                <select id="report_id" name="report_id" class="form-select">
-                                                    <option value="RUTA">POR RUTA</option>
+                                                <select id="report_type" name="report_type" class="form-select">
+                                                    <option value="BOLETOS">BOLETOS</option>
+                                                    <option value="PAQUETES">PAQUETE</option>
                                                 </select>
                                             </div>
                                         </div> 
                                         <div class="row g-3 mt-2">
                                             <div class="col-md-12 text-end">
-                                                <button id="btnGenerate" class="btn btn-success" type="button" onclick="show()"> 
-                                                    <i class="bi bi-receipt"></i> Buscar
+                                                <button id="btnGenerate" class="btn btn-success" type="button" onclick="exportCSV()"> 
+                                                    <i class="bi bi-receipt"></i> Generar
                                                 </button>
                                             </div>
                                         </div>
@@ -164,46 +165,71 @@
                 });
             }
         });
+        // exportCSV()
     }
 
-    const  exportCSV = () => {
+    const exportCSV = () => {
         const date_start = document.getElementById("date_start").value;
         const date_end = document.getElementById("date_end").value;
-        let branch_office_id = document.getElementById('branch_office_id_selected').value;
+        const branch_office_id = document.getElementById("branch_office_id_selected").value;
+        const report_type = document.getElementById("report_type").value;
 
         Swal.fire({
-            title: 'Exportando...',
-            text: 'Por favor, espera mientras se genera el archivo Excel.',
+            title: "Exportando...",
+            text: "Por favor, espera mientras se genera el archivo Excel.",
             allowOutsideClick: false,
             allowEscapeKey: false,
-            didOpen: () => {
-                Swal.showLoading();
-            }
+            didOpen: () => Swal.showLoading()
         });
-    
+
         $.ajax({
             url: "../Controllers/adminReportsController.php?op=xls",
             type: "POST",
-            dataType: "json",
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-            data: { date_start: date_start, date_end:date_end, branch_office_id:branch_office_id },
-            success: function (response) {
-                console.log(response)
-                const formattedData = response.map(item => ({
-                    "Fecha" : item.date,
-                    "Horario" : item.leaving_time,
-                    "Origen": item.origin,
-                    "Destino": item.destination,
-                    "Chofer": item.employee,
-                    "Unidad": item.unidad_number,
-                    "Precio": item.price,   
-                    "Estatus" : item.status,
-                }));
-                const worksheet = XLSX.utils.json_to_sheet(formattedData);
-                const workbook  = XLSX.utils.book_new();
+            dataType: "text",
+            headers: { Authorization: `Bearer ${token}` },
+            data: { date_start, date_end, branch_office_id, report_type },
 
+            success: function (responseText) {
+                let data;
+                try {
+                    data = JSON.parse(responseText);
+                } catch (e) {
+                    console.error("Respuesta NO es JSON válido:", responseText);
+                    Swal.fire({
+                        icon: "error",
+                        title: "Respuesta inválida",
+                        text: "El servidor devolvió algo que no es JSON (revisa warnings/echo en PHP).",
+                        confirmButtonColor: "#f07d42"
+                    });
+                    return;
+                }
+
+                if (!Array.isArray(data)) {
+                    console.error("JSON no es array:", data);
+                    Swal.fire({
+                        icon: "error",
+                        title: "Formato incorrecto",
+                        text: "El servidor no devolvió una lista de registros.",
+                        confirmButtonColor: "#f07d42"
+                    });
+                    return;
+                }
+
+                if (data.length === 0) {
+                    Swal.fire({
+                        icon: "warning",
+                        title: "Sin datos",
+                        text: "No hay registros para exportar.",
+                        confirmButtonColor: "#f07d42"
+                    });
+                    return;
+                }
+                const clean = data.map(r => ({
+                    ...r,
+                    // price: r.PRECIO !== null ? Number(r.PRECIO) : null
+                }));
+                const worksheet = XLSX.utils.json_to_sheet(clean);
+                const workbook = XLSX.utils.book_new();
                 XLSX.utils.book_append_sheet(workbook, worksheet, "Boletos por sucursal");
                 XLSX.writeFile(workbook, `reporte_boletos_${branch_office_id}.xlsx`);
 
@@ -214,8 +240,9 @@
                     confirmButtonColor: "#28c76f"
                 });
             },
+
             error: function (xhr, status, error) {
-                console.error("Error en la solicitud:", error);
+                console.error("Error AJAX:", status, error, xhr.responseText);
                 Swal.fire({
                     icon: "error",
                     title: "Error",
@@ -224,6 +251,6 @@
                 });
             }
         });
-    }
+    };
 
 </script>

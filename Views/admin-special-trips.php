@@ -442,4 +442,8 @@ const show = (id) => {
     $("#new_client_box input").val('');
     $("#new_client_box").hide();
   };
+
+  const contract = ( id ) => {
+    window.open('../Pdf/contract.php?id='+id)
+  }
 </script>

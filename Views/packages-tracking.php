@@ -87,6 +87,11 @@ if (isset($_GET['data']) && !empty($_GET['data'])) {
 
 
         $(document).ready(function(){
+                let module = $("#module").val();
+                const menuItem = document.querySelector('a[href="packages-tracking.php"]').parentElement;
+                menuItem.classList.add('active');
+                const menuToggle = document.querySelector(`a[href="${module}"]`).parentElement;
+                menuToggle.classList.add('open');
 
                 const autoCode = "<?= $autoCode ?>";
                 const autoPin  = "<?= $autoPin ?>";
