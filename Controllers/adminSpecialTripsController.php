@@ -12,12 +12,12 @@ switch ($_GET["op"]) {
         while ($reg = $rspta->fetch_assoc()) {
             $btnEdit = '<button type="button" class="editar btn btn-sm btn-warning" onclick="show('.$reg['id'].')"><i class="ti ti-edit"></i></button>';
             $btnDel  = '<button type="button" class="eliminar btn btn-sm btn-danger" onclick="deleteItem('.$reg['id'].')"><i class="ti ti-trash"></i></button>';
-            $btnDel  = '<button type="button" class="show btn btn-sm btn-success" onclick="contract('.$reg['id'].')"><i class="ti ti-trash"></i></button>';
+            $btnImp  = '<button type="button" class="btn btn-sm btn-success" onclick="contract('.$reg['id'].')"><i class="ti ti-printer"></i></button>';
 
             $badgeClass = ($reg['status']=='pending'?'warning':($reg['status']=='in_progress'?'info':($reg['status']=='completed'?'success':'danger')));
 
             $data[] = [
-                $btnEdit.' '.$btnDel,
+                $btnEdit.' '.$btnDel.' '.$btnImp,
                 $reg['id'],
                 $reg['client_name'] ?? '—',
                 $reg['vehicle_plate'],

@@ -22,6 +22,7 @@ $sql = '
         special_trips.start_date,
         special_trips.end_date,
         clients.name,
+        clients.phone,
         vehicles.unidad_number,
         vehicles.capacity
     FROM `special_trips`
@@ -30,14 +31,23 @@ $sql = '
 ';
 $result = ejecutarConsulta($sql);
 $item = mysqli_fetch_assoc($result);
+$precio = $item['price'];
+$date = date("Y-m-d");
 
+function numeroALetras($numero){
 
+    $formatter = new NumberFormatter("es", NumberFormatter::SPELLOUT);
+
+    return strtoupper($formatter->format($numero));
+}
+
+$precioLetra = numeroALetras($precio);
 $html = "
 
 <style>
 body{
     font-family: times;
-    font-size: 11px;
+    font-size: 15px;
     line-height: 1.45;
 }
 
@@ -142,7 +152,7 @@ body{
         CORREO ELECTRONICO t_lgar_ade@live.com.mx
     </div>
     <div class='header-sub' style='margin-top:4px;'>
-        Ario de Rosales Michoacán A: <span class='short-line'></span>
+        Ario de Rosales Michoacán A: {$date} <span class='short-line'></span>
     </div>
 </div>
 
@@ -174,9 +184,11 @@ body{
     <br><br>
 
     con un costo total del Servicio por $ 
-    <span class='short-line'></span>
+    <span class='short-line'>{$item['price']}</span>
 
-    ( <span class='medium-line'>{$item['price']}</span> )
+    <span class='medium-line'>
+        ( {$precioLetra} PESOS )
+    </span>
 
     depositando un anticipo Garantía por la cantidad de $ 
     <span class='short-line'>{$item['price']}</span>
@@ -203,11 +215,11 @@ body{
 
     Ciudad de: <span class='medium-line'></span>
     &nbsp; a la Orden del Sr.(a):
-    <span class='medium-line'></span>
+    <span class='medium-line'>{$item['name']}</span>
 
     <br><br>
 
-    Cel: <span class='short-line'></span>
+    Cel: <span class='short-line'>{$item['phone']}</span>
     &nbsp; Casa u oficina:
     <span class='medium-line'></span>
     </div>
@@ -217,8 +229,8 @@ body{
     </div>
 
     <div class='justify'>
-        El regreso será el día <span class='short-line'></span> a las <span class='short-line'></span> en domicilio destino
-        <span class='medium-line'></span> de la ciudad de <span class='medium-line'></span>
+        El regreso será el día <span class='short-line'>{$item['end_date,']}</span> a las <span class='short-line'></span> en domicilio destino
+        <span class='medium-line'>{$item['origin']}</span> de la ciudad de <span class='medium-line'></span>
     </div>
 
     <br>

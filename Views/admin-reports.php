@@ -35,13 +35,6 @@
                                                 <label class="form-label section-title">Hasta</label>
                                                 <input id="date_end" name="date_end" type="date" class="form-control" value="<?php echo date('Y-m-d'); ?>"/>
                                             </div>
-                                            <div class="col-md-12">
-                                                <label class="form-label section-title">Reporte</label>
-                                                <select id="report_type" name="report_type" class="form-select">
-                                                    <option value="BOLETOS">BOLETOS</option>
-                                                    <option value="PAQUETES">PAQUETE</option>
-                                                </select>
-                                            </div>
                                         </div> 
                                         <div class="row g-3 mt-2">
                                             <div class="col-md-12 text-end">
@@ -169,10 +162,11 @@
     }
 
     const exportCSV = () => {
+
         const date_start = document.getElementById("date_start").value;
         const date_end = document.getElementById("date_end").value;
         const branch_office_id = document.getElementById("branch_office_id_selected").value;
-        const report_type = document.getElementById("report_type").value;
+        // const report_type = document.getElementById("report_type").value;
 
         Swal.fire({
             title: "Exportando...",
@@ -187,51 +181,91 @@
             type: "POST",
             dataType: "text",
             headers: { Authorization: `Bearer ${token}` },
-            data: { date_start, date_end, branch_office_id, report_type },
+            data: { date_start, date_end, branch_office_id },
 
             success: function (responseText) {
+
                 let data;
+
                 try {
                     data = JSON.parse(responseText);
                 } catch (e) {
+
                     console.error("Respuesta NO es JSON válido:", responseText);
+
                     Swal.fire({
                         icon: "error",
                         title: "Respuesta inválida",
-                        text: "El servidor devolvió algo que no es JSON (revisa warnings/echo en PHP).",
+                        text: "El servidor devolvió algo que no es JSON.",
                         confirmButtonColor: "#f07d42"
                     });
+
                     return;
                 }
 
-                if (!Array.isArray(data)) {
-                    console.error("JSON no es array:", data);
-                    Swal.fire({
-                        icon: "error",
-                        title: "Formato incorrecto",
-                        text: "El servidor no devolvió una lista de registros.",
-                        confirmButtonColor: "#f07d42"
-                    });
-                    return;
-                }
+                const boletos = data.boletos || [];
+                const paquetes = data.paquetes || [];
 
-                if (data.length === 0) {
+                if (boletos.length === 0 && paquetes.length === 0) {
+
                     Swal.fire({
                         icon: "warning",
                         title: "Sin datos",
                         text: "No hay registros para exportar.",
                         confirmButtonColor: "#f07d42"
                     });
+
                     return;
                 }
-                const clean = data.map(r => ({
-                    ...r,
-                    // price: r.PRECIO !== null ? Number(r.PRECIO) : null
-                }));
-                const worksheet = XLSX.utils.json_to_sheet(clean);
+
+                const rows = [];
+                boletos.forEach(b => {
+
+                    rows.push({
+                        "TIPO": "BOLETO",
+                        "ID": b.id,
+                        "TIPO PAGO": b["TIPO PAGO"],
+                        "PRECIO": b.PRECIO,
+                        "ESTATUS": b.ESTATUS,
+                        "HORA": b.HORA,
+                        "FECHA": b.FECHA,
+                        "DESCUENTO": b.DESCUENTO,
+                        "ORIGEN": b.ORIGEN,
+                        "DESTINO": b.DESTINO,
+                        "CHOFER": b.CHOFER,
+                        "NUMERO UNIDAD": b["NUMERO UNIDAD"],
+                        "HORA SALIDA": b["HORA SALIDA"],
+                        "VENDEDOR": b.VENDEDOR
+                    });
+
+                });
+
+                paquetes.forEach(p => {
+
+                    rows.push({
+                        "TIPO": "PAQUETE",
+                        "ID": p.id,
+                        "PRECIO": p.PRECIO,
+                        "CANTIDAD": p.CANTIDAD,
+                        "DESCRIPCION": p.DESCRIPCION,
+                        "ORIGEN": p.ORIGEN,
+                        "DESTINO": p.DESTINO,
+                        "CHOFER": p.CHOFER,
+                        "NUMERO UNIDAD": p["NUMERO UNIDAD"],
+                        "HORA SALIDA": p["HORA SALIDA"],
+                        "VENDEDOR": p.VENDEDOR,
+                        "FECHA": p.FECHA
+                    });
+
+                });
+
+                const worksheet = XLSX.utils.json_to_sheet(rows);
+
                 const workbook = XLSX.utils.book_new();
-                XLSX.utils.book_append_sheet(workbook, worksheet, "Boletos por sucursal");
-                XLSX.writeFile(workbook, `reporte_boletos_${branch_office_id}.xlsx`);
+
+                XLSX.utils.book_append_sheet(workbook, worksheet, "Reporte");
+
+                XLSX.writeFile(workbook, `reporte_${branch_office_id}.xlsx`);
 
                 Swal.fire({
                     icon: "success",
@@ -239,16 +273,20 @@
                     text: "El archivo Excel ha sido generado con éxito.",
                     confirmButtonColor: "#28c76f"
                 });
+
             },
 
             error: function (xhr, status, error) {
+
                 console.error("Error AJAX:", status, error, xhr.responseText);
+
                 Swal.fire({
                     icon: "error",
                     title: "Error",
                     text: "Hubo un problema al procesar los datos.",
                     confirmButtonColor: "#f07d42"
                 });
+
             }
         });
     };
