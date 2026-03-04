@@ -17,7 +17,7 @@ $mpdf = new Mpdf([
 // $mpdf->SetWatermarkImage('../assets/img/logo.png', 0.12, [40, 40]);
 // $mpdf->showWatermarkImage = true;
 
-$mpdf->SetWatermarkImage('../assets/img/set_water.jpeg', 0.45, [30,30], 'F', false, 203);
+$mpdf->SetWatermarkImage('../assets/img/set_water.png', 0.45, [30,30], 'F', false, 203);
 $mpdf->showWatermarkImage = true;
 
 
