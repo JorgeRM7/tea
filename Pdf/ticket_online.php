@@ -45,8 +45,8 @@ if (empty($tickets)) {
 
 
 
-$text = $ticket['id'];
-$qrUrl  = "https://api.qrserver.com/v1/create-qr-code/?size=130x130&data=" . urlencode($text);
+
+
 $logoPath = dirname(__DIR__) . "/assets/img/set_water.png";
 
   // Generar QR
@@ -71,8 +71,8 @@ foreach ($tickets as $ticket) {
     $destination = strtoupper($ticket['destination'] ?? '');
     $vehicle = strtoupper($ticket['vehicle_id'] ?? '');
     $employee = strtoupper($ticket['employee'] ?? 'POR ASIGNAR');
-
-
+    $text = $ticket['id'];
+    $qrUrl  = "https://api.qrserver.com/v1/create-qr-code/?size=130x130&data=" . urlencode($text);
     $html .= "
     <style>
         body {
