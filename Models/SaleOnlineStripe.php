@@ -92,7 +92,15 @@ class SaleOnlineStripe
 
     private function insertTicket(array $ticketMeta): int
     {
-        $sql = "INSERT INTO tickets (
+
+        $sql_sale = "SELECT IFNULL(MAX(sale_id), 0) + 1 AS next_sale_id FROM tickets";
+        $rs = ejecutarConsulta($sql_sale);
+        $row = mysqli_fetch_assoc($rs);
+        $sale_id = (int)$row['next_sale_id'] ?? 1;
+
+        for ($i = 0; $i < $ticketMeta['quantity']; $i++) {
+
+            $sql = "INSERT INTO tickets (
                     route_schedule_id,
                     route_id,
                     employee_id,
@@ -107,6 +115,7 @@ class SaleOnlineStripe
                     date,
                     hour,
                     expires_at,
+                    sale_id,
                     created_at,
                     updated_at
                 ) VALUES (
@@ -117,24 +126,30 @@ class SaleOnlineStripe
                     '{$ticketMeta['branch_office_id']}',
                     '{$ticketMeta['user_id']}',
                     '{$ticketMeta['routes_stop_id']}',
-                    '{$ticketMeta['quantity']}',
+                    '1',
                     '{$ticketMeta['payment_method']}',
                     '{$ticketMeta['price']}',
                     '{$ticketMeta['status']}',
                     '{$ticketMeta['date']}',
                     '{$ticketMeta['hour']}',
                     '{$ticketMeta['expires_at']}',
+                    '$sale_id',
                     NOW(),
                     NOW()
                 )";
 
-        $result = ejecutarConsulta($sql);
-        if (!$result) {
-            throw new RuntimeException("No fue posible registrar el boleto.");
+            $result = ejecutarConsulta($sql);
         }
 
-        global $conexion;
-        return (int)mysqli_insert_id($conexion);
+        if (!$result) {
+            throw new RuntimeException("No fue posible registrar el boleto.");
+        }else{
+            return $sale_id;
+        }
+
+        // global $conexion;
+        // return (int)mysqli_insert_id($conexion);
+
     }
 
     private function createCheckoutSession(array $data, int $ticketId, array $ticketMeta)
@@ -337,7 +352,7 @@ class SaleOnlineStripe
 
     private function updateTicketStatus(int $ticketId, string $status): void
     {
-        $sql = "UPDATE tickets SET status='$status', updated_at = NOW() WHERE id='$ticketId'";
+        $sql = "UPDATE tickets SET status='$status', updated_at = NOW() WHERE sale_id='$ticketId'";
         ejecutarConsulta($sql);
     }
 
