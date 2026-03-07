@@ -5,7 +5,8 @@ $session_id = $_GET['session_id'] ?? '';
 
 $sql = "
     SELECT 
-        tickets.id,
+        GROUP_CONCAT(tickets.id) AS id,
+        COUNT(tickets.id) AS cantidad,
         tickets.price,
         tickets.quantity,
         tickets.status,
@@ -13,12 +14,13 @@ $sql = "
         routes_schedule.leaving_time,
         routes_stop.origin,
         routes_stop.destination,
-        COALESCE(vehicles.unidad_number, vehicles.id) AS vehicle_id
+        COALESCE(vehicles.unidad_number, vehicles.id) AS vehicle_id,
+        tickets.sale_id
     FROM tickets
     LEFT JOIN routes_schedule ON tickets.route_schedule_id = routes_schedule.id
     INNER JOIN routes_stop ON routes_stop.id = tickets.route_stop_id
     LEFT JOIN vehicles ON vehicles.id = tickets.vehicle_id
-    WHERE tickets.id = '$ticket_id'";
+    WHERE tickets.sale_id = '$ticket_id'";
 $query = ejecutarConsulta($sql);
 $ticket = mysqli_fetch_assoc($query);
 ?>
@@ -73,13 +75,13 @@ $ticket = mysqli_fetch_assoc($query);
 
         <?php if ($ticket) : ?>
             <div class="ticket-data text-start">
-                <p><strong>Boleto:</strong> #<?php echo $ticket['id']; ?></p>
+                <p><strong>Boleto(s):</strong> #<?php echo $ticket['id']; ?></p>
                 <p><strong>Origen:</strong> <?php echo $ticket['origin']; ?></p>
                 <p><strong>Destino:</strong> <?php echo $ticket['destination']; ?></p>
                 <p><strong>Fecha:</strong> <?php echo $ticket['date']; ?></p>
                 <p><strong>Horario:</strong> <?php echo $ticket['leaving_time']; ?></p>
                 <p><strong>Vehiculo:</strong> <?php echo $ticket['vehicle_id']; ?></p>
-                <p><strong>Cantidad:</strong> <?php echo $ticket['quantity']; ?></p>
+                <p><strong>Cantidad:</strong> <?php echo $ticket['cantidad']; ?></p>
                 <p><strong>Total:</strong> $<?php echo number_format($ticket['price'], 2); ?></p>
                 <p><strong>Estatus (DB):</strong> <?php echo $ticket['status']; ?></p>
             </div>
@@ -142,6 +144,8 @@ $ticket = mysqli_fetch_assoc($query);
 
         msg.innerHTML = "Enviando boleto... ⏳";
         msg.style.color = "white";
+
+        console.log(ticket_id)
 
         fetch("../Controllers/send_ticket_email.php", {
             method: "POST",
