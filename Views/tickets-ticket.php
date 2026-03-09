@@ -107,8 +107,7 @@
                                                             $sql_branch_offices_user = "
                                                                 SELECT branch_office_id 
                                                                 FROM branch_offices_user 
-                                                                WHERE user_id = 1 
-                                                                AND deleted_at IS NULL
+                                                                WHERE deleted_at IS NULL
                                                             ";
 
                                                             $resultado = ejecutarConsulta($sql_branch_offices_user);
