@@ -102,12 +102,13 @@
                                                     <label class="form-label section-title">Ruta</label>
                                                     <select id="search_route" name="search_route" class="form-select form-select-lg">
                                                         <?php 
+                                                            $user_id = $_SESSION['user_id'];
                                                             $branch_ids = [];
 
                                                             $sql_branch_offices_user = "
                                                                 SELECT branch_office_id 
                                                                 FROM branch_offices_user 
-                                                                WHERE deleted_at IS NULL
+                                                                WHERE user_id ='$user_id' AND deleted_at IS NULL
                                                             ";
 
                                                             $resultado = ejecutarConsulta($sql_branch_offices_user);
