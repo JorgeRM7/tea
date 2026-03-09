@@ -124,7 +124,7 @@
                                                                     SELECT * 
                                                                     FROM routes 
                                                                     WHERE deleted_at IS NULL 
-                                                                    AND branch_office_id IN ($branch_ids_str)
+                                                                    
                                                                 ";
 
                                                                 $query = ejecutarConsulta($sql);
