@@ -124,7 +124,7 @@
                                                                     SELECT * 
                                                                     FROM routes 
                                                                     WHERE deleted_at IS NULL 
-                                                                    
+                                                                    AND branch_office_id IN ($branch_ids_str)
                                                                 ";
 
                                                                 $query = ejecutarConsulta($sql);
@@ -133,6 +133,8 @@
                                                                     echo "<option value='".$valores['id']."'>".$valores['origin']." - ".$valores['destination']."</option>";
                                                                 }
                                                             }
+
+                                                            
 
                                                         ?>
                                                     </select>
@@ -216,10 +218,10 @@
                                                 <small>Boletos hoy</small>
                                                 <div id="kpiCount">—</div>
                                             </div>
-                                            <!-- <div class="col-6">
-                                                <small>Descuento</small>
-                                                <div id="pvDescount">—</div>
-                                            </div> -->
+                                            <div class="col-6">
+                                                <small>Boletos en linea</small>
+                                                <div id="kpiOnline">—</div>
+                                            </div>
                                         </div>
                                     </div>
 
@@ -436,6 +438,12 @@
         });
     };
 
+    setInterval(() => {
+        console.log('ejecutando')
+        tickets_today();
+        routes();
+    }, 300000);
+
     const schedules = () => {
         let route_id = $("#search_route").val();
         let date     = $("#search_date").val();
@@ -449,6 +457,8 @@
             dataType: 'json',
             data: { route_id: route_id, date: date },
             success: function(schedules) {
+
+                console.log( schedules )
 
                 let container = $("#times");
                 container.empty();
@@ -530,7 +540,23 @@
             dataType: "json",
             success: function (response) {
                 let data = response;
-                $("#kpiCount").text(data?.tickets_today ?? 0);               
+                console.log('boletos hoy')
+                let efectivo = 0;
+                let stripe = 0;
+
+                data?.forEach(item => {
+
+                    if (item.payment_method === "EFECTIVO") {
+                        efectivo = parseInt(item["tickets_today "] ?? 0);
+                    }
+
+                    if (item.payment_method === "STRIPE") {
+                        stripe = parseInt(item["tickets_today "] ?? 0);
+                    }
+
+                });
+                $("#kpiCount").text(efectivo);
+                $("#kpiOnline").text(stripe);          
             },
             error: function (xhr, status, error) {
                 console.error("Error en la solicitud:", error);

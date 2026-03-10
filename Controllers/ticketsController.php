@@ -121,7 +121,14 @@ switch ($_GET["op"]) {
 
     case 'tickets-today':
         $rspta = $Ticket->tickets_today();
-        echo json_encode($rspta);
+        $data = [];
+        while ($reg = $rspta->fetch_assoc()) {
+            $data[] = [
+                "payment_method" => $reg['payment_method'],
+                "tickets_today " => $reg['tickets_today'],
+            ];
+        }
+        echo json_encode($data);
     break;
 
     case 'discounts':

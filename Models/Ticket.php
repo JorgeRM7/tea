@@ -252,10 +252,24 @@ class Ticket
     }
 
     public function tickets_today (){
-        $today    = date("Y-m-d");
-        $user_id = $_SESSION['user_id'];
-        $sql = "SELECT COUNT( id ) AS tickets_today FROM tickets WHERE date ='$today' AND user_id ='$user_id'";
-        return ejecutarConsultaSimpleFila($sql);
+        $today      = date("Y-m-d");
+        $user_id    = $_SESSION['user_id'];
+        $sql = "
+            SELECT 
+                pm.payment_method,
+                COALESCE(COUNT(tickets.id),0) AS tickets_today
+            FROM (
+                SELECT 'EFECTIVO' AS payment_method
+                UNION ALL
+                SELECT 'STRIPE'
+            ) pm
+            LEFT JOIN tickets 
+                ON tickets.payment_method = pm.payment_method
+                AND tickets.date = '$today'
+                AND tickets.user_id IN ($user_id,39)
+                AND tickets.status = 'VENDIDO'
+            GROUP BY pm.payment_method;";
+        return ejecutarConsulta($sql);
     }
 
     public function discounts ( $data ){
