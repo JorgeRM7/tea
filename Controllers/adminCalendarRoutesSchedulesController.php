@@ -22,9 +22,10 @@ switch ($_GET["op"]) {
         $data = [];
         while ($reg = $rspta->fetch_assoc()) {
             $data[] = [
-                "route_schedule_id" => $reg['id'],
-                "leaving_time" => $reg['leaving_time'],
-                "unidad_number" => $reg['unidad_number'],  
+                "route_static_id"   => $reg['id'],
+                "leaving_time"      => $reg['leaving_time'],
+                "shift_role_id"     => $reg['shift_role_id'],  
+                "route_id"          => $reg['route_id'],  
             ];
         }
 

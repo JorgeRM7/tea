@@ -102,7 +102,7 @@
                                     <form name="formulario" id="formulario" method="POST">
                                         <div class="row">
 
-                                            <div class="col-md-8">
+                                            <div class="col-md-3">
                                                 <label class="form-label section-title">Ruta</label>
                                                 <select id="route_id" name="route_id" class="form-select">
                                                     <?php 
@@ -116,7 +116,35 @@
                                                 </select>
                                                 <div id="routeRules" class="rule-note mt-1"></div>
                                             </div>
-                                            <div class="col-md-4">
+                                            <div class="col-md-3">
+                                                <label class="form-label section-title">Vehiculo</label>
+                                                <select id="vehicle_id" name="vehicle_id" class="form-select">
+                                                    <?php 
+                                                        $sql = "SELECT * FROM `vehicles` WHERE deleted_at is null";
+                                                        $query = ejecutarConsulta($sql);
+                                                        while($valores = mysqli_fetch_array($query)){
+                                                            echo "<option value='".$valores['id']."'>(".$valores['unidad_number'].") ".$valores['brand']."</option>";
+                                                        }
+                                                    ?>
+
+                                                </select>
+                                                
+                                            </div>
+                                            <div class="col-md-3">
+                                                <label class="form-label section-title">Rol de horiario</label>
+                                                <select id="shift_role_id" name="shift_role_id" class="form-select">
+                                                    <?php 
+                                                        $sql = "SELECT * FROM `shift_roles` WHERE deleted_at is null";
+                                                        $query = ejecutarConsulta($sql);
+                                                        while($valores = mysqli_fetch_array($query)){
+                                                            echo "<option value='".$valores['id']."'>".$valores['name']."</option>";
+                                                        }
+                                                    ?>
+
+                                                </select>
+                                                
+                                            </div>
+                                            <div class="col-md-3">
                                                 <label class="form-label section-title">Fecha</label>
                                                 <input type="date" class="form-control" id="date" name="date" readonly>
                                             
@@ -130,12 +158,6 @@
                                     <button class="crear btn btn-primary me-2" onclick="store()">
                                         <i class="ti ti-device-floppy"></i> Guardar
                                     </button>
-                                    <button class="crear btn btn-success me-2" onclick="addNewSchedule()">
-                                        <i class="ti ti-device-floppy"></i> Agregar
-                                    </button>
-                                    <button class="crear btn btn-warning me-2" onclick="loadSchedules()">
-                                        <i class="ti ti-reload"></i> Cargar horarios
-                                    </button>
                                     <button type="button" class="btn btn-danger" data-bs-dismiss="modal" onclick="clean()">Cerrar</button>
                                 </div>
                             </div>
@@ -143,48 +165,7 @@
                     </div>
                     <!--Fin Modal Crear-->
 
-                    <!--Inicio Modal Unidad-->
-                    <div class="modal animate__animated animate__flipInX" id="modal_add_unit" aria-labelledby="flipInXAnimationModalLabel" aria-hidden="true">
-                        <div class="modal-dialog" role="document">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="exampleModalLabel">Asignar unidad</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body">
-                                    
-                                    <div class="row">
-
-                                        <div class="col-md-8">
-                                            <label class="form-label section-title">Vehiculo</label>
-                                            <input type="hidden" id="record_id" name="record_id">
-                                            <select id="vehicle_id" name="vehicle_id" class="form-select">
-                                                <?php 
-                                                    $sql = "SELECT * FROM `vehicles` WHERE deleted_at is null";
-                                                    $query = ejecutarConsulta($sql);
-                                                    while($valores = mysqli_fetch_array($query)){
-                                                        echo "<option value='".$valores['id']."'>".$valores['unidad_number']."</option>";
-                                                    }
-                                                ?>
-
-                                            </select>
-                                            
-                                        </div>
-                                        
-                                    </div>
-                                    
-                                </div>
-                                <div class="modal-footer">
-                                    <button class="crear btn btn-primary me-2" onclick="storeUnit()">
-                                        <i class="ti ti-device-floppy"></i> Guardar
-                                    </button>
-                                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal" onclick="clean()">Cerrar</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!--Fin Modal Unidad-->
-                    
+                   
                     <!-- FOOTER -->
                     <?php require_once('footer.php'); ?>
                     <!-- FOOTER -->
@@ -213,6 +194,10 @@
   
 
         $("#route_id").on("change", function() {
+            routes();
+        });
+
+        $("#shift_role_id").on("change", function() {
             routes();
         });
 
@@ -263,9 +248,6 @@
    
     const create = () => {
         $('#modal_create').modal('show');
-        
-        // loadSchedules();
-        // clean();
     };
 
     const store = () => {
@@ -279,20 +261,36 @@
             data: formData,
             contentType: false,
             processData: false,
+            dataType: "json",
             success: function(response) {
 
-                // console.log(response)
-                
-                Swal.fire({
-                    toast: true,
-                    position: 'top-end',
-                    showConfirmButton: false,
-                    timer: 3000,
-                    timerProgressBar: true,
-                    icon: 'success',
-                    title: 'Éxito',
-                    text: 'Registro creado exitosamente.',
-                });
+                if (response.total_records > 0) {
+
+                    Swal.fire({
+                        toast: true,
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 3000,
+                        timerProgressBar: true,
+                        icon: 'success',
+                        title: 'Éxito',
+                        text: `Se insertaron ${response.total_records} horarios correctamente.`,
+                    });
+
+                } else {
+
+                    Swal.fire({
+                        toast: true,
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 4000,
+                        timerProgressBar: true,
+                        icon: 'warning',
+                        title: 'Aviso',
+                        text: `Los ${response.horarios_existentes} horarios ya existían.`,
+                    });
+
+                }
 
             },
             error: function(error) {
@@ -388,8 +386,8 @@
     }
     
     const routes = () => {    
-        let search_route = $("#route_id").val(); 
-        let search_date = $("#date").val(); 
+        let search_route        = $("#route_id").val(); 
+        let search_shift_role   = $("#shift_role_id").val(); 
         $.ajax({
             url: "../Controllers/adminCalendarRoutesSchedulesController.php?op=routes",
             type: "POST",
@@ -397,9 +395,8 @@
                 "Authorization": "Bearer " + token
             },
             dataType: "json",
-            data: { search_route, search_date },
+            data: { search_route, search_shift_role },
             success: function (data) {
-
                 let content = ``;
 
                 if (!data.length) {
@@ -412,7 +409,6 @@
                 } else {
 
                     data.forEach(item => {
-                        console.log(item)
                         content += `
                             <div class="col-12 col-sm-6 col-md-4 mb-3 schedule-item" data-schedule-id="${item.route_schedule_id}">
 
@@ -426,33 +422,6 @@
                                         data-id="${item.route_schedule_id}"
                                         onchange="updateTime(${item.route_schedule_id}, this.value)"
                                     >
-                                    ${item.unidad_number ? `
-                                        <button 
-                                            type="button"
-                                            class="btn btn-success btn-mini"
-                                            title="Unidad asignada: ${item.unidad_number}"
-                                            disabled
-                                        >
-                                        ${item.unidad_number}
-                                        </button>
-                                    ` : ''}
-
-                                    <button 
-                                        type ="button"
-                                        class="btn btn-outline-success btn-mini"
-                                        title="Agregar unidad"
-                                        onclick="addUnit(${item.route_schedule_id})">
-                                        <i class="ti ti-car"></i>
-                                    </button>
-
-                                    <button 
-                                        type ="button"
-                                        class="btn btn-outline-danger btn-mini"
-                                        title="Eliminar horario"
-                                        onclick="deleteSchedule(this)">
-                                        <i class="ti ti-trash"></i>
-                                    </button>
-
                                 </div>
                             </div>
                         `;
@@ -508,138 +477,4 @@
         });
     };  
 
-    let tempScheduleCounter = 0;
-
-    function addNewSchedule() {
-
-        tempScheduleCounter++;
-
-        const tempId = `new-${tempScheduleCounter}`;
-
-        $('#times').append(`
-            <div class="col-12 col-sm-6 col-md-4 mb-3 schedule-item"
-                data-temp-id="${tempId}">
-
-                <div class="input-group input-group-sm schedule-group">
-
-                    <input 
-                        type="time"
-                        name="time[]"
-                        class="form-control schedule-time"
-                        data-temp-id="${tempId}"
-                    >
-
-                    <button 
-                        type ="button"
-                        class="btn btn-outline-success btn-mini"
-                        title="Agregar unidad"
-                        >
-                        <i class="ti ti-car"></i>
-                    </button>
-
-                    <button 
-                        type ="button"
-                        class="btn btn-outline-danger btn-mini"
-                        title="Eliminar horario"
-                        onclick="deleteSchedule(this)">
-                        <i class="ti ti-trash"></i>
-                    </button>
-
-                </div>
-            </div>
-        `);
-    }
-
-    function deleteSchedule(btn) {
-
-        const card = btn.closest('.schedule-item');
-        const scheduleId = card.dataset.scheduleId;
-        const tempId     = card.dataset.tempId;
-
-        if (scheduleId) {
-
-            Swal.fire({
-                title: '¿Eliminar horario?',
-                text: 'Este cambio es permanente',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Sí, eliminar'
-            }).then(result => {
-
-                if (!result.isConfirmed) return;
-                $.ajax({
-                    url: "../Controllers/adminCalendarRoutesSchedulesController.php?op=deleteItem",
-                    type: "POST",
-                    dataType: "json",
-                    headers: {
-                        "Authorization": "Bearer " + token
-                    },
-                    data: { id: scheduleId },
-                    success: (data) => {
-                        card.remove();
-                        Swal.fire('Eliminado', data.message || '', 'success');
-                    },
-                    error: (xhr) => {
-                        console.error("Error delete:", xhr.responseText);
-                        Swal.fire("Error", "No se pudo eliminar", "error");
-                    }
-                });
-
-            });
-
-        } else {
-            card.remove();
-        }
-    }
-
-    const addUnit = ( schedule_id ) => {
-        $('#modal_add_unit').modal('show');
-        $("#record_id").val(schedule_id);
-    };
-
-    function storeUnit() {
-        let record_id = $("#record_id").val(); 
-        let vehicle_id = $("#vehicle_id").val();
-
-        Swal.fire({
-            title: '¿Seguro (a) de realizar esta acción?',
-            text: 'Se asignara la unidad seleccionada',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonText: 'Sí, asignar'
-        }).then(result => {
-
-            if (!result.isConfirmed) return;
-            $.ajax({
-                url: "../Controllers/adminCalendarRoutesSchedulesController.php?op=store-unit",
-                type: "POST",
-                dataType: "json",
-                headers: {
-                    "Authorization": "Bearer " + token
-                },
-                data: { record_id: record_id, vehicle_id: vehicle_id },
-                success: (data) => {
-                    
-                    Swal.fire({
-                        toast: true,
-                        position: 'top-end',
-                        showConfirmButton: false,
-                        timer: 3000,
-                        timerProgressBar: true,
-                        icon: 'success',
-                        title: 'Éxito',
-                        text: 'Unidad asignada correctamente.',
-                    });
-                    $('#modal_add_unit').modal('hide');
-                },
-                error: (xhr) => {
-                    console.error("Error delete:", xhr.responseText);
-                    Swal.fire("Error", "No se pudo asignar", "error");
-                }
-            });
-        });
-
-    }
-
-    
 </script>

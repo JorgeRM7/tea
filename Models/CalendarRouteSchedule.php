@@ -7,10 +7,10 @@ class Calendar {
     public function __construct() {}
     
 
-    public function store($data) {
+    public function store( $data ) {
         $route_id   = $data["route_id"] ?? null;
         $date       = $data["date"] ?? null;
-        $vehicle_id = 0;
+        $vehicle_id = $data["vehicle_id"] ?? null;;
 
         $dateObj = new DateTime($date);
 
@@ -21,11 +21,25 @@ class Calendar {
 
         $results = [];
         $contador = 0;
-
-        $delete = "DELETE FROM routes_schedule WHERE route_id = '$route_id' AND vehicle_id = 0 AND day='$day' AND week='$week' AND year='$year' AND date='$date'";
-        ejecutarConsulta($delete);
+        $existentes = 0;
 
         foreach ($data["time"] as $time) {
+
+            $sql_check = "
+                SELECT id
+                FROM routes_schedule
+                WHERE route_id = '$route_id'   
+                AND date = '$date'
+                AND leaving_time = '$time'
+                LIMIT 1
+            ";
+
+            $check = ejecutarConsultaSimpleFila($sql_check);
+
+            if ($check) {
+                $existentes++;
+                continue;
+            }
 
             $sql = "
                 INSERT INTO `routes_schedule` (
@@ -56,8 +70,9 @@ class Calendar {
         }
 
         $results = [
-            "total records" => $contador, 
-            "action"        => "inserted_or_updated"
+            "total_records" => $contador, 
+            "action"        => "inserted_or_updated",
+            "horarios_existentes" => $existentes
         ];
 
         return $results;
@@ -128,32 +143,21 @@ class Calendar {
 
     public function routes( $data ) {
         
-        $search_route    = $data['search_route'] ?? NULL;
-        $search_date     = $data["search_date"] ?? null;
+        $search_route        = $data['search_route'] ?? NULL;
+        $search_shift_role   = $data["search_shift_role"] ?? null;
         $sql = "
             SELECT 
-                routes_schedule.*,
-                vehicles.unidad_number
-            FROM `routes_schedule` 
-            LEFT JOIN vehicles ON vehicles.id = routes_schedule.vehicle_id
-            WHERE routes_schedule.route_id ='$search_route' AND routes_schedule.date='$search_date' AND routes_schedule.deleted_at IS NULL ORDER BY routes_schedule.leaving_time ASC
+                routes_static.*
+            FROM `routes_static` 
+            WHERE routes_static.route_id ='$search_route' AND shift_role_id='$search_shift_role' AND routes_static.deleted_at IS NULL ORDER BY routes_static.leaving_time ASC
         ";
 
         return ejecutarConsulta($sql);
     }
 
-    public function deleteItem ( $data ){
-        $routes_schedule_id = $data['id'];
-        $sql=" UPDATE `routes_schedule` SET `deleted_at`= NOW() WHERE `id`='$routes_schedule_id'";
-        return ejecutarConsulta($sql);
-    }
+    
 
-    public function storeUnit ( $data ){
-        $record_id = $data['record_id'];
-        $vehicle_id = $data['vehicle_id'];
-        $sql=" UPDATE `routes_schedule` SET `vehicle_id`= '$vehicle_id' WHERE `id`='$record_id'";
-        return ejecutarConsulta($sql);
-    }
+   
 
 
     
