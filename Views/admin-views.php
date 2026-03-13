@@ -74,7 +74,7 @@
                                             </div>
                                             <div class="col-md-6">
                                                 <label for="nameWithTitle" class="form-label">Modulo</label>
-                                                <input type="text" id="module" name="module" class="form-control" placeholder="Ingresa..." required/>
+                                                <input type="text" id="module_f" name="module" class="form-control" placeholder="Ingresa..." required/>
                                             </div>
                                             <div class="col-md-6">
                                                 <label for="nameWithTitle" class="form-label">Titulo</label>
@@ -221,7 +221,7 @@
                 let data = response;
                 $("#view_id").val(data?.id);
                 $("#route").val(data?.route);
-                $("#module").val(data?.module);
+                $("#module_f").val(data?.module);
                 $("#title").val(data?.title);
                 $("#icon").val(data?.icon);               
             },
@@ -336,7 +336,7 @@
     const clean = () => {   
         $("#view_id").val('');
         $("#route").val('');
-        $("#module").val('');
+        $("#module_f").val('');
         $("#title").val('');
         $("#icon").val('');        
     }

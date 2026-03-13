@@ -132,17 +132,7 @@
                                             </div>
                                             <div class="col-md-3">
                                                 <label class="form-label section-title">Rol de horiario</label>
-                                                <select id="shift_role_id" name="shift_role_id" class="form-select">
-                                                    <?php 
-                                                        $sql = "SELECT * FROM `shift_roles` WHERE deleted_at is null";
-                                                        $query = ejecutarConsulta($sql);
-                                                        while($valores = mysqli_fetch_array($query)){
-                                                            echo "<option value='".$valores['id']."'>".$valores['name']."</option>";
-                                                        }
-                                                    ?>
-
-                                                </select>
-                                                
+                                                <select id="shift_role_id" name="shift_role_id" class="form-select"></select>
                                             </div>
                                             <div class="col-md-3">
                                                 <label class="form-label section-title">Fecha</label>
@@ -190,16 +180,31 @@
         menuToggle.classList.add('open');
         // index();
 
+        $('#vehicle_id').select2({
+            placeholder: "Selecciona un vehiculo",
+            width: '100%',
+            dropdownParent: $('#modal_create'),
+            containerCssClass: 'modal-content'
+        });
 
+        $('#route_id').select2({
+            placeholder: "Selecciona una ruta",
+            width: '100%',
+            dropdownParent: $('#modal_create'),
+            containerCssClass: 'modal-content'
+        });
   
 
         $("#route_id").on("change", function() {
+            shiftRoles();
             routes();
         });
 
         $("#shift_role_id").on("change", function() {
             routes();
         });
+
+        shiftRoles();
 
     });
 
@@ -476,5 +481,43 @@
             }
         });
     };  
+
+    const shiftRoles = () => {
+        let search_route = $("#route_id").val(); 
+        $.ajax({
+            url: "../Controllers/adminCalendarRoutesSchedulesController.php?op=shift-roles",
+            type: "POST",
+             headers: {
+                "Authorization": "Bearer " + token
+            },
+            data: { search_route },
+            dataType: "json",
+            success: function (data) {
+
+                $('#shift_role_id').empty();
+
+                data.forEach(role => {
+                    $('#shift_role_id').append(
+                        `<option value="${role.id}">${role.text}</option>`
+                    );
+                });
+
+                $('#shift_role_id').select2({
+                    placeholder: "Selecciona un rol",
+                    width: '100%',
+                    dropdownParent: $('#modal_create'),
+                    containerCssClass: 'modal-content'
+                });
+
+                routes();
+
+            },
+            error: function (error) {
+                console.log(error);
+            }
+        });
+        
+
+    };
 
 </script>

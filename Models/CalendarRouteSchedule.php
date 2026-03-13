@@ -155,6 +155,29 @@ class Calendar {
         return ejecutarConsulta($sql);
     }
 
+    public function shiftRole( $data ){
+        $route_id = $data['search_route'];
+        $sql ="SELECT 
+                    shift_roles.id,
+                    shift_roles.name
+                FROM `routes_static`
+                INNER JOIN shift_roles ON shift_roles.id = routes_static.shift_role_id
+                WHERE routes_static.route_id = '$route_id' AND routes_static.deleted_at IS NULL GROUP BY shift_roles.id ";
+        $query = ejecutarConsulta($sql);
+
+        $data = [];
+
+        while($row = mysqli_fetch_assoc($query)){
+            $data[] = [
+                "id"    => $row["id"],
+                "text"  => $row["name"]
+            ];
+        }
+
+        return $data; 
+
+    }
+
     
 
    

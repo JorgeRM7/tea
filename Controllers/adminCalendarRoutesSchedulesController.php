@@ -32,14 +32,10 @@ switch ($_GET["op"]) {
         echo json_encode($data);
     break;
     
-    case 'deleteItem':
-        $rspta=$Calendar->deleteItem($_POST);
-        echo $rspta;
-    break;
 
-    case 'store-unit':
-        $rspta=$Calendar->storeUnit($_POST);
-        echo $rspta;
+    case 'shift-roles':
+        $rspta=$Calendar->shiftRole($_POST);
+        echo json_encode($rspta);
     break;
     
 
