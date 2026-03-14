@@ -89,7 +89,7 @@ $payload = json_encode([
 
 $encryptedPayload = encryptData($payload, $secretKey, $method);
 
-$trackingLink = "http://localhost/tea/tea/Views/packages-tracking.php?data=" . urlencode($encryptedPayload);
+$trackingLink = "https://transportestea.com/Views/packages-tracking.php?data=" . urlencode($encryptedPayload);
 
 $qrUrl = "https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=" . urlencode($trackingLink);
 

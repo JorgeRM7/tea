@@ -231,13 +231,13 @@ class PackageDelivery
             WHERE td.deleted_at IS NULL
             ";
             
-        if(!empty($view)){
-            if ($view === 'origin') {
-                $sql .= " AND td.branch_office_id = '$branch_id'";
-            } elseif ($view === 'destination') {
-                $sql .= " AND td.branch_office_destination_id = '$branch_id'";
-            }
-        }
+        // if(!empty($view)){
+        //     if ($view === 'origin') {
+        //         $sql .= " AND td.branch_office_id = '$branch_id'";
+        //     } elseif ($view === 'destination') {
+        //         $sql .= " AND td.branch_office_destination_id = '$branch_id'";
+        //     }
+        // }
 
         if (!empty($status)) {
             $sql .= " AND td.status = '$status'";
