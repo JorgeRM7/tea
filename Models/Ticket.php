@@ -131,6 +131,7 @@ class Ticket
     }
 
     public function schedules($data) {
+
         $hour     = date("H:i:s"); 
         $today    = date("Y-m-d");
         $route_id = $data['route_id'];
@@ -152,8 +153,10 @@ class Ticket
     }
 
     public function routes($data) {
+        date_default_timezone_set('America/Mexico_City');
         $hour  = date("H:i:s"); 
         $today = date("Y-m-d");
+        $now = date("Y-m-d H:i:s");
         $search_date     = $data['search_date'] ?? NULL;
         $search_schedule = $data['search_schedule'] ?? NULL;
         $search_route    = $data['search_route'] ?? NULL;
@@ -171,9 +174,15 @@ class Ticket
                 WHERE 1=1";
 
         if (!empty($search_date)) {
+
             if ($search_date == $today) {
+                
+                // $sql .= " AND routes_schedule.date = '$search_date' 
+                //         AND routes_schedule.leaving_time >= '$hour'";
+
                 $sql .= " AND routes_schedule.date = '$search_date' 
-                        AND routes_schedule.leaving_time >= '$hour'";
+                        AND DATE_ADD(CONCAT(routes_schedule.date, ' ', routes_schedule.leaving_time), INTERVAL 20 MINUTE) >= '$now'";
+
             } elseif ($search_date > $today) {
                 $sql .= " AND routes_schedule.date = '$search_date'";
             } else {

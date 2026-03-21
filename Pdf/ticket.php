@@ -17,7 +17,7 @@ $mpdf = new Mpdf([
 // $mpdf->SetWatermarkImage('../assets/img/logo.png', 0.12, [40, 40]);
 // $mpdf->showWatermarkImage = true;
 
-$mpdf->SetWatermarkImage('../assets/img/set_water.png', 0.45, [30,30], 'F', false, 203);
+$mpdf->SetWatermarkImage('../assets/img/set_water.png', 0.15, [60,60], 'F', false, 203);
 $mpdf->showWatermarkImage = true;
 
 
@@ -64,9 +64,14 @@ foreach ($tickets_ids as $ticket_id) {
     // HTML del ticket
     $html = "
     <style>
+        * {
+            color: #000000 !important;
+            text-shadow: 0 0 0 #000000; /* truco para hacerlo más sólido */
+        }
         .ticket {
-            font-family: 'Helvetica', sans-serif;
-            font-size: 9px;
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+            font-weight: 600;
         }
         .ticket h3 {
             margin: 0;
@@ -83,7 +88,7 @@ foreach ($tickets_ids as $ticket_id) {
         }
         .ticket hr {
             border: none;
-            margin: 2px 0;
+            margin: 0px 0;
         }
         table.ticket-table {
             width: 100%;
@@ -91,7 +96,7 @@ foreach ($tickets_ids as $ticket_id) {
             font-size: 10px;
         }
         table.ticket-table td {
-            padding: 2px 2px;
+            padding: 1px 1px;
             vertical-align: top;
         }
         .label {
@@ -100,7 +105,7 @@ foreach ($tickets_ids as $ticket_id) {
         }
         .value {
             font-weight: bold;
-            font-size: 9px;
+            font-size: 10px;
         }
         .qr {
             text-align: center;
