@@ -1,2 +1,4 @@
 global.php
 /vendor/
+config/database.php
+Database/global.php
