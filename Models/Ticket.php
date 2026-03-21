@@ -181,7 +181,7 @@ class Ticket
                 //         AND routes_schedule.leaving_time >= '$hour'";
 
                 $sql .= " AND routes_schedule.date = '$search_date' 
-                        AND DATE_ADD(CONCAT(routes_schedule.date, ' ', routes_schedule.leaving_time), INTERVAL 20 MINUTE) >= '$now'";
+                        AND DATE_ADD(CONCAT(routes_schedule.date, ' ', routes_schedule.leaving_time), INTERVAL 10 MINUTE) >= '$now'";
 
             } elseif ($search_date > $today) {
                 $sql .= " AND routes_schedule.date = '$search_date'";
