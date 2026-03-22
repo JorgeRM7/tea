@@ -39,9 +39,10 @@ class Ticket
             WHERE branch_office_id = '$branch_office_id'
         ";
 
-        if ( $user_type_id != 1 ) {
+        if ( $user_type_id == 3 ) {
             $sql .= " AND tickets.user_id = '".$user_id. "'";
         }
+
 
         if (!empty($date)) {
             $sql .= " AND tickets.date >= '$date' AND tickets.date <='$date_filter_end'";
