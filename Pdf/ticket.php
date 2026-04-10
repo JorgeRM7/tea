@@ -25,6 +25,7 @@ foreach ($tickets_ids as $index => $ticket_id) {
     $sql = "
         SELECT 
             tickets.id,
+            tickets.code,
             tickets.price,
             tickets.discount,
             routes_schedule.date,
@@ -84,7 +85,7 @@ foreach ($tickets_ids as $index => $ticket_id) {
         <h3>{$item['social_reason']}</h3>
         <p style='margin:0;text-align:center;'>RFC: {$item['RFC']}</p>
 
-        <div class='folio'>Folio: {$item['id']}</div>
+        <div class='folio'>Folio: {$item['code']}</div>
         <hr>
 
         <table>
@@ -114,7 +115,7 @@ foreach ($tickets_ids as $index => $ticket_id) {
         <h3>{$item['social_reason']}</h3>
         <p style='margin:0;text-align:center;'>RFC: {$item['RFC']}</p>
 
-        <div class='folio'>Folio: {$item['id']}</div>
+        <div class='folio'>Folio: {$item['code']}</div>
         <hr>
 
         <table>

@@ -77,7 +77,30 @@ class Ticket
 
         $sale_id = (int)$row['next_sale_id'] ?? 1;
 
+
+        $sql_branch = "SELECT code FROM branch_offices WHERE id = '$branch_office_id'";
+        $rs_branch = ejecutarConsulta($sql_branch);
+        $row_branch = mysqli_fetch_assoc($rs_branch);
+
+        $code_branch = $row_branch['code'];
+
         for ($i = 1; $i <= $quantity; $i++) {
+
+           $prefix = $code_branch.'-';
+            $sql_code = "
+                SELECT 
+                    IFNULL(MAX(CAST(SUBSTRING_INDEX(code, '-', -1) AS UNSIGNED)), 0) + 1 AS next_code
+                FROM tickets
+                WHERE branch_office_id = '$branch_office_id'
+                AND code LIKE '{$prefix}%'
+            ";
+
+            $rs_code = ejecutarConsulta($sql_code);
+            $row_code = mysqli_fetch_assoc($rs_code);
+
+            $nextNumber = (int)($row_code['next_code'] ?? 1);
+            $code = $prefix . $nextNumber;
+
             $sql = "
                 INSERT INTO `tickets`(
                     `route_schedule_id`,
@@ -97,6 +120,7 @@ class Ticket
                     `discount`,
                     `expires_at`,
                     `sale_id`,
+                    `code`,
                     `created_at`, 
                     `updated_at`
                 ) VALUES (
@@ -117,6 +141,7 @@ class Ticket
                     '$discount',
                     '$expiration_date',
                     '$sale_id',
+                    '$code',
                     '$today',
                     '$today'
                 )
