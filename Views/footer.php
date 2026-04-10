@@ -9,7 +9,7 @@
         </div>
     </div>
 </footer>
-
+<script src="../assets/js/sweetalert2.all.min.js"></script>
 <script src="../assets/vendor/libs/jquery/jquery.js"></script>
 <script src="../assets/vendor/libs/popper/popper.js"></script>
 <script src="../assets/vendor/js/bootstrap.js"></script>
@@ -24,6 +24,8 @@
 <script src="../assets/js/main.js"></script>
 <script src="../assets/vendor/libs/datatables-bs5/datatables-bootstrap5.js"></script>
 <script src="../assets/vendor/libs/dropzone/dropzone.js"></script>
+<script src="../assets/js/jquery.min.js"></script>
+<script src="../assets/js/select2.min.js"></script>
 
 <!-- <script src="https://cdn.datatables.net/buttons/2.3.6/js/dataTables.buttons.min.js"></script>
 <script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.colVis.min.js"></script>
