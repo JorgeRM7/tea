@@ -9,6 +9,7 @@
         </div>
     </div>
 </footer>
+<script src="../assets/js/xlsx.full.min.js"></script>
 <script src="../assets/js/fullcalendar.min.js"></script>
 <script src="../assets/js/sweetalert2.all.min.js"></script>
 <script src="../assets/vendor/libs/jquery/jquery.js"></script>

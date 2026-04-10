@@ -3,6 +3,8 @@ require_once dirname(__DIR__) . "/Database/conexion.php";
 require_once __DIR__ . '/../vendor/autoload.php';
 
 use Mpdf\Mpdf;
+use Endroid\QrCode\QrCode;
+use Endroid\QrCode\Writer\PngWriter;
 
 $tickets_ids = isset($_GET['tickets_id']) ? explode(",", $_GET['tickets_id']) : [];
 
@@ -56,7 +58,15 @@ foreach ($tickets_ids as $index => $ticket_id) {
     $discount = (float) ($item['discount'] ?? 0);
     $total    = $price - $discount;
 
-    $url  = "https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=" . urlencode($item['id']);
+
+    $qrCode = new QrCode((string) $item['id']);
+    $writer = new PngWriter();
+
+    $result = $writer->write($qrCode);
+
+    $url = 'data:' . $result->getMimeType() . ';base64,' . base64_encode($result->getString());
+
+    // $url  = "https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=" . urlencode($item['id']);
 
     // 🔥 CSS global (solo una vez)
     if ($index == 0) {

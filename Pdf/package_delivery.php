@@ -3,6 +3,8 @@ require_once dirname(__DIR__) . "/Database/conexion.php";
 require_once __DIR__ . "/../vendor/autoload.php";
 
 use Mpdf\Mpdf;
+use Endroid\QrCode\QrCode;
+use Endroid\QrCode\Writer\PngWriter;
 
 /* ==========================================================
    CONFIGURACIÓN DE SEGURIDAD
@@ -91,7 +93,14 @@ $encryptedPayload = encryptData($payload, $secretKey, $method);
 
 $trackingLink = "https://transportestea.com/Views/packages-tracking.php?data=" . urlencode($encryptedPayload);
 
-$qrUrl = "https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=" . urlencode($trackingLink);
+// $qrUrl = "https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=" . urlencode($trackingLink);
+
+$qrCode = new QrCode((string) $trackingLink);
+$writer = new PngWriter();
+$result = $writer->write($qrCode);
+$qrUrl = 'data:' . $result->getMimeType() . ';base64,' . base64_encode($result->getString());
+
+
 
 /* ==========================================================
    MPDF CONFIG (MISMAS DIMENSIONES QUE PASAJERO)
