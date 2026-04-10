@@ -23,6 +23,7 @@
     <script src="../assets/vendor/js/template-customizer.js"></script>
     <script src="../assets/js/config.js"></script>
     <link rel="stylesheet" href="../assets/vendor/css/pages/page-auth.css" />
+    <!-- hola -->
 
 
 

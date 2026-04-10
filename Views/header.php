@@ -66,6 +66,9 @@ require_once dirname(__DIR__) . "/Database/conexion.php";
     <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
     <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.3.6/css/buttons.dataTables.min.css"> -->
 
+    <!-- hola -->
+    
+
 
     
 
