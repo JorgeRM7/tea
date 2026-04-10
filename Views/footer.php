@@ -9,6 +9,7 @@
         </div>
     </div>
 </footer>
+<script src="../assets/js/fullcalendar.min.js"></script>
 <script src="../assets/js/sweetalert2.all.min.js"></script>
 <script src="../assets/vendor/libs/jquery/jquery.js"></script>
 <script src="../assets/vendor/libs/popper/popper.js"></script>
@@ -26,13 +27,14 @@
 <script src="../assets/vendor/libs/dropzone/dropzone.js"></script>
 <script src="../assets/js/jquery.min.js"></script>
 <script src="../assets/js/select2.min.js"></script>
+<!-- <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.css" rel="stylesheet"> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/bootstrap5.global.min.js"></script> -->
 
 <!-- <script src="https://cdn.datatables.net/buttons/2.3.6/js/dataTables.buttons.min.js"></script>
 <script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.colVis.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.css" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/bootstrap5.global.min.js"></script>
+
 <script src="https://cdn.datatables.net/2.1.4/js/dataTables.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>

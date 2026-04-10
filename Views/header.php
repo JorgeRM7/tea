@@ -57,6 +57,7 @@ require_once dirname(__DIR__) . "/Database/conexion.php";
     <link rel="stylesheet" href="../assets/vendor/css/pages/page-auth.css" />
     <link rel="stylesheet" href="../assets/vendor/libs/dropzone/dropzone.css" />
     <link rel="stylesheet" href="../assets/css/select2.min.css">
+    <!-- <link rel="stylesheet" href="../assets/css/fullcalendar.min.css"> -->
 
     <!-- <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
