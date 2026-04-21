@@ -79,12 +79,19 @@ foreach ($tickets_ids as $index => $ticket_id) {
                 page-break-inside: avoid;
             }
             h3 { margin:0; font-size:9px; text-align:center; }
-            .folio { font-size:11px; font-weight:bold; text-align:right; }
+            .folio{
+                font-size: 11px;
+                font-weight: bold;
+                display: block;
+                width: 100%;
+                text-align: right;
+                padding-right: 50px;
+            }
             table { width:100%; border-collapse: collapse; font-size:10px; }
             td { padding:1px; vertical-align:top; }
             .label { font-weight:bold; }
             .value { font-weight:bold; }
-            .qr { text-align:center; }
+            .qr { text-align:center; padding-right: 40px;}
         </style>
         ");
     }
