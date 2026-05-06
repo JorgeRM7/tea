@@ -91,7 +91,7 @@ if($archivo_actual == 'inicio.php'){
              <li class="nav-item dropdown-notifications navbar-dropdown dropdown me-3 me-xl-1">
                 <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
                     <i class="ti ti-bell ti-md"></i>
-                    <span class="badge bg-danger rounded-pill badge-notifications">1</span>
+                    <span class="badge bg-danger rounded-pill badge-notifications">0</span>
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end py-0">
                     <li class="dropdown-menu-header border-bottom">
@@ -107,7 +107,7 @@ if($archivo_actual == 'inicio.php'){
                             ></a>
                         </div>
                     </li>
-                    <li class="dropdown-notifications-list scrollable-container">
+                    <!-- <li class="dropdown-notifications-list scrollable-container">
                         <ul class="list-group list-group-flush">
                             <li class="list-group-item list-group-item-action dropdown-notifications-item marked-as-read">
                                 <div class="d-flex">
@@ -138,7 +138,7 @@ if($archivo_actual == 'inicio.php'){
                                 </div>
                             </li>
                         </ul>
-                    </li>
+                    </li> -->
                     <li class="dropdown-menu-footer border-top">
                       <a
                         href="javascript:void(0);"
