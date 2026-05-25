@@ -150,7 +150,15 @@ class Ticket
 
             if ( $result ) {
                 global $conexion;
+                $LOG = [
+                    'table_name'        => 'tickets',
+                    'relationship_id'   => mysqli_insert_id($conexion),
+                    'old_data'          => NULL,
+                    'action'            => 'INSERT'
+                ];
+                // ActivityLog::store($LOG);
                 $tickets_ids[] = mysqli_insert_id($conexion);
+                
             }
         }
         return $tickets_ids;

@@ -88,7 +88,55 @@ if($archivo_actual == 'inicio.php'){
                     </li>
                 </ul>
             </li>
-             <li class="nav-item dropdown-notifications navbar-dropdown dropdown me-3 me-xl-1">
+            <li class="nav-item dropdown-shortcuts navbar-dropdown dropdown me-2 me-xl-0">
+                <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
+                    <i class="ti ti-layout-grid-add ti-md"></i>
+                </a>
+                <div class="dropdown-menu dropdown-menu-end py-0">
+                    <div class="dropdown-menu-header border-bottom">
+                        <div class="dropdown-header d-flex align-items-center py-3">
+                            <h5 class="text-body mb-0 me-auto">Acceso Rapido</h5>
+                            <a
+                                href="javascript:void(0)"
+                                class="dropdown-shortcuts-add text-body"
+                                data-bs-toggle="tooltip"
+                                data-bs-placement="top"
+                                title="Add shortcuts"
+                                >
+                                <i class="ti ti-sm ti-apps"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="dropdown-shortcuts-list scrollable-container">
+                        <div class="row row-bordered overflow-visible g-0">
+
+                            <?php
+                                $sql = "SELECT * FROM system_modules WHERE deleted_at IS NULL ORDER BY name ASC";
+                                $query = ejecutarConsulta($sql);
+
+                                while ($modulo = mysqli_fetch_array($query)) {
+                            ?>
+
+                                <div class="dropdown-shortcuts-item col-6">
+                                    <span class="dropdown-shortcuts-icon rounded-circle mb-2 bg-label-primary">
+                                        <i class="<? echo $modulo['icon'] ?>"></i>
+                                    </span>
+
+                                    <a href="" class="stretched-link">
+                                        <?= $modulo['name'] ?>
+                                    </a>
+
+                                    <small class="text-muted mb-0">
+                                        <?= $modulo['description'] ?? 'Acceso al sistema' ?>
+                                    </small>
+                                </div>
+
+                            <?php } ?>
+                        </div>
+                    </div>
+                </div>
+            </li>
+            <li class="nav-item dropdown-notifications navbar-dropdown dropdown me-3 me-xl-1">
                 <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
                     <i class="ti ti-bell ti-md"></i>
                     <span class="badge bg-danger rounded-pill badge-notifications">0</span>
@@ -193,8 +241,6 @@ if($archivo_actual == 'inicio.php'){
                 </ul>
             </li>
             <!--/ USUARIO -->
-
-           
         </ul>
     </div>
 </nav>

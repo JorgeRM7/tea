@@ -3,6 +3,7 @@ require_once dirname(__DIR__) . "/Database/conexion.php";
 
 $user_type_id = $_SESSION['user_type_id'] ?? 3;
 
+
 $sql = "
     SELECT 
         views.title,
