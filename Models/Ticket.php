@@ -276,7 +276,9 @@ class Ticket
                 SUM(CASE WHEN status = 'VENDIDO' THEN 1 ELSE 0 END) AS vendidos,
                 SUM(CASE WHEN status = 'CANCELADO' THEN 1 ELSE 0 END) AS cancelados,
                 SUM(CASE WHEN status = 'VENDIDO' THEN price - discount ELSE 0 END) AS importe_total,
-                COUNT(*) AS total
+                COUNT(*) AS total,
+                (SELECT SUM(price) FROM tickets_delivery WHERE deleted_at is null) AS packages_price,
+                (SELECT COUNT(id) FROM tickets_delivery WHERE deleted_at is null) AS packages_amount
             FROM tickets
             WHERE branch_office_id = $branch_office_id
         ";

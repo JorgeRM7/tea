@@ -515,6 +515,9 @@
             const date_start = document.getElementById("fecha_inicial").value;
             const date_end = document.getElementById("fecha_final").value;
             let branch_office_id = document.getElementById('branch_office_id_selected').value;
+
+            console.log(date_start,date_end,branch_office_id)
+
             $('#modalXLS').modal('hide');
             Swal.fire({
                 title: 'Exportando...',
@@ -535,6 +538,8 @@
                 },
                 data: { date_start: date_start, date_end:date_end, branch_office_id:branch_office_id },
                 success: function (response) {
+                    console.log(response)
+
                     const formattedData = response.map(item => ({
                         "Descripcion" : item.description,
                         "Horario" : item.leaving_time,

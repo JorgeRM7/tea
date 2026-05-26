@@ -18,7 +18,7 @@
                 <div class="content-wrapper">
                     <div class="container-xxl flex-grow-1 container-p-y">
                         <div class="row">
-                            <div class="col-sm-3 col-lg-3 mt-2">
+                            <div class="col-sm-2 col-lg-2 mt-2">
                                 <div class="card card-border-shadow-success">
                                     <div class="card-body">
                                         <div class="d-flex align-items-center mb-2 pb-1">
@@ -34,7 +34,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-sm-3 col-lg-3 mt-2">
+                            <div class="col-sm-2 col-lg-2 mt-2">
                                 <div class="card card-border-shadow-danger">
                                     <div class="card-body">
                                         <div class="d-flex align-items-center mb-2 pb-1">
@@ -50,7 +50,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-sm-3 col-lg-3 mt-2">
+                            <div class="col-sm-2 col-lg-2 mt-2">
                                 <div class="card card-border-shadow-success">
                                     <div class="card-body">
                                         <div class="d-flex align-items-center mb-2 pb-1">
@@ -66,7 +66,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-sm-3 col-lg-3 mt-2">
+                            <div class="col-sm-2 col-lg-2 mt-2">
                                 <div class="card card-border-shadow-success">
                                     <div class="card-body">
                                         <div class="d-flex align-items-center mb-2 pb-1">
@@ -78,6 +78,37 @@
                                             <h4 class="ms-1 mb-0" id="importeTotal">0</h4>
                                         </div>
                                         <p class="mb-1">Importe Total</p>  
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-2 col-lg-2 mt-2">
+                                <div class="card card-border-shadow-success">
+                                    <div class="card-body">
+                                        <div class="d-flex align-items-center mb-2 pb-1">
+                                            <div class="avatar me-2">
+                                                <span class="avatar-initial rounded bg-label-success">
+                                                    <i class="ti ti-coin ti-md"></i>
+                                                </span>
+                                            </div>
+                                            <h4 class="ms-1 mb-0" id="importeTotalPaquetes">0</h4>
+                                        </div>
+                                        <p class="mb-1">Importe Total (Paquetes)</p>  
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-2 col-lg-2 mt-2">
+                                <div class="card card-border-shadow-success">
+                                    <div class="card-body">
+                                        <div class="d-flex align-items-center mb-2 pb-1">
+                                            <div class="avatar me-2">
+                                                <span class="avatar-initial rounded bg-label-success">
+                                                    <i class="ti ti-coin ti-md"></i>
+                                                </span>
+                                            </div>
+                                            <h4 class="ms-1 mb-0" id="totalPaquetes">0</h4>
+                                        </div>
+                                        <p class="mb-1">Total Paquetes</p>  
                                     </div>
                                 </div>
                             </div>
@@ -405,6 +436,7 @@
                 date: date, branch_office_id: branch_office_id, date_filter_end:date_filter_end,
             },
             success: function (data) {
+                console.log(data)
                 $("#totalVendidos").text(
                     isNaN(parseFloat(data.vendidos)) 
                         ? 0 
@@ -427,6 +459,24 @@
                     isNaN(parseFloat(data.importe_total)) 
                         ? 0 
                         : parseFloat(data.importe_total).toLocaleString()
+                );
+
+                $("#importeTotal").text(
+                    isNaN(parseFloat(data.importe_total)) 
+                        ? 0 
+                        : parseFloat(data.importe_total).toLocaleString()
+                );
+
+                $("#importeTotalPaquetes").text(
+                    isNaN(parseFloat(data.packages_price)) 
+                        ? 0 
+                        : parseFloat(data.packages_price).toLocaleString()
+                );
+
+                $("#totalPaquetes").text(
+                    isNaN(parseFloat(data.packages_amount)) 
+                        ? 0 
+                        : parseFloat(data.packages_amount).toLocaleString()
                 );
 
             },
